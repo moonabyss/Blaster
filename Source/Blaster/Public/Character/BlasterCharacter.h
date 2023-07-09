@@ -7,6 +7,9 @@
 
 #include "BlasterCharacter.generated.h"
 
+class UCameraComponent;
+class USpringArmComponent;
+
 UCLASS()
 class BLASTER_API ABlasterCharacter : public ACharacter
 {
@@ -14,12 +17,16 @@ class BLASTER_API ABlasterCharacter : public ACharacter
 
 public:
     ABlasterCharacter();
+    virtual void Tick(float DeltaTime) override;
+    virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
     virtual void BeginPlay() override;
 
-public:
-    virtual void Tick(float DeltaTime) override;
+private:
+    UPROPERTY(Category = "Components", VisibleAnywhere)
+    USpringArmComponent* CameraBoom;
 
-    virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+    UPROPERTY(Category = "Components", VisibleAnywhere)
+    UCameraComponent* FollowCamera;
 };
