@@ -2,6 +2,7 @@
 
 #include "Character/BlasterCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 ABlasterCharacter::ABlasterCharacter()
@@ -16,6 +17,9 @@ ABlasterCharacter::ABlasterCharacter()
     FollowCamera = CreateDefaultSubobject<UCameraComponent>("Camera");
     FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
     FollowCamera->bUsePawnControlRotation = false;
+
+    bUseControllerRotationYaw = false;
+    GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 void ABlasterCharacter::BeginPlay()
@@ -44,8 +48,8 @@ void ABlasterCharacter::MoveForward(float Value)
 {
     if (!Controller || FMath::IsNearlyZero(Value)) return;
 
-    const FRotator YawRotation{0.0f, Controller->GetControlRotation().Yaw, 0.0f};
-    const FVector Direction{FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X)};
+    const FRotator YawRotation = FRotator(0.0f, Controller->GetControlRotation().Yaw, 0.0f);
+    const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
     AddMovementInput(Direction, Value);
 }
 
@@ -53,8 +57,8 @@ void ABlasterCharacter::MoveRight(float Value)
 {
     if (!Controller || FMath::IsNearlyZero(Value)) return;
 
-    const FRotator YawRotation{0.0f, Controller->GetControlRotation().Yaw, 0.0f};
-    const FVector Direction{FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y)};
+    const FRotator YawRotation = FRotator(0.0f, Controller->GetControlRotation().Yaw, 0.0f);
+    const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
     AddMovementInput(Direction, Value);
 }
 
