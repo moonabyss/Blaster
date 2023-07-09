@@ -31,4 +31,43 @@ void ABlasterCharacter::Tick(float DeltaTime)
 void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+    PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ACharacter::Jump);
+
+    PlayerInputComponent->BindAxis("MoveForward", this, &ThisClass::MoveForward);
+    PlayerInputComponent->BindAxis("MoveRight", this, &ThisClass::MoveRight);
+    PlayerInputComponent->BindAxis("Turn", this, &ThisClass::Turn);
+    PlayerInputComponent->BindAxis("LookUp", this, &ThisClass::LookUp);
+}
+
+void ABlasterCharacter::MoveForward(float Value)
+{
+    if (!Controller || FMath::IsNearlyZero(Value)) return;
+
+    const FRotator YawRotation{0.0f, Controller->GetControlRotation().Yaw, 0.0f};
+    const FVector Direction{FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X)};
+    AddMovementInput(Direction, Value);
+}
+
+void ABlasterCharacter::MoveRight(float Value)
+{
+    if (!Controller || FMath::IsNearlyZero(Value)) return;
+
+    const FRotator YawRotation{0.0f, Controller->GetControlRotation().Yaw, 0.0f};
+    const FVector Direction{FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y)};
+    AddMovementInput(Direction, Value);
+}
+
+void ABlasterCharacter::Turn(float Value)
+{
+    if (!Controller || FMath::IsNearlyZero(Value)) return;
+
+    AddControllerYawInput(Value);
+}
+
+void ABlasterCharacter::LookUp(float Value)
+{
+    if (!Controller || FMath::IsNearlyZero(Value)) return;
+
+    AddControllerPitchInput(Value);
 }
