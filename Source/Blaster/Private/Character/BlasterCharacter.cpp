@@ -4,6 +4,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "HUD/OverheadWidget.h"
 
 ABlasterCharacter::ABlasterCharacter()
 {
@@ -20,6 +21,11 @@ ABlasterCharacter::ABlasterCharacter()
 
     bUseControllerRotationYaw = false;
     GetCharacterMovement()->bOrientRotationToMovement = true;
+
+    if (OverheadWidgetClass)
+    {
+        OverheadWidget = CreateWidget<UOverheadWidget>(GetWorld(), OverheadWidgetClass);
+    }
 }
 
 void ABlasterCharacter::BeginPlay()
@@ -74,4 +80,11 @@ void ABlasterCharacter::LookUp(float Value)
     if (!Controller || FMath::IsNearlyZero(Value)) return;
 
     AddControllerPitchInput(Value);
+}
+
+void ABlasterCharacter::DisplayNetRole()
+{
+    if (!OverheadWidget) return;
+
+    // OverheadWidget->SetDisplayText();
 }

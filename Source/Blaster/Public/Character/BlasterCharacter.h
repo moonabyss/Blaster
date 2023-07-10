@@ -9,6 +9,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class UOverheadWidget;
 
 UCLASS()
 class BLASTER_API ABlasterCharacter : public ACharacter
@@ -34,4 +35,9 @@ private:
 
     UPROPERTY(Category = "Components", VisibleAnywhere)
     UCameraComponent* FollowCamera;
+
+    TSubclassOf<UOverheadWidget> OverheadWidgetClass;
+    UOverheadWidget* OverheadWidget;
+
+    void DisplayNetRole();
 };
