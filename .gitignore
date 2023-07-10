@@ -87,3 +87,4 @@ Content/StarterContent/*
 devops/tests/data/
 devops/jenkins/
 Documentation/
+devops_data/config.bat
