@@ -9,8 +9,9 @@ void UOverheadWidget::NativeDestruct()
     Super::NativeDestruct();
 }
 
-void UOverheadWidget::SetDisplayText(FString TextToDisplay) {
-    if (!DisplayText) return;
+void UOverheadWidget::SetDisplayText(FString TextToDisplay)
+{
+    if (!IsValid(DisplayText)) return;
 
     DisplayText->SetText(FText::FromString(TextToDisplay));
 }

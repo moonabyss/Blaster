@@ -2,6 +2,7 @@
 
 #include "Character/BlasterCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "HUD/OverheadWidget.h"
@@ -22,15 +23,21 @@ ABlasterCharacter::ABlasterCharacter()
     bUseControllerRotationYaw = false;
     GetCharacterMovement()->bOrientRotationToMovement = true;
 
-    if (OverheadWidgetClass)
-    {
-        OverheadWidget = CreateWidget<UOverheadWidget>(GetWorld(), OverheadWidgetClass);
-    }
+    OverheadWidget = CreateDefaultSubobject<UWidgetComponent>("OverheadWidget");
+    check(OverheadWidget);
+    OverheadWidget->SetupAttachment(GetRootComponent());
+    OverheadWidget->SetWidgetSpace(EWidgetSpace::Screen);
+    OverheadWidget->SetDrawAtDesiredSize(true);
 }
 
 void ABlasterCharacter::BeginPlay()
 {
     Super::BeginPlay();
+    if (auto Widget = Cast<UOverheadWidget>(OverheadWidget->GetUserWidgetObject()))
+    {
+        // Display network role
+        Widget->SetDisplayText(FString(UEnum::GetValueAsString<ENetRole>(GetLocalRole())));
+    }
 }
 
 void ABlasterCharacter::Tick(float DeltaTime)
