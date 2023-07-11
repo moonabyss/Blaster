@@ -36,7 +36,7 @@ void ABlasterCharacter::BeginPlay()
     if (auto Widget = Cast<UOverheadWidget>(OverheadWidget->GetUserWidgetObject()))
     {
         // Display network role
-        Widget->SetDisplayText(FString(UEnum::GetValueAsString<ENetRole>(GetLocalRole())));
+        Widget->SetDisplayText(FString(UEnum::GetValueAsString<ENetRole>(GetRemoteRole())));
     }
 }
 
