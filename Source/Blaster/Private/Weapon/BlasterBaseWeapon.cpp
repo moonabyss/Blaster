@@ -11,18 +11,21 @@ ABlasterBaseWeapon::ABlasterBaseWeapon()
     bReplicates = true;
 
     WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>("WeaponMesh");
+    check(WeaponMesh);
     SetRootComponent(WeaponMesh);
     WeaponMesh->SetCollisionResponseToAllChannels(ECR_Block);
     WeaponMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
     WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
     AreaSphere = CreateDefaultSubobject<USphereComponent>("AreaSphere");
+    check(AreaSphere);
     AreaSphere->SetupAttachment(RootComponent);
     AreaSphere->InitSphereRadius(200.0f);
     AreaSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
     AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
     PickupWidget = CreateDefaultSubobject<UWidgetComponent>("PickupWidget");
+    check(PickupWidget);
     PickupWidget->SetupAttachment(RootComponent);
     PickupWidget->SetWidgetSpace(EWidgetSpace::Screen);
     PickupWidget->SetDrawAtDesiredSize(true);
@@ -70,5 +73,30 @@ void ABlasterBaseWeapon::ShowPickupWidget(bool bShowWidget)
 
 void ABlasterBaseWeapon::SetWeaponState(EWeaponState State)
 {
-    WeaponState = State;
+    if (IsValid(PickupWidget))
+    {
+        PickupWidget->SetVisibility(false);
+    }
+
+    if (HasAuthority())
+    {
+        check(AreaSphere);
+
+        switch (State)
+        {
+            case EWeaponState::EWS_Initial:
+            {
+                AreaSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+                break;
+            }
+            case EWeaponState::EWS_Equipped:
+            {
+                AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+                break;
+            }
+            case EWeaponState::EWS_Dropped: break;
+            default: break;
+        }
+        WeaponState = State;
+    }
 }

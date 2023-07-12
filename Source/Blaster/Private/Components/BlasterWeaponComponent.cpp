@@ -2,8 +2,9 @@
 
 #include "Components/BlasterWeaponComponent.h"
 
-#include "Weapon/BlasterBaseWeapon.h"
 #include "BlasterCoreTypes.h"
+#include "Character/BlasterCharacter.h"
+#include "Weapon/BlasterBaseWeapon.h"
 
 UBlasterWeaponComponent::UBlasterWeaponComponent()
 {
@@ -25,11 +26,20 @@ void UBlasterWeaponComponent::SetCharacter(ABlasterCharacter* BlasterCharacter)
     Character = BlasterCharacter;
 }
 
-void UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip) 
+void UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
 {
-    if (!IsValid(WeaponToEquip)) return;
+    if (!IsValid(WeaponToEquip) || !Character) return;
 
-    EquippedWeapon = WeaponToEquip;
-    EquippedWeapon->SetWeaponState(EWeaponState::EWS_Equipped);
-    Character->GetMesh()
+    CurrentWeapon = WeaponToEquip;
+    CurrentWeapon->SetWeaponState(EWeaponState::EWS_Equipped);
+    CurrentWeapon->SetOwner(Character);
+    AttachWeaponToSocket(CurrentWeapon, Character->GetMesh(), WeaponRightHandSocket);
+}
+
+void UBlasterWeaponComponent::AttachWeaponToSocket(ABlasterBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName) 
+{
+    if (!Weapon || !SceneComponent) return;
+
+    FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
+    Weapon->AttachToComponent(SceneComponent, AttachmentRules, SocketName);
 }

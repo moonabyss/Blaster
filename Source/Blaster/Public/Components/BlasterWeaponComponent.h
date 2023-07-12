@@ -30,8 +30,10 @@ private:
     TObjectPtr<ABlasterCharacter> Character;
     
     UPROPERTY(VisibleAnywhere)
-    ABlasterBaseWeapon* EquippedWeapon;
+    ABlasterBaseWeapon* CurrentWeapon;
 
     UPROPERTY(EditDefaultsOnly)
     FName WeaponRightHandSocket{FName("Weapon_R")};
+
+    void AttachWeaponToSocket(ABlasterBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName);
 };

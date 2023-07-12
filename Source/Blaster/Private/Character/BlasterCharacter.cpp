@@ -103,9 +103,12 @@ void ABlasterCharacter::LookUp(float Value)
     AddControllerPitchInput(Value);
 }
 
-void ABlasterCharacter::EquipPressed() 
+void ABlasterCharacter::EquipPressed()
 {
-    WeaponComponent->EquipWeapon(OverlappingWeapon);
+    if (IsValid(WeaponComponent) && HasAuthority())
+    {
+        WeaponComponent->EquipWeapon(OverlappingWeapon);
+    }
 }
 
 void ABlasterCharacter::DisplayNetRole()
