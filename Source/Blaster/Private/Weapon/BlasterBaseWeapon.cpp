@@ -1,6 +1,7 @@
 // Blaster Multiplayer Game. All rights reserved.
 
 #include "Weapon/BlasterBaseWeapon.h"
+#include "Character/BlasterCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 
@@ -37,12 +38,37 @@ void ABlasterBaseWeapon::BeginPlay()
         AreaSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
         AreaSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
         AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnSphereBeginOverlap);
+        AreaSphere->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnSphereEndOverlap);
     }
-
 }
 
 void ABlasterBaseWeapon::OnSphereBeginOverlap(
     UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    PickupWidget->SetVisibility(true);
+    // PickupWidget->SetVisibility(true);
+    if (auto Player = Cast<ABlasterCharacter>(OtherActor))
+    {
+        Player->SetOverlappedWeapon(this);
+    }
+}
+
+void ABlasterBaseWeapon::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+    if (auto Player = Cast<ABlasterCharacter>(OtherActor))
+    {
+        Player->UnsetOverlappedWeapon(this);
+    }
+}
+
+void ABlasterBaseWeapon::ShowPickupWidget(bool bShowWidget)
+{
+    if (IsValid(PickupWidget))
+    {
+        PickupWidget->SetVisibility(bShowWidget);
+    }
+}
+
+void ABlasterBaseWeapon::SetWeaponState(EWeaponState State)
+{
+    WeaponState = State;
 }

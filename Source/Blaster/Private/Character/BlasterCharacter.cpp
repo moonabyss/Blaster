@@ -5,18 +5,24 @@
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Net/UnrealNetwork.h"
+
+#include "Components/BlasterWeaponComponent.h"
 #include "HUD/OverheadWidget.h"
+#include "Weapon/BlasterBaseWeapon.h"
 
 ABlasterCharacter::ABlasterCharacter()
 {
     PrimaryActorTick.bCanEverTick = true;
 
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
+    check(CameraBoom);
     CameraBoom->SetupAttachment(GetMesh());
     CameraBoom->TargetArmLength = 600.0f;
     CameraBoom->bUsePawnControlRotation = true;
 
     FollowCamera = CreateDefaultSubobject<UCameraComponent>("Camera");
+    check(FollowCamera);
     FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
     FollowCamera->bUsePawnControlRotation = false;
 
@@ -28,17 +34,23 @@ ABlasterCharacter::ABlasterCharacter()
     OverheadWidget->SetupAttachment(GetRootComponent());
     OverheadWidget->SetWidgetSpace(EWidgetSpace::Screen);
     OverheadWidget->SetDrawAtDesiredSize(true);
+
+    WeaponComponent = CreateDefaultSubobject<UBlasterWeaponComponent>("WeaponComponent");
+    check(WeaponComponent);
+    WeaponComponent->SetCharacter(this);
+    WeaponComponent->SetIsReplicated(true);
+}
+
+void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME_CONDITION(ABlasterCharacter, OverlappingWeapon, COND_OwnerOnly);
 }
 
 void ABlasterCharacter::BeginPlay()
 {
     Super::BeginPlay();
-
-    if (auto Widget = Cast<UOverheadWidget>(OverheadWidget->GetUserWidgetObject()))
-    {
-        // Display network role
-        // Widget->SetDisplayText(FString(UEnum::GetValueAsString<ENetRole>(GetRemoteRole())));
-    }
 }
 
 void ABlasterCharacter::Tick(float DeltaTime)
@@ -51,6 +63,7 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     Super::SetupPlayerInputComponent(PlayerInputComponent);
 
     PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ACharacter::Jump);
+    PlayerInputComponent->BindAction("Equip", EInputEvent::IE_Pressed, this, &ThisClass::EquipPressed);
 
     PlayerInputComponent->BindAxis("MoveForward", this, &ThisClass::MoveForward);
     PlayerInputComponent->BindAxis("MoveRight", this, &ThisClass::MoveRight);
@@ -90,9 +103,53 @@ void ABlasterCharacter::LookUp(float Value)
     AddControllerPitchInput(Value);
 }
 
+void ABlasterCharacter::EquipPressed() 
+{
+    WeaponComponent->EquipWeapon(OverlappingWeapon);
+}
+
 void ABlasterCharacter::DisplayNetRole()
 {
     if (!OverheadWidget) return;
 
-    // OverheadWidget->SetDisplayText();
+    if (auto Widget = Cast<UOverheadWidget>(OverheadWidget->GetUserWidgetObject()))
+    {
+        Widget->SetDisplayText(FString(UEnum::GetValueAsString<ENetRole>(GetRemoteRole())));
+    }
+}
+
+void ABlasterCharacter::SetOverlappedWeapon(ABlasterBaseWeapon* Weapon)
+{
+    if (IsValid(Weapon))
+    {
+        OverlappingWeapon = Weapon;
+        if (IsLocallyControlled())
+        {
+            Weapon->ShowPickupWidget(true);
+        }
+    }
+}
+
+void ABlasterCharacter::UnsetOverlappedWeapon(ABlasterBaseWeapon* Weapon)
+{
+    if (IsValid(Weapon))
+    {
+        OverlappingWeapon = nullptr;
+        if (IsLocallyControlled())
+        {
+            Weapon->ShowPickupWidget(false);
+        }
+    }
+}
+
+void ABlasterCharacter::OnRep_OverlappingWeapon(ABlasterBaseWeapon* LastValue)
+{
+    if (IsValid(OverlappingWeapon))
+    {
+        OverlappingWeapon->ShowPickupWidget(true);
+    }
+    if (IsValid(LastValue))
+    {
+        LastValue->ShowPickupWidget(false);
+    }
 }

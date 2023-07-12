@@ -10,6 +10,8 @@
 class UCameraComponent;
 class USpringArmComponent;
 class UWidgetComponent;
+class ABlasterBaseWeapon;
+class UBlasterWeaponComponent;
 
 UCLASS()
 class BLASTER_API ABlasterCharacter : public ACharacter
@@ -20,6 +22,9 @@ public:
     ABlasterCharacter();
     virtual void Tick(float DeltaTime) override;
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+    virtual void SetOverlappedWeapon(ABlasterBaseWeapon* Weapon);
+    virtual void UnsetOverlappedWeapon(ABlasterBaseWeapon* Weapon);
 
 protected:
     virtual void BeginPlay() override;
@@ -28,6 +33,7 @@ protected:
     void MoveRight(float Value);
     void Turn(float Value);
     void LookUp(float Value);
+    void EquipPressed();
 
 private:
     UPROPERTY(Category = "Components", VisibleAnywhere)
@@ -38,6 +44,15 @@ private:
 
     UPROPERTY(Category = "Components", VisibleAnywhere)
     UWidgetComponent* OverheadWidget;
+
+    UPROPERTY(Category = "Components", VisibleAnywhere)
+    UBlasterWeaponComponent* WeaponComponent;
+
+    UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
+    ABlasterBaseWeapon* OverlappingWeapon{nullptr};
+
+    UFUNCTION()
+    void OnRep_OverlappingWeapon(ABlasterBaseWeapon* LastValue);
 
     void DisplayNetRole();
 };
