@@ -16,6 +16,7 @@ ABlasterBaseWeapon::ABlasterBaseWeapon()
 
     AreaSphere = CreateDefaultSubobject<USphereComponent>("AreaSphere");
     AreaSphere->SetupAttachment(RootComponent);
+    AreaSphere->InitSphereRadius(200.0f);
     AreaSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
     AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }

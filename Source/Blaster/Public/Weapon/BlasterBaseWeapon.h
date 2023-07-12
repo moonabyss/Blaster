@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "BlasterCoreTypes.h"
 
 #include "BlasterBaseWeapon.generated.h"
 
@@ -26,4 +27,7 @@ private:
 
     UPROPERTY(Category = "Components", VisibleAnywhere)
     USphereComponent* AreaSphere;
+
+    UPROPERTY(Category = "Weapon Properties", VisibleAnywhere)
+    EWeaponState WeaponState{EWeaponState::EWS_Initial};
 };
