@@ -4,6 +4,7 @@
 #include "Character/BlasterCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Net/UnrealNetwork.h"
 
 ABlasterBaseWeapon::ABlasterBaseWeapon()
 {
@@ -32,6 +33,13 @@ ABlasterBaseWeapon::ABlasterBaseWeapon()
     PickupWidget->SetVisibility(false);
 }
 
+void ABlasterBaseWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME_CONDITION(ABlasterBaseWeapon, WeaponState, COND_OwnerOnly);
+}
+
 void ABlasterBaseWeapon::BeginPlay()
 {
     Super::BeginPlay();
@@ -48,7 +56,6 @@ void ABlasterBaseWeapon::BeginPlay()
 void ABlasterBaseWeapon::OnSphereBeginOverlap(
     UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    // PickupWidget->SetVisibility(true);
     if (auto Player = Cast<ABlasterCharacter>(OtherActor))
     {
         Player->SetOverlappedWeapon(this);
@@ -98,5 +105,12 @@ void ABlasterBaseWeapon::SetWeaponState(EWeaponState State)
             default: break;
         }
         WeaponState = State;
+    }
+}
+
+void ABlasterBaseWeapon::OnRep_WeaponState_Implementation() {
+    if (IsValid(PickupWidget))
+    {
+        PickupWidget->SetVisibility(false);
     }
 }

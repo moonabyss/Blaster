@@ -2,6 +2,8 @@
 
 #include "Components/BlasterWeaponComponent.h"
 
+#include "Net/UnrealNetwork.h"
+
 #include "BlasterCoreTypes.h"
 #include "Character/BlasterCharacter.h"
 #include "Weapon/BlasterBaseWeapon.h"
@@ -9,6 +11,11 @@
 UBlasterWeaponComponent::UBlasterWeaponComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
+}
+
+void UBlasterWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const 
+{
+    DOREPLIFETIME_CONDITION(UBlasterWeaponComponent, CurrentWeapon, COND_OwnerOnly);
 }
 
 void UBlasterWeaponComponent::BeginPlay()

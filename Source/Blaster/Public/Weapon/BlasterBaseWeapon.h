@@ -2,9 +2,10 @@
 
 #pragma once
 
-#include "BlasterCoreTypes.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+
+#include "BlasterCoreTypes.h"
 
 #include "BlasterBaseWeapon.generated.h"
 
@@ -19,6 +20,7 @@ class BLASTER_API ABlasterBaseWeapon : public AActor
 public:
     ABlasterBaseWeapon();
     void ShowPickupWidget(bool bShowWidget);
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
     virtual void BeginPlay() override;
@@ -31,6 +33,7 @@ protected:
 
 public:
     void SetWeaponState(EWeaponState State);
+    EWeaponState GetWeaponState() { return WeaponState; };
 
 private:
     UPROPERTY(Category = "Components", VisibleAnywhere)
@@ -39,8 +42,11 @@ private:
     UPROPERTY(Category = "Components", VisibleAnywhere)
     USphereComponent* AreaSphere;
 
-    UPROPERTY(Category = "Weapon Properties", VisibleAnywhere)
+    UPROPERTY(Category = "Weapon Properties", VisibleAnywhere, ReplicatedUsing = OnRep_WeaponState)
     EWeaponState WeaponState{EWeaponState::EWS_Initial};
+
+    UFUNCTION(Server, Reliable)
+    void OnRep_WeaponState();
 
     UPROPERTY(Category = "Weapon Properties", VisibleAnywhere)
     UWidgetComponent* PickupWidget;

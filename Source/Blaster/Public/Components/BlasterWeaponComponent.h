@@ -18,6 +18,7 @@ class BLASTER_API UBlasterWeaponComponent : public UActorComponent
 public:
     UBlasterWeaponComponent();
     virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+    virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
     virtual void BeginPlay() override;
@@ -29,7 +30,7 @@ public:
 private:
     TObjectPtr<ABlasterCharacter> Character;
     
-    UPROPERTY(VisibleAnywhere)
+    UPROPERTY(VisibleAnywhere, Replicated)
     ABlasterBaseWeapon* CurrentWeapon;
 
     UPROPERTY(EditDefaultsOnly)

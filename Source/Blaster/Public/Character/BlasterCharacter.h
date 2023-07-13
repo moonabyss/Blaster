@@ -23,12 +23,15 @@ public:
     virtual void Tick(float DeltaTime) override;
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-    virtual void SetOverlappedWeapon(ABlasterBaseWeapon* Weapon);
-    virtual void UnsetOverlappedWeapon(ABlasterBaseWeapon* Weapon);
 
 protected:
     virtual void BeginPlay() override;
 
+public:
+    virtual void SetOverlappedWeapon(ABlasterBaseWeapon* Weapon);
+    virtual void UnsetOverlappedWeapon(ABlasterBaseWeapon* Weapon);
+
+protected:
     void MoveForward(float Value);
     void MoveRight(float Value);
     void Turn(float Value);
@@ -55,4 +58,7 @@ private:
     void OnRep_OverlappingWeapon(ABlasterBaseWeapon* LastValue);
 
     void DisplayNetRole();
+
+    UFUNCTION(Server, Reliable)
+    void ServerEquipPressed();
 };

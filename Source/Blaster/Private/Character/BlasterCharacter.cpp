@@ -105,9 +105,26 @@ void ABlasterCharacter::LookUp(float Value)
 
 void ABlasterCharacter::EquipPressed()
 {
-    if (IsValid(WeaponComponent) && HasAuthority())
+    if (IsValid(WeaponComponent))
+    {
+        if (HasAuthority())
+        {
+            WeaponComponent->EquipWeapon(OverlappingWeapon);
+            UnsetOverlappedWeapon(OverlappingWeapon);
+        }
+        else
+        {
+            ServerEquipPressed();
+        }
+    }
+}
+
+void ABlasterCharacter::ServerEquipPressed_Implementation()
+{
+    if (IsValid(WeaponComponent))
     {
         WeaponComponent->EquipWeapon(OverlappingWeapon);
+        UnsetOverlappedWeapon(OverlappingWeapon);
     }
 }
 
