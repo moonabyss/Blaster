@@ -51,7 +51,7 @@ void UBlasterWeaponComponent::AttachWeaponToSocket(ABlasterBaseWeapon* Weapon, U
     Weapon->AttachToComponent(SceneComponent, AttachmentRules, SocketName);
 }
 
-bool UBlasterWeaponComponent::IsEquipped() const 
+bool UBlasterWeaponComponent::IsWeaponEquipped() const
 {
     return IsValid(CurrentWeapon);
 }

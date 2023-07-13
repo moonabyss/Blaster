@@ -29,7 +29,10 @@ protected:
     bool bIsAccelerating;
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
-    bool bIsEquipped;
+    bool bIsWeaponEquipped;
+
+    UPROPERTY(Category = "Character", BlueprintReadOnly)
+    bool bIsCrouched;
 
     UFUNCTION(BlueprintPure)
     ABlasterCharacter* GetCharacter() const;

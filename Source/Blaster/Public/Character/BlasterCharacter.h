@@ -32,7 +32,7 @@ protected:
 public:
     virtual void SetOverlappedWeapon(ABlasterBaseWeapon* Weapon);
     virtual void UnsetOverlappedWeapon(ABlasterBaseWeapon* Weapon);
-    bool IsEquipped() const;
+    bool IsWeaponEquipped() const;
     EWeaponType GetEquippedWeaponType() const;
 
 protected:
@@ -41,6 +41,7 @@ protected:
     void Turn(float Value);
     void LookUp(float Value);
     void EquipPressed();
+    void CrouchPressed();
 
 private:
     UPROPERTY(Category = "Components", VisibleAnywhere)

@@ -26,14 +26,16 @@ ABlasterCharacter::ABlasterCharacter()
     FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
     FollowCamera->bUsePawnControlRotation = false;
 
-    bUseControllerRotationYaw = false;
-    GetCharacterMovement()->bOrientRotationToMovement = true;
-
     OverheadWidget = CreateDefaultSubobject<UWidgetComponent>("OverheadWidget");
     check(OverheadWidget);
     OverheadWidget->SetupAttachment(GetRootComponent());
     OverheadWidget->SetWidgetSpace(EWidgetSpace::Screen);
     OverheadWidget->SetDrawAtDesiredSize(true);
+
+    bUseControllerRotationYaw = false;
+    GetCharacterMovement()->bOrientRotationToMovement = true;
+    GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
+    GetCharacterMovement()->SetCrouchedHalfHeight(70.0f);
 
     WeaponComponent = CreateDefaultSubobject<UBlasterWeaponComponent>("WeaponComponent");
     check(WeaponComponent);
@@ -64,6 +66,7 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
     PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ACharacter::Jump);
     PlayerInputComponent->BindAction("Equip", EInputEvent::IE_Pressed, this, &ThisClass::EquipPressed);
+    PlayerInputComponent->BindAction("Crouch", EInputEvent::IE_Pressed, this, &ThisClass::CrouchPressed);
 
     PlayerInputComponent->BindAxis("MoveForward", this, &ThisClass::MoveForward);
     PlayerInputComponent->BindAxis("MoveRight", this, &ThisClass::MoveRight);
@@ -128,6 +131,18 @@ void ABlasterCharacter::ServerEquipPressed_Implementation()
     }
 }
 
+void ABlasterCharacter::CrouchPressed() 
+{
+    if (bIsCrouched)
+    {
+        UnCrouch();
+    }
+    else
+    {
+        Crouch();
+    }
+}
+
 void ABlasterCharacter::DisplayNetRole()
 {
     if (!OverheadWidget) return;
@@ -179,9 +194,9 @@ void ABlasterCharacter::OnRep_OverlappingWeapon(ABlasterBaseWeapon* LastValue)
     }
 }
 
-bool ABlasterCharacter::IsEquipped() const 
+bool ABlasterCharacter::IsWeaponEquipped() const
 {
-    return IsValid(WeaponComponent) && WeaponComponent->IsEquipped();
+    return IsValid(WeaponComponent) && WeaponComponent->IsWeaponEquipped();
 }
 
 EWeaponType ABlasterCharacter::GetEquippedWeaponType() const 
