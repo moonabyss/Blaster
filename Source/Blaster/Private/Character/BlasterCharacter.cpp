@@ -178,3 +178,15 @@ void ABlasterCharacter::OnRep_OverlappingWeapon(ABlasterBaseWeapon* LastValue)
         LastValue->ShowPickupWidget(false);
     }
 }
+
+bool ABlasterCharacter::IsEquipped() const 
+{
+    return IsValid(WeaponComponent) && WeaponComponent->IsEquipped();
+}
+
+EWeaponType ABlasterCharacter::GetEquippedWeaponType() const 
+{
+    if (!IsValid(WeaponComponent)) return EWeaponType::EWT_MAX;
+
+    return WeaponComponent->GetEquippedWeaponType();
+}

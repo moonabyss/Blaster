@@ -113,3 +113,8 @@ void ABlasterBaseWeapon::OnRep_WeaponState_Implementation() {
         PickupWidget->SetVisibility(false);
     }
 }
+
+EWeaponType ABlasterBaseWeapon::GetWeaponType() const 
+{
+    return WeaponType;
+}

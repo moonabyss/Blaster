@@ -27,7 +27,7 @@ protected:
 
 public:
     void SetWeaponState(EWeaponState State);
-    EWeaponState GetWeaponState() { return WeaponState; };
+    EWeaponType GetWeaponType() const;
 
 protected:
     UFUNCTION()
@@ -49,6 +49,9 @@ private:
 
     UFUNCTION(Server, Reliable)
     void OnRep_WeaponState();
+
+    UPROPERTY(Category = "Weapon Properties", EditDefaultsOnly)
+    EWeaponType WeaponType{EWeaponType::EWT_Rifle};
 
     UPROPERTY(Category = "Weapon Properties", VisibleAnywhere)
     UWidgetComponent* PickupWidget;

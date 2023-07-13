@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 
+#include "BlasterCoreTypes.h"
+
 #include "BlasterCharacter.generated.h"
 
 class UCameraComponent;
@@ -30,6 +32,8 @@ protected:
 public:
     virtual void SetOverlappedWeapon(ABlasterBaseWeapon* Weapon);
     virtual void UnsetOverlappedWeapon(ABlasterBaseWeapon* Weapon);
+    bool IsEquipped() const;
+    EWeaponType GetEquippedWeaponType() const;
 
 protected:
     void MoveForward(float Value);

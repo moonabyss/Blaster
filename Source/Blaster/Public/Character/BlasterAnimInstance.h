@@ -28,6 +28,12 @@ protected:
     UPROPERTY(Category = "Character", BlueprintReadOnly)
     bool bIsAccelerating;
 
+    UPROPERTY(Category = "Character", BlueprintReadOnly)
+    bool bIsEquipped;
+
+    UFUNCTION(BlueprintPure)
+    ABlasterCharacter* GetCharacter() const;
+
 private:
     UPROPERTY()
     TObjectPtr<ABlasterCharacter> BlasterCharacter;

@@ -15,7 +15,7 @@ UBlasterWeaponComponent::UBlasterWeaponComponent()
 
 void UBlasterWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const 
 {
-    DOREPLIFETIME_CONDITION(UBlasterWeaponComponent, CurrentWeapon, COND_OwnerOnly);
+    DOREPLIFETIME(UBlasterWeaponComponent, CurrentWeapon);
 }
 
 void UBlasterWeaponComponent::BeginPlay()
@@ -49,4 +49,16 @@ void UBlasterWeaponComponent::AttachWeaponToSocket(ABlasterBaseWeapon* Weapon, U
 
     FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
     Weapon->AttachToComponent(SceneComponent, AttachmentRules, SocketName);
+}
+
+bool UBlasterWeaponComponent::IsEquipped() const 
+{
+    return IsValid(CurrentWeapon);
+}
+
+EWeaponType UBlasterWeaponComponent::GetEquippedWeaponType() const
+{
+    if (!IsValid(CurrentWeapon)) return EWeaponType::EWT_MAX;
+
+    return CurrentWeapon->GetWeaponType();
 }

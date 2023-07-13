@@ -5,6 +5,8 @@
 #include "Components/ActorComponent.h"
 #include "CoreMinimal.h"
 
+#include "BlasterCoreTypes.h"
+
 #include "BlasterWeaponComponent.generated.h"
 
 class ABlasterBaseWeapon;
@@ -26,6 +28,8 @@ protected:
 public:
     void SetCharacter(ABlasterCharacter* BlasterCharacter);
     void EquipWeapon(ABlasterBaseWeapon* WeaponToEquip);
+    bool IsEquipped() const;
+    EWeaponType GetEquippedWeaponType() const;
 
 private:
     TObjectPtr<ABlasterCharacter> Character;
