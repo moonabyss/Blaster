@@ -102,7 +102,6 @@ void ABlasterBaseWeapon::SetWeaponState(EWeaponState State)
                 break;
             }
             case EWeaponState::EWS_Dropped: break;
-            default: break;
         }
         WeaponState = State;
     }

@@ -142,11 +142,16 @@ void ABlasterCharacter::SetOverlappedWeapon(ABlasterBaseWeapon* Weapon)
 {
     if (IsValid(Weapon))
     {
-        OverlappingWeapon = Weapon;
         if (IsLocallyControlled())
         {
+            if (IsValid(OverlappingWeapon))
+            {
+                OverlappingWeapon->ShowPickupWidget(false);
+            }
             Weapon->ShowPickupWidget(true);
         }
+
+        OverlappingWeapon = Weapon;
     }
 }
 
