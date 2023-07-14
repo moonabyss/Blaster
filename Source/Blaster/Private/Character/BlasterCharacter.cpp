@@ -41,6 +41,8 @@ ABlasterCharacter::ABlasterCharacter()
     check(WeaponComponent);
     WeaponComponent->SetCharacter(this);
     WeaponComponent->SetIsReplicated(true);
+    WeaponComponent->WeaponEquipped.AddUObject(this, &ThisClass::OnWeaponEquipped);
+    WeaponComponent->WeaponUnequipped.AddUObject(this, &ThisClass::OnWeaponUnequipped);
 }
 
 void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -206,6 +208,18 @@ EWeaponType ABlasterCharacter::GetEquippedWeaponType() const
     if (!IsValid(WeaponComponent)) return EWeaponType::EWT_MAX;
 
     return WeaponComponent->GetEquippedWeaponType();
+}
+
+void ABlasterCharacter::OnWeaponEquipped() 
+{
+    bUseControllerRotationYaw = true;
+    GetCharacterMovement()->bOrientRotationToMovement = false;
+}
+
+void ABlasterCharacter::OnWeaponUnequipped() 
+{
+    bUseControllerRotationYaw = false;
+    GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 void ABlasterCharacter::AimPressed()

@@ -4,6 +4,9 @@
 #include "BlasterCoreTypes.generated.h"
 
 // weapon
+DECLARE_MULTICAST_DELEGATE(FOnWeaponEquippedDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnWeaponUnequippedDelegate);
+
 UENUM(BlueprintType)
 enum class EWeaponState : uint8
 {

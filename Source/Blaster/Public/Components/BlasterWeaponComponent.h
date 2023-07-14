@@ -26,6 +26,8 @@ protected:
     virtual void BeginPlay() override;
 
 public:
+    FOnWeaponEquippedDelegate WeaponEquipped;
+    FOnWeaponUnequippedDelegate WeaponUnequipped;
     void SetCharacter(ABlasterCharacter* BlasterCharacter);
     void EquipWeapon(ABlasterBaseWeapon* WeaponToEquip);
     bool IsWeaponEquipped() const;
@@ -43,8 +45,11 @@ protected:
 private:
     TObjectPtr<ABlasterCharacter> Character{nullptr};
     
-    UPROPERTY(VisibleAnywhere, Replicated)
+    UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_CurrentWeapon)
     ABlasterBaseWeapon* CurrentWeapon{nullptr};
+
+    UFUNCTION()
+    void OnRep_CurrentWeapon(ABlasterBaseWeapon* LastWeapon);
 
     UPROPERTY(EditDefaultsOnly)
     FName WeaponRightHandSocket{FName("Weapon_R")};

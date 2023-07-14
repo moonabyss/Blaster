@@ -70,5 +70,9 @@ private:
     UFUNCTION(Server, Reliable)
     void ServerEquipPressed();
 
+    UFUNCTION()
+    void OnWeaponEquipped();
 
+    UFUNCTION()
+    void OnWeaponUnequipped();
 };

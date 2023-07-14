@@ -1,9 +1,11 @@
 // Blaster Multiplayer Game. All rights reserved.
 
 #include "Character/BlasterAnimInstance.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+
 #include "BlasterUtils.h"
 #include "Character/BlasterCharacter.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBlasterAnimInstance, All, All);
 
@@ -46,9 +48,19 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     bIsCrouched = BlasterCharacter->bIsCrouched;
 
     bIsAiming = BlasterCharacter->IsAiming();
-}
 
-ABlasterCharacter* UBlasterAnimInstance::GetCharacter() const
-{
-    return BlasterCharacter;
+    // Offset Yaw for Strafing
+    const auto AimRotation = BlasterCharacter->GetBaseAimRotation();
+    const auto MovementRotation = UKismetMathLibrary::MakeRotFromX(Velocity);
+    const auto DeltaRot = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation);
+    DeltaRotation = FMath::RInterpTo(DeltaRotation, DeltaRot, DeltaSeconds, YawInterpSpeed);
+    YawOffset = DeltaRotation.Yaw;
+
+    // Lean
+    CharacterRotationLastFrame = CharacterRotation;
+    CharacterRotation = BlasterCharacter->GetActorRotation();
+    const auto Delta = UKismetMathLibrary::NormalizedDeltaRotator(CharacterRotation, CharacterRotationLastFrame);
+    const auto Target = Delta.Yaw / DeltaSeconds;
+    const auto Interp = FMath::FInterpTo(Lean, Target, DeltaSeconds, LeanInterpSpeed);
+    Lean = FMath::Clamp(Interp, -90.0f, 90.f);
 }

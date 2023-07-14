@@ -15,6 +15,8 @@ UBlasterWeaponComponent::UBlasterWeaponComponent()
 
 void UBlasterWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
     DOREPLIFETIME(UBlasterWeaponComponent, CurrentWeapon);
     DOREPLIFETIME(UBlasterWeaponComponent, bWantsAiming);
 }
@@ -42,6 +44,19 @@ void UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
     CurrentWeapon->SetWeaponState(EWeaponState::EWS_Equipped);
     CurrentWeapon->SetOwner(Character);
     AttachWeaponToSocket(CurrentWeapon, Character->GetMesh(), WeaponRightHandSocket);
+
+    WeaponEquipped.Broadcast();
+}
+
+void UBlasterWeaponComponent::OnRep_CurrentWeapon(ABlasterBaseWeapon* LastWeapon)
+{
+    if (IsValid(CurrentWeapon) && !LastWeapon)
+    {
+        WeaponEquipped.Broadcast();
+    }
+    if (!IsValid(CurrentWeapon) && IsValid(LastWeapon)){
+        WeaponUnequipped.Broadcast();
+    }
 }
 
 void UBlasterWeaponComponent::AttachWeaponToSocket(ABlasterBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName)

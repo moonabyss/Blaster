@@ -37,10 +37,22 @@ protected:
     UPROPERTY(Category = "Character", BlueprintReadOnly)
     bool bIsAiming;
 
-    UFUNCTION(BlueprintPure)
-    ABlasterCharacter* GetCharacter() const;
+    UPROPERTY(Category = "Character", BlueprintReadOnly)
+    float YawOffset{0.0f};
 
-private:
-    UPROPERTY()
+    UPROPERTY(Category = "Character", BlueprintReadOnly)
+    float Lean{0.0f};
+
+    UPROPERTY(Category = "Character", BlueprintReadOnly)
     TObjectPtr<ABlasterCharacter> BlasterCharacter;
+
+    FRotator CharacterRotationLastFrame{FRotator()};
+    FRotator CharacterRotation{FRotator()};
+    FRotator DeltaRotation{FRotator()};
+
+    UPROPERTY(Category = "Movement", EditAnywhere)
+    float YawInterpSpeed{6.0f};
+
+    UPROPERTY(Category = "Movement", EditAnywhere)
+    float LeanInterpSpeed{3.0f};
 };
