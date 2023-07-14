@@ -20,22 +20,23 @@ public:
 
 protected:
     UPROPERTY(Category = "Character", BlueprintReadOnly)
-    float Speed;
+    float Speed{0.0f};
+    float SpeedLastFrame{0.0f};
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
-    bool bIsInAir;
+    bool bIsInAir{false};
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
-    bool bIsAccelerating;
+    bool bIsAccelerating{false};
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
-    bool bIsWeaponEquipped;
+    bool bIsWeaponEquipped{false};
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
-    bool bIsCrouched;
+    bool bIsCrouched{false};
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
-    bool bIsAiming;
+    bool bIsAiming{false};
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
     float YawOffset{0.0f};

@@ -137,6 +137,8 @@ void ABlasterCharacter::ServerEquipPressed_Implementation()
 
 void ABlasterCharacter::CrouchPressed()
 {
+    if (GetCharacterMovement()->IsFalling()) return;
+
     if (bIsCrouched)
     {
         UnCrouch();
@@ -210,13 +212,13 @@ EWeaponType ABlasterCharacter::GetEquippedWeaponType() const
     return WeaponComponent->GetEquippedWeaponType();
 }
 
-void ABlasterCharacter::OnWeaponEquipped() 
+void ABlasterCharacter::OnWeaponEquipped()
 {
     bUseControllerRotationYaw = true;
     GetCharacterMovement()->bOrientRotationToMovement = false;
 }
 
-void ABlasterCharacter::OnWeaponUnequipped() 
+void ABlasterCharacter::OnWeaponUnequipped()
 {
     bUseControllerRotationYaw = false;
     GetCharacterMovement()->bOrientRotationToMovement = true;

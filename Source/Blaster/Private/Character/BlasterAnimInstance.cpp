@@ -36,6 +36,8 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
         return;
     }
 
+    SpeedLastFrame = Speed;
+
     FVector Velocity = BlasterCharacter->GetVelocity().GetSafeNormal2D();
     Speed = Velocity.Size();
 
@@ -53,7 +55,14 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     const auto AimRotation = BlasterCharacter->GetBaseAimRotation();
     const auto MovementRotation = UKismetMathLibrary::MakeRotFromX(Velocity);
     const auto DeltaRot = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation);
-    DeltaRotation = FMath::RInterpTo(DeltaRotation, DeltaRot, DeltaSeconds, YawInterpSpeed);
+    if (FMath::IsNearlyZero(SpeedLastFrame))
+    {
+        DeltaRotation = DeltaRot;
+    }
+    else
+    {
+        DeltaRotation = FMath::RInterpTo(DeltaRotation, DeltaRot, DeltaSeconds, YawInterpSpeed);
+    }
     YawOffset = DeltaRotation.Yaw;
 
     // Lean
