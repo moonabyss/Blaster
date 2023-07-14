@@ -30,15 +30,27 @@ public:
     void EquipWeapon(ABlasterBaseWeapon* WeaponToEquip);
     bool IsWeaponEquipped() const;
     EWeaponType GetEquippedWeaponType() const;
+    void StartAiming();
+    void StopAiming();
+    bool IsAiming();
+
+protected:
+    void SetAiming(bool bIsAiming);
+
+    UFUNCTION(Server, Reliable)
+    void ServerSetAiming(bool bIsAiming);
 
 private:
-    TObjectPtr<ABlasterCharacter> Character;
+    TObjectPtr<ABlasterCharacter> Character{nullptr};
     
     UPROPERTY(VisibleAnywhere, Replicated)
-    ABlasterBaseWeapon* CurrentWeapon;
+    ABlasterBaseWeapon* CurrentWeapon{nullptr};
 
     UPROPERTY(EditDefaultsOnly)
     FName WeaponRightHandSocket{FName("Weapon_R")};
 
     void AttachWeaponToSocket(ABlasterBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName);
+
+    UPROPERTY(Replicated)
+    bool bWantsAiming{false};
 };

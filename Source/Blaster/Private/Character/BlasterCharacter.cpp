@@ -67,6 +67,8 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ACharacter::Jump);
     PlayerInputComponent->BindAction("Equip", EInputEvent::IE_Pressed, this, &ThisClass::EquipPressed);
     PlayerInputComponent->BindAction("Crouch", EInputEvent::IE_Pressed, this, &ThisClass::CrouchPressed);
+    PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Pressed, this, &ThisClass::AimPressed);
+    PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Released, this, &ThisClass::AimReleased);
 
     PlayerInputComponent->BindAxis("MoveForward", this, &ThisClass::MoveForward);
     PlayerInputComponent->BindAxis("MoveRight", this, &ThisClass::MoveRight);
@@ -131,7 +133,7 @@ void ABlasterCharacter::ServerEquipPressed_Implementation()
     }
 }
 
-void ABlasterCharacter::CrouchPressed() 
+void ABlasterCharacter::CrouchPressed()
 {
     if (bIsCrouched)
     {
@@ -199,9 +201,26 @@ bool ABlasterCharacter::IsWeaponEquipped() const
     return IsValid(WeaponComponent) && WeaponComponent->IsWeaponEquipped();
 }
 
-EWeaponType ABlasterCharacter::GetEquippedWeaponType() const 
+EWeaponType ABlasterCharacter::GetEquippedWeaponType() const
 {
     if (!IsValid(WeaponComponent)) return EWeaponType::EWT_MAX;
 
     return WeaponComponent->GetEquippedWeaponType();
+}
+
+void ABlasterCharacter::AimPressed()
+{
+    if (!IsValid(WeaponComponent)) return;
+    WeaponComponent->StartAiming();
+}
+
+void ABlasterCharacter::AimReleased()
+{
+    if (!IsValid(WeaponComponent)) return;
+    WeaponComponent->StopAiming();
+}
+
+bool ABlasterCharacter::IsAiming()
+{
+    return IsValid(WeaponComponent) && WeaponComponent->IsAiming();
 }

@@ -13,9 +13,10 @@ UBlasterWeaponComponent::UBlasterWeaponComponent()
     PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UBlasterWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const 
+void UBlasterWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     DOREPLIFETIME(UBlasterWeaponComponent, CurrentWeapon);
+    DOREPLIFETIME(UBlasterWeaponComponent, bWantsAiming);
 }
 
 void UBlasterWeaponComponent::BeginPlay()
@@ -43,7 +44,7 @@ void UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
     AttachWeaponToSocket(CurrentWeapon, Character->GetMesh(), WeaponRightHandSocket);
 }
 
-void UBlasterWeaponComponent::AttachWeaponToSocket(ABlasterBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName) 
+void UBlasterWeaponComponent::AttachWeaponToSocket(ABlasterBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName)
 {
     if (!Weapon || !SceneComponent) return;
 
@@ -61,4 +62,34 @@ EWeaponType UBlasterWeaponComponent::GetEquippedWeaponType() const
     if (!IsValid(CurrentWeapon)) return EWeaponType::EWT_MAX;
 
     return CurrentWeapon->GetWeaponType();
+}
+
+void UBlasterWeaponComponent::StartAiming()
+{
+    if (!IsValid(CurrentWeapon)) return;
+    SetAiming(true);
+}
+
+void UBlasterWeaponComponent::StopAiming()
+{
+    SetAiming(false);
+}
+
+bool UBlasterWeaponComponent::IsAiming()
+{
+    return bWantsAiming;
+}
+
+void UBlasterWeaponComponent::SetAiming(bool bIsAiming)
+{
+    bWantsAiming = bIsAiming;
+    if (!Character->HasAuthority())
+    {
+        ServerSetAiming(bIsAiming);
+    }
+}
+
+void UBlasterWeaponComponent::ServerSetAiming_Implementation(bool bIsAiming)
+{
+    bWantsAiming = bIsAiming;
 }

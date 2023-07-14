@@ -34,6 +34,9 @@ protected:
     UPROPERTY(Category = "Character", BlueprintReadOnly)
     bool bIsCrouched;
 
+    UPROPERTY(Category = "Character", BlueprintReadOnly)
+    bool bIsAiming;
+
     UFUNCTION(BlueprintPure)
     ABlasterCharacter* GetCharacter() const;
 

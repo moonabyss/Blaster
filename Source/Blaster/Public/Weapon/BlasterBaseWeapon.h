@@ -19,13 +19,13 @@ class BLASTER_API ABlasterBaseWeapon : public AActor
 
 public:
     ABlasterBaseWeapon();
-    void ShowPickupWidget(bool bShowWidget);
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
     virtual void BeginPlay() override;
 
 public:
+    void ShowPickupWidget(bool bShowWidget);
     void SetWeaponState(EWeaponState State);
     EWeaponType GetWeaponType() const;
 

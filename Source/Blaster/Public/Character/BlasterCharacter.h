@@ -34,6 +34,7 @@ public:
     virtual void UnsetOverlappedWeapon(ABlasterBaseWeapon* Weapon);
     bool IsWeaponEquipped() const;
     EWeaponType GetEquippedWeaponType() const;
+    bool IsAiming();
 
 protected:
     void MoveForward(float Value);
@@ -42,6 +43,8 @@ protected:
     void LookUp(float Value);
     void EquipPressed();
     void CrouchPressed();
+    void AimPressed();
+    void AimReleased();
 
 private:
     UPROPERTY(Category = "Components", VisibleAnywhere)
@@ -66,4 +69,6 @@ private:
 
     UFUNCTION(Server, Reliable)
     void ServerEquipPressed();
+
+
 };
