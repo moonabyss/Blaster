@@ -27,7 +27,8 @@ protected:
 public:
     void ShowPickupWidget(bool bShowWidget);
     void SetWeaponState(EWeaponState State);
-    FWeaponProps GetWeaponProps() const; 
+    FWeaponProps GetWeaponProps() const;
+    USkeletalMeshComponent* GetMesh() const;
 
 protected:
     UFUNCTION()

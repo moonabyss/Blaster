@@ -67,4 +67,7 @@ protected:
     
     UPROPERTY(Category = "Movement", EditAnywhere)
     float AimInterSpeed{10.0f};
+
+    UPROPERTY(Category = "Movement", BlueprintReadOnly)
+    FTransform LeftHandTransform{FTransform()};
 };

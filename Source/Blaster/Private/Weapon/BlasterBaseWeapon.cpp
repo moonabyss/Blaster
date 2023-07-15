@@ -119,3 +119,8 @@ FWeaponProps ABlasterBaseWeapon::GetWeaponProps() const
 {
     return WeaponProperies;
 }
+
+USkeletalMeshComponent* ABlasterBaseWeapon::GetMesh() const
+{
+    return WeaponMesh;
+}

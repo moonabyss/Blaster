@@ -4,8 +4,10 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
+#include "BlasterCoreTypes.h"
 #include "BlasterUtils.h"
 #include "Character/BlasterCharacter.h"
+#include "Weapon/BlasterBaseWeapon.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBlasterAnimInstance, All, All);
 
@@ -75,9 +77,21 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     const auto Interp = FMath::FInterpTo(Lean, Target, DeltaSeconds, LeanInterpSpeed);
     Lean = FMath::Clamp(Interp, -90.0f, 90.f);
 
+    // Aim Offset
     FRotator LastRotator = FRotator(AO_PitchLastFrame, AO_YawLastFrame, 0.0f);
     FRotator TargetRotator = FRotator(BlasterCharacter->GetAimPitch(), BlasterCharacter->GetAimYaw(), 0.0f);
     FRotator NextRotator = FMath::RInterpTo(LastRotator, TargetRotator, DeltaSeconds, AimInterSpeed);
     AO_Yaw = NextRotator.Yaw;
     AO_Pitch = NextRotator.Pitch;
+
+    // FABRIK
+    if (bIsWeaponEquipped)
+    {
+        LeftHandTransform = BlasterCharacter->GetCurrentWeapon()->GetMesh()->GetSocketTransform(LeftHandSocketName, ERelativeTransformSpace::RTS_World);
+        FVector OutPosition;
+        FRotator OutRotation;
+        BlasterCharacter->GetMesh()->TransformToBoneSpace(FName("Hand_R"), LeftHandTransform.GetLocation(), FRotator::ZeroRotator, OutPosition, OutRotation);
+        LeftHandTransform.SetLocation(OutPosition);
+        LeftHandTransform.SetRotation(FQuat(OutRotation));
+    }
 }

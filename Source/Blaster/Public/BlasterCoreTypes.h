@@ -8,6 +8,8 @@ DECLARE_MULTICAST_DELEGATE(FOnWeaponEquippedDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnWeaponUnequippedDelegate);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnWeaponAimingDelegate, bool bIsAiming);
 
+const FName LeftHandSocketName = "LeftHandSocket";
+
 UENUM(BlueprintType)
 enum class EWeaponState : uint8
 {
