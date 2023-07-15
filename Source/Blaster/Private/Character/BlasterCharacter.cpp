@@ -2,16 +2,18 @@
 
 #include "Character/BlasterCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Net/UnrealNetwork.h"
 
+#include "Components/BlasterMovementComponent.h"
 #include "Components/BlasterWeaponComponent.h"
 #include "HUD/OverheadWidget.h"
 #include "Weapon/BlasterBaseWeapon.h"
 
-ABlasterCharacter::ABlasterCharacter()
+ABlasterCharacter::ABlasterCharacter(const FObjectInitializer& ObjInit)
+    : Super(ObjInit.SetDefaultSubobjectClass<UBlasterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
     PrimaryActorTick.bCanEverTick = true;
 
@@ -25,6 +27,8 @@ ABlasterCharacter::ABlasterCharacter()
     check(FollowCamera);
     FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
     FollowCamera->bUsePawnControlRotation = false;
+    GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+    GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 
     OverheadWidget = CreateDefaultSubobject<UWidgetComponent>("OverheadWidget");
     check(OverheadWidget);
@@ -41,8 +45,6 @@ ABlasterCharacter::ABlasterCharacter()
     check(WeaponComponent);
     WeaponComponent->SetCharacter(this);
     WeaponComponent->SetIsReplicated(true);
-    WeaponComponent->WeaponEquipped.AddUObject(this, &ThisClass::OnWeaponEquipped);
-    WeaponComponent->WeaponUnequipped.AddUObject(this, &ThisClass::OnWeaponUnequipped);
 }
 
 void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -55,6 +57,11 @@ void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 void ABlasterCharacter::BeginPlay()
 {
     Super::BeginPlay();
+
+    check(WeaponComponent);
+    WeaponComponent->WeaponEquipped.AddUObject(this, &ThisClass::OnWeaponEquipped);
+    WeaponComponent->WeaponUnequipped.AddUObject(this, &ThisClass::OnWeaponUnequipped);
+    WeaponComponent->WeaponAiming.AddUObject(this, &ThisClass::OnAiming);
 }
 
 void ABlasterCharacter::Tick(float DeltaTime)
@@ -155,7 +162,7 @@ void ABlasterCharacter::DisplayNetRole()
 
     if (auto Widget = Cast<UOverheadWidget>(OverheadWidget->GetUserWidgetObject()))
     {
-        Widget->SetDisplayText(FString(UEnum::GetValueAsString<ENetRole>(GetRemoteRole())));
+        Widget->SetDisplayText(UEnum::GetValueAsString<ENetRole>(GetRemoteRole()));
     }
 }
 
@@ -205,11 +212,11 @@ bool ABlasterCharacter::IsWeaponEquipped() const
     return IsValid(WeaponComponent) && WeaponComponent->IsWeaponEquipped();
 }
 
-EWeaponType ABlasterCharacter::GetEquippedWeaponType() const
+ABlasterBaseWeapon* ABlasterCharacter::GetCurrentWeapon() const 
 {
-    if (!IsValid(WeaponComponent)) return EWeaponType::EWT_MAX;
+    if (!IsValid(WeaponComponent)) return nullptr;
 
-    return WeaponComponent->GetEquippedWeaponType();
+    return WeaponComponent->GetCurrentWeapon();
 }
 
 void ABlasterCharacter::OnWeaponEquipped()
@@ -236,7 +243,12 @@ void ABlasterCharacter::AimReleased()
     WeaponComponent->StopAiming();
 }
 
-bool ABlasterCharacter::IsAiming()
+void ABlasterCharacter::OnAiming(bool bIsAiming) 
+{
+    
+}
+
+bool ABlasterCharacter::IsAiming() const
 {
     return IsValid(WeaponComponent) && WeaponComponent->IsAiming();
 }

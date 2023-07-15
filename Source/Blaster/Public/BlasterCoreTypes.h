@@ -6,6 +6,7 @@
 // weapon
 DECLARE_MULTICAST_DELEGATE(FOnWeaponEquippedDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnWeaponUnequippedDelegate);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnWeaponAimingDelegate, bool bIsAiming);
 
 UENUM(BlueprintType)
 enum class EWeaponState : uint8
@@ -24,4 +25,22 @@ enum class EWeaponType : uint8
     EWT_Rifle UMETA(DisplayName = "Rifle"),
 
     EWT_MAX UMETA(Hidden)
+};
+
+USTRUCT(BlueprintType)
+struct FWeaponProps
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere)
+    EWeaponType WeaponType;
+
+    UPROPERTY(EditAnywhere)
+    float AimSpeedModifier;
+
+    FWeaponProps()
+    {
+        WeaponType = EWeaponType::EWT_MAX;
+        AimSpeedModifier = 1.0f;
+    }
 };

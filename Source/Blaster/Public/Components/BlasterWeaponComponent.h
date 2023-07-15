@@ -28,10 +28,11 @@ protected:
 public:
     FOnWeaponEquippedDelegate WeaponEquipped;
     FOnWeaponUnequippedDelegate WeaponUnequipped;
+    FOnWeaponAimingDelegate WeaponAiming;
     void SetCharacter(ABlasterCharacter* BlasterCharacter);
     void EquipWeapon(ABlasterBaseWeapon* WeaponToEquip);
     bool IsWeaponEquipped() const;
-    EWeaponType GetEquippedWeaponType() const;
+    ABlasterBaseWeapon* GetCurrentWeapon() const;
     void StartAiming();
     void StopAiming();
     bool IsAiming();

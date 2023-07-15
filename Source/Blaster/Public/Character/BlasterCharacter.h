@@ -13,6 +13,7 @@ class UCameraComponent;
 class USpringArmComponent;
 class UWidgetComponent;
 class ABlasterBaseWeapon;
+class UBlasterMovementComponent;
 class UBlasterWeaponComponent;
 
 UCLASS()
@@ -21,7 +22,7 @@ class BLASTER_API ABlasterCharacter : public ACharacter
     GENERATED_BODY()
 
 public:
-    ABlasterCharacter();
+    ABlasterCharacter(const FObjectInitializer& ObjInit);
     virtual void Tick(float DeltaTime) override;
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -33,8 +34,8 @@ public:
     virtual void SetOverlappedWeapon(ABlasterBaseWeapon* Weapon);
     virtual void UnsetOverlappedWeapon(ABlasterBaseWeapon* Weapon);
     bool IsWeaponEquipped() const;
-    EWeaponType GetEquippedWeaponType() const;
-    bool IsAiming();
+    ABlasterBaseWeapon* GetCurrentWeapon() const;
+    bool IsAiming() const;
 
 protected:
     void MoveForward(float Value);
@@ -75,4 +76,7 @@ private:
 
     UFUNCTION()
     void OnWeaponUnequipped();
+
+    UFUNCTION()
+    void OnAiming(bool bIsAiming);
 };

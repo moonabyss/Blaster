@@ -72,22 +72,24 @@ bool UBlasterWeaponComponent::IsWeaponEquipped() const
     return IsValid(CurrentWeapon);
 }
 
-EWeaponType UBlasterWeaponComponent::GetEquippedWeaponType() const
+ABlasterBaseWeapon* UBlasterWeaponComponent::GetCurrentWeapon() const 
 {
-    if (!IsValid(CurrentWeapon)) return EWeaponType::EWT_MAX;
+    if (!IsValid(CurrentWeapon)) return nullptr;
 
-    return CurrentWeapon->GetWeaponType();
+    return CurrentWeapon;
 }
 
 void UBlasterWeaponComponent::StartAiming()
 {
     if (!IsValid(CurrentWeapon)) return;
     SetAiming(true);
+    WeaponAiming.Broadcast(true);
 }
 
 void UBlasterWeaponComponent::StopAiming()
 {
     SetAiming(false);
+    WeaponAiming.Broadcast(false);
 }
 
 bool UBlasterWeaponComponent::IsAiming()
