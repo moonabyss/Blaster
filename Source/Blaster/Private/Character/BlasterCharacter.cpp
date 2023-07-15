@@ -53,6 +53,8 @@ void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
     DOREPLIFETIME_CONDITION(ABlasterCharacter, OverlappingWeapon, COND_OwnerOnly);
+    DOREPLIFETIME_CONDITION(ABlasterCharacter, AO_Yaw, COND_SimulatedOnly);
+    DOREPLIFETIME_CONDITION(ABlasterCharacter, AO_Pitch, COND_SimulatedOnly);
 }
 
 void ABlasterCharacter::BeginPlay()
@@ -69,7 +71,10 @@ void ABlasterCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    AimOffset(DeltaTime);
+    if (HasAuthority() || IsLocallyControlled())
+    {
+        AimOffset(DeltaTime);
+    }
 }
 
 void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

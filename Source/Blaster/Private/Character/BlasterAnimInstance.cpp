@@ -37,6 +37,8 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     }
 
     SpeedLastFrame = Speed;
+    AO_YawLastFrame = AO_Yaw;
+    AO_PitchLastFrame = AO_Pitch;
 
     FVector Velocity = BlasterCharacter->GetVelocity().GetSafeNormal2D();
     Speed = Velocity.Size();
@@ -73,6 +75,9 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     const auto Interp = FMath::FInterpTo(Lean, Target, DeltaSeconds, LeanInterpSpeed);
     Lean = FMath::Clamp(Interp, -90.0f, 90.f);
 
-    AO_Yaw = BlasterCharacter->GetAimYaw();
-    AO_Pitch = BlasterCharacter->GetAimPitch();
+    FRotator LastRotator = FRotator(AO_PitchLastFrame, AO_YawLastFrame, 0.0f);
+    FRotator TargetRotator = FRotator(BlasterCharacter->GetAimPitch(), BlasterCharacter->GetAimYaw(), 0.0f);
+    FRotator NextRotator = FMath::RInterpTo(LastRotator, TargetRotator, DeltaSeconds, AimInterSpeed);
+    AO_Yaw = NextRotator.Yaw;
+    AO_Pitch = NextRotator.Pitch;
 }

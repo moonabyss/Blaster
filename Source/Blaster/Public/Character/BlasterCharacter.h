@@ -83,7 +83,10 @@ private:
     UFUNCTION()
     void OnAiming(bool bIsAiming);
 
+    UPROPERTY(Replicated)
     float AO_Yaw{0.0f};
+    UPROPERTY(Replicated)
     float AO_Pitch{0.0f};
+
     FRotator StartingAimRotation{FRotator()};
 };

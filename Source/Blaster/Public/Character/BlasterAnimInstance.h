@@ -46,9 +46,11 @@ protected:
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
     float AO_Yaw{0.0f};
+    float AO_YawLastFrame{0.0f};
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
     float AO_Pitch{0.0f};
+    float AO_PitchLastFrame{0.0f};
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
     TObjectPtr<ABlasterCharacter> BlasterCharacter;
@@ -62,4 +64,7 @@ protected:
 
     UPROPERTY(Category = "Movement", EditAnywhere)
     float LeanInterpSpeed{3.0f};
+    
+    UPROPERTY(Category = "Movement", EditAnywhere)
+    float AimInterSpeed{10.0f};
 };
