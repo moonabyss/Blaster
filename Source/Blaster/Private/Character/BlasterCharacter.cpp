@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 #include "Components/BlasterMovementComponent.h"
@@ -67,6 +68,8 @@ void ABlasterCharacter::BeginPlay()
 void ABlasterCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
+    AimOffset(DeltaTime);
 }
 
 void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -212,7 +215,7 @@ bool ABlasterCharacter::IsWeaponEquipped() const
     return IsValid(WeaponComponent) && WeaponComponent->IsWeaponEquipped();
 }
 
-ABlasterBaseWeapon* ABlasterCharacter::GetCurrentWeapon() const 
+ABlasterBaseWeapon* ABlasterCharacter::GetCurrentWeapon() const
 {
     if (!IsValid(WeaponComponent)) return nullptr;
 
@@ -243,12 +246,45 @@ void ABlasterCharacter::AimReleased()
     WeaponComponent->StopAiming();
 }
 
-void ABlasterCharacter::OnAiming(bool bIsAiming) 
-{
-    
-}
+void ABlasterCharacter::OnAiming(bool bIsAiming) {}
 
 bool ABlasterCharacter::IsAiming() const
 {
     return IsValid(WeaponComponent) && WeaponComponent->IsAiming();
+}
+
+void ABlasterCharacter::AimOffset(float DeltaTime)
+{
+    if (!IsValid(GetCurrentWeapon())) return;
+
+    FVector Velocity = GetVelocity().GetSafeNormal2D();
+    float Speed = Velocity.Size();
+    bool bIsInAir = GetCharacterMovement()->IsFalling();
+
+    if (FMath::IsNearlyZero(Speed) && !bIsInAir)  // standing still, not jumping
+    {
+        FRotator CurrentAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
+        FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotation, StartingAimRotation);
+        AO_Yaw = DeltaAimRotation.Yaw;
+        bUseControllerRotationYaw = false;
+    }
+
+    if (Speed > 0.0f || bIsInAir)  // running or jumping
+    {
+        StartingAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
+        AO_Yaw = 0.0f;
+        bUseControllerRotationYaw = true;
+    }
+
+    AO_Pitch = GetBaseAimRotation().Pitch;
+}
+
+float ABlasterCharacter::GetAimYaw() const
+{
+    return AO_Yaw;
+}
+
+float ABlasterCharacter::GetAimPitch() const
+{
+    return AO_Pitch;
 }

@@ -45,6 +45,12 @@ protected:
     float Lean{0.0f};
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
+    float AO_Yaw{0.0f};
+
+    UPROPERTY(Category = "Character", BlueprintReadOnly)
+    float AO_Pitch{0.0f};
+
+    UPROPERTY(Category = "Character", BlueprintReadOnly)
     TObjectPtr<ABlasterCharacter> BlasterCharacter;
 
     FRotator CharacterRotationLastFrame{FRotator()};

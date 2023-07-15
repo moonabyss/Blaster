@@ -36,6 +36,8 @@ public:
     bool IsWeaponEquipped() const;
     ABlasterBaseWeapon* GetCurrentWeapon() const;
     bool IsAiming() const;
+    float GetAimYaw() const;
+    float GetAimPitch() const;
 
 protected:
     void MoveForward(float Value);
@@ -46,6 +48,7 @@ protected:
     void CrouchPressed();
     void AimPressed();
     void AimReleased();
+    void AimOffset(float DeltaTime);
 
 private:
     UPROPERTY(Category = "Components", VisibleAnywhere)
@@ -79,4 +82,8 @@ private:
 
     UFUNCTION()
     void OnAiming(bool bIsAiming);
+
+    float AO_Yaw{0.0f};
+    float AO_Pitch{0.0f};
+    FRotator StartingAimRotation{FRotator()};
 };
