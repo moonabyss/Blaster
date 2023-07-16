@@ -55,6 +55,7 @@ void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
     DOREPLIFETIME_CONDITION(ABlasterCharacter, OverlappingWeapon, COND_OwnerOnly);
     DOREPLIFETIME_CONDITION(ABlasterCharacter, AO_Yaw, COND_SimulatedOnly);
     DOREPLIFETIME_CONDITION(ABlasterCharacter, AO_Pitch, COND_SimulatedOnly);
+    DOREPLIFETIME_CONDITION(ABlasterCharacter, TurningInPlace, COND_SimulatedOnly);
 }
 
 void ABlasterCharacter::BeginPlay()
@@ -271,8 +272,13 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
         FRotator CurrentAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
         FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotation, StartingAimRotation);
         AO_Yaw = DeltaAimRotation.Yaw;
-        bUseControllerRotationYaw = false;
 
+        if (TurningInPlace == ETurningInPlace::ETIP_NotTurning)
+        {
+            InterpAO_Yaw = AO_Yaw;
+        }
+
+        bUseControllerRotationYaw = true;
         TurnInPlace(DeltaTime);
     }
 
@@ -296,7 +302,7 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
     }
 }
 
-void ABlasterCharacter::TurnInPlace(float DeltaTime) 
+void ABlasterCharacter::TurnInPlace(float DeltaTime)
 {
     if (AO_Yaw > 90.0f)
     {
@@ -306,9 +312,17 @@ void ABlasterCharacter::TurnInPlace(float DeltaTime)
     {
         TurningInPlace = ETurningInPlace::ETIP_Left;
     }
-    else
+
+    if (TurningInPlace != ETurningInPlace::ETIP_NotTurning)
     {
-        TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+        const float InterpSpeed = bIsCrouched ? 5.0f : 10.0f;
+        InterpAO_Yaw = FMath::FInterpTo(InterpAO_Yaw, 0.0f, DeltaTime, InterpSpeed);
+        AO_Yaw = InterpAO_Yaw;
+        if (FMath::Abs(AO_Yaw) < 15.0f)
+        {
+            TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+            StartingAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
+        }
     }
 }
 

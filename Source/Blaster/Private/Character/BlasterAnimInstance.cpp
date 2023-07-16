@@ -51,6 +51,14 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     bIsCrouched = BlasterCharacter->bIsCrouched;
     bIsAiming = BlasterCharacter->IsAiming();
     TurningInPlace = BlasterCharacter->GetTurningInPlace();
+    if (BlasterCharacter->GetCurrentWeapon())
+    {
+        AimSpeedModifier = BlasterCharacter->GetCurrentWeapon()->GetWeaponProps().AimSpeedModifier;
+    }
+    else
+    {
+        AimSpeedModifier = 1.0f;
+    }
 
     // Offset Yaw for Strafing
     const auto AimRotation = BlasterCharacter->GetBaseAimRotation();
@@ -77,7 +85,7 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     // Aim Offset
     FRotator LastRotator = FRotator(AO_PitchLastFrame, AO_YawLastFrame, 0.0f);
     FRotator TargetRotator = FRotator(BlasterCharacter->GetAimPitch(), BlasterCharacter->GetAimYaw(), 0.0f);
-    FRotator NextRotator = FMath::RInterpTo(LastRotator, TargetRotator, DeltaSeconds, AimInterSpeed);
+    FRotator NextRotator = FMath::RInterpTo(LastRotator, TargetRotator, DeltaSeconds, AimInterpSpeed);
     AO_Yaw = NextRotator.Yaw;
     AO_Pitch = NextRotator.Pitch;
 

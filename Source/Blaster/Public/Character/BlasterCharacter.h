@@ -89,8 +89,11 @@ private:
     UPROPERTY(Replicated)
     float AO_Pitch{0.0f};
 
+    float InterpAO_Yaw{0.0f};
+
     FRotator StartingAimRotation{FRotator()};
 
+    UPROPERTY(Replicated)
     ETurningInPlace TurningInPlace{ETurningInPlace::ETIP_NotTurning};
     void TurnInPlace(float DeltaTime);
 };

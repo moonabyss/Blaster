@@ -41,6 +41,9 @@ protected:
     bool bIsAiming{false};
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
+    float AimSpeedModifier{1.0f};
+
+    UPROPERTY(Category = "Character", BlueprintReadOnly)
     float YawOffset{0.0f};
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
@@ -68,7 +71,7 @@ protected:
     float LeanInterpSpeed{3.0f};
     
     UPROPERTY(Category = "Movement", EditAnywhere)
-    float AimInterSpeed{10.0f};
+    float AimInterpSpeed{10.0f};
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
     FTransform LeftHandTransform{FTransform()};
