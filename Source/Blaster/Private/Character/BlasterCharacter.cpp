@@ -41,11 +41,15 @@ ABlasterCharacter::ABlasterCharacter(const FObjectInitializer& ObjInit)
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
     GetCharacterMovement()->SetCrouchedHalfHeight(70.0f);
+    GetCharacterMovement()->RotationRate = FRotator(0.0f, 0.0f, 720.0f);
 
     WeaponComponent = CreateDefaultSubobject<UBlasterWeaponComponent>("WeaponComponent");
     check(WeaponComponent);
     WeaponComponent->SetCharacter(this);
     WeaponComponent->SetIsReplicated(true);
+
+    NetUpdateFrequency = 66.0f;
+    MinNetUpdateFrequency = 33.0f;
 }
 
 void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -65,7 +69,6 @@ void ABlasterCharacter::BeginPlay()
     check(WeaponComponent);
     WeaponComponent->WeaponEquipped.AddUObject(this, &ThisClass::OnWeaponEquipped);
     WeaponComponent->WeaponUnequipped.AddUObject(this, &ThisClass::OnWeaponUnequipped);
-    WeaponComponent->WeaponAiming.AddUObject(this, &ThisClass::OnAiming);
 }
 
 void ABlasterCharacter::Tick(float DeltaTime)
@@ -82,7 +85,7 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-    PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ACharacter::Jump);
+    PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ThisClass::Jump);
     PlayerInputComponent->BindAction("Equip", EInputEvent::IE_Pressed, this, &ThisClass::EquipPressed);
     PlayerInputComponent->BindAction("Crouch", EInputEvent::IE_Pressed, this, &ThisClass::CrouchPressed);
     PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Pressed, this, &ThisClass::AimPressed);
@@ -124,6 +127,18 @@ void ABlasterCharacter::LookUp(float Value)
     if (!Controller || FMath::IsNearlyZero(Value)) return;
 
     AddControllerPitchInput(Value);
+}
+
+void ABlasterCharacter::Jump() 
+{
+    if (bIsCrouched)
+    {
+        UnCrouch();
+    }
+    else
+    {
+        Super::Jump();
+    }
 }
 
 void ABlasterCharacter::EquipPressed()
@@ -251,8 +266,6 @@ void ABlasterCharacter::AimReleased()
     if (!IsValid(WeaponComponent)) return;
     WeaponComponent->StopAiming();
 }
-
-void ABlasterCharacter::OnAiming(bool bIsAiming) {}
 
 bool ABlasterCharacter::IsAiming() const
 {

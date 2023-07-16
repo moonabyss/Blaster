@@ -6,6 +6,7 @@
 
 #include "BlasterCoreTypes.h"
 #include "Character/BlasterCharacter.h"
+#include "Components/BlasterMovementComponent.h"
 #include "Weapon/BlasterBaseWeapon.h"
 
 UBlasterWeaponComponent::UBlasterWeaponComponent()
@@ -82,31 +83,18 @@ ABlasterBaseWeapon* UBlasterWeaponComponent::GetCurrentWeapon() const
 void UBlasterWeaponComponent::StartAiming()
 {
     if (!IsValid(CurrentWeapon)) return;
-    SetAiming(true);
-    WeaponAiming.Broadcast(true);
+    
+    bWantsAiming = true;
 }
 
 void UBlasterWeaponComponent::StopAiming()
 {
-    SetAiming(false);
-    WeaponAiming.Broadcast(false);
+    bWantsAiming = false;
 }
 
-bool UBlasterWeaponComponent::IsAiming()
+bool UBlasterWeaponComponent::IsAiming() const
 {
-    return bWantsAiming;
-}
+    if (!Character) return false;
 
-void UBlasterWeaponComponent::SetAiming(bool bIsAiming)
-{
-    bWantsAiming = bIsAiming;
-    if (!Character->HasAuthority())
-    {
-        ServerSetAiming(bIsAiming);
-    }
-}
-
-void UBlasterWeaponComponent::ServerSetAiming_Implementation(bool bIsAiming)
-{
-    bWantsAiming = bIsAiming;
+    return bWantsAiming && !Character->GetCharacterMovement()->IsFalling();
 }

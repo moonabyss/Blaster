@@ -29,6 +29,7 @@ public:
 
 protected:
     virtual void BeginPlay() override;
+    virtual void Jump() override;
 
 public:
     virtual void SetOverlappedWeapon(ABlasterBaseWeapon* Weapon);
@@ -80,9 +81,6 @@ private:
 
     UFUNCTION()
     void OnWeaponUnequipped();
-
-    UFUNCTION()
-    void OnAiming(bool bIsAiming);
 
     UPROPERTY(Replicated)
     float AO_Yaw{0.0f};

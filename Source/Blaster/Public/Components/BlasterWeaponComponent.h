@@ -28,20 +28,15 @@ protected:
 public:
     FOnWeaponEquippedDelegate WeaponEquipped;
     FOnWeaponUnequippedDelegate WeaponUnequipped;
-    FOnWeaponAimingDelegate WeaponAiming;
     void SetCharacter(ABlasterCharacter* BlasterCharacter);
     void EquipWeapon(ABlasterBaseWeapon* WeaponToEquip);
     bool IsWeaponEquipped() const;
     ABlasterBaseWeapon* GetCurrentWeapon() const;
     void StartAiming();
     void StopAiming();
-    bool IsAiming();
+    bool IsAiming() const;
 
 protected:
-    void SetAiming(bool bIsAiming);
-
-    UFUNCTION(Server, Reliable)
-    void ServerSetAiming(bool bIsAiming);
 
 private:
     TObjectPtr<ABlasterCharacter> Character{nullptr};
