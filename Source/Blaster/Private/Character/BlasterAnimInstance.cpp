@@ -46,14 +46,11 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     Speed = Velocity.Size();
 
     bIsInAir = BlasterCharacter->GetCharacterMovement()->IsFalling();
-
     bIsAccelerating = !FMath::IsNearlyZero(BlasterCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size());
-
     bIsWeaponEquipped = BlasterCharacter && BlasterCharacter->IsWeaponEquipped();
-
     bIsCrouched = BlasterCharacter->bIsCrouched;
-
     bIsAiming = BlasterCharacter->IsAiming();
+    TurningInPlace = BlasterCharacter->GetTurningInPlace();
 
     // Offset Yaw for Strafing
     const auto AimRotation = BlasterCharacter->GetBaseAimRotation();

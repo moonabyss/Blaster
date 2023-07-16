@@ -5,6 +5,8 @@
 #include "Animation/AnimInstance.h"
 #include "CoreMinimal.h"
 
+#include "BlasterCoreTypes.h"
+
 #include "BlasterAnimInstance.generated.h"
 
 class ABlasterCharacter;
@@ -68,6 +70,9 @@ protected:
     UPROPERTY(Category = "Movement", EditAnywhere)
     float AimInterSpeed{10.0f};
 
-    UPROPERTY(Category = "Movement", BlueprintReadOnly)
+    UPROPERTY(Category = "Character", BlueprintReadOnly)
     FTransform LeftHandTransform{FTransform()};
+
+    UPROPERTY(Category = "Character", BlueprintReadOnly)
+    ETurningInPlace TurningInPlace{ETurningInPlace::ETIP_NotTurning};
 };

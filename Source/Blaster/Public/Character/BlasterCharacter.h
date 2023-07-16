@@ -38,6 +38,7 @@ public:
     bool IsAiming() const;
     float GetAimYaw() const;
     float GetAimPitch() const;
+    ETurningInPlace GetTurningInPlace() const;
 
 protected:
     void MoveForward(float Value);
@@ -89,4 +90,7 @@ private:
     float AO_Pitch{0.0f};
 
     FRotator StartingAimRotation{FRotator()};
+
+    ETurningInPlace TurningInPlace{ETurningInPlace::ETIP_NotTurning};
+    void TurnInPlace(float DeltaTime);
 };
