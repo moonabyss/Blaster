@@ -20,8 +20,8 @@ void UBlasterWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
     DOREPLIFETIME(UBlasterWeaponComponent, CurrentWeapon);
-    DOREPLIFETIME(UBlasterWeaponComponent, bWantsAiming);
-    DOREPLIFETIME(UBlasterWeaponComponent, bWantsFire);
+    DOREPLIFETIME_CONDITION(UBlasterWeaponComponent, bWantsAiming, COND_SkipOwner);
+    DOREPLIFETIME_CONDITION(UBlasterWeaponComponent, bWantsFire, COND_SkipOwner);
 }
 
 void UBlasterWeaponComponent::BeginPlay()
@@ -87,11 +87,13 @@ void UBlasterWeaponComponent::StartAiming()
     if (!IsValid(CurrentWeapon)) return;
     
     bWantsAiming = true;
+    if (Character && !Character->HasAuthority()) ServerSetWantsAiming(true);
 }
 
 void UBlasterWeaponComponent::StopAiming()
 {
     bWantsAiming = false;
+    if (Character && !Character->HasAuthority()) ServerSetWantsAiming(false);
 }
 
 bool UBlasterWeaponComponent::IsAiming()
@@ -101,15 +103,28 @@ bool UBlasterWeaponComponent::IsAiming()
     return bWantsAiming && !Character->GetCharacterMovement()->IsFalling();
 }
 
+void UBlasterWeaponComponent::ServerSetWantsAiming_Implementation(bool bIsAiming) 
+{
+    bWantsAiming = bIsAiming;
+}
+
 void UBlasterWeaponComponent::StartFire() 
 {
     bWantsFire = true;
+    if (Character && !Character->HasAuthority()) ServerSetWantsFire(true);
+
     PlayFireMontage();
 }
 
 void UBlasterWeaponComponent::StopFire() 
 {
     bWantsFire = false;
+    if (Character && !Character->HasAuthority()) ServerSetWantsFire(false);
+}
+
+void UBlasterWeaponComponent::ServerSetWantsFire_Implementation(bool bIsFiring) 
+{
+    bWantsFire = bIsFiring;
 }
 
 void UBlasterWeaponComponent::PlayFireMontage() 

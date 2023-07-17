@@ -57,8 +57,14 @@ private:
     UPROPERTY(Replicated)
     bool bWantsAiming{false};
 
+    UFUNCTION(Server, Reliable)
+    void ServerSetWantsAiming(bool bIsAiming);
+
     UPROPERTY(Replicated)
     bool bWantsFire{false};
+
+    UFUNCTION(Server, Reliable)
+    void ServerSetWantsFire(bool bIsFiring);
 
     void PlayFireMontage();
 };
