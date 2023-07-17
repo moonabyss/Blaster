@@ -55,9 +55,9 @@ private:
     void AttachWeaponToSocket(ABlasterBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName);
 
     UPROPERTY(Replicated)
-    bool bIsAiming{false};
     bool bWantsAiming{false};
 
+    UPROPERTY(Replicated)
     bool bWantsFire{false};
 
     void PlayFireMontage();

@@ -20,7 +20,8 @@ void UBlasterWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
     DOREPLIFETIME(UBlasterWeaponComponent, CurrentWeapon);
-    DOREPLIFETIME(UBlasterWeaponComponent, bIsAiming);
+    DOREPLIFETIME(UBlasterWeaponComponent, bWantsAiming);
+    DOREPLIFETIME(UBlasterWeaponComponent, bWantsFire);
 }
 
 void UBlasterWeaponComponent::BeginPlay()
@@ -97,8 +98,7 @@ bool UBlasterWeaponComponent::IsAiming()
 {
     if (!Character) return false;
 
-    bIsAiming = bWantsAiming && !Character->GetCharacterMovement()->IsFalling();
-    return bIsAiming;
+    return bWantsAiming && !Character->GetCharacterMovement()->IsFalling();
 }
 
 void UBlasterWeaponComponent::StartFire() 
