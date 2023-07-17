@@ -51,6 +51,8 @@ protected:
     void AimPressed();
     void AimReleased();
     void AimOffset(float DeltaTime);
+    void FirePressed();
+    void FireReleased();
 
 private:
     UPROPERTY(Category = "Components", VisibleAnywhere)

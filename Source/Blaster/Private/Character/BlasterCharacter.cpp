@@ -90,6 +90,8 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     PlayerInputComponent->BindAction("Crouch", EInputEvent::IE_Pressed, this, &ThisClass::CrouchPressed);
     PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Pressed, this, &ThisClass::AimPressed);
     PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Released, this, &ThisClass::AimReleased);
+    PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Pressed, this, &ThisClass::FirePressed);
+    PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Released, this, &ThisClass::FireReleased);
 
     PlayerInputComponent->BindAxis("MoveForward", this, &ThisClass::MoveForward);
     PlayerInputComponent->BindAxis("MoveRight", this, &ThisClass::MoveRight);
@@ -352,4 +354,18 @@ float ABlasterCharacter::GetAimPitch() const
 ETurningInPlace ABlasterCharacter::GetTurningInPlace() const
 {
     return TurningInPlace;
+}
+
+void ABlasterCharacter::FirePressed() 
+{
+    if (!WeaponComponent) return;
+
+    WeaponComponent->StartFire();
+}
+
+void ABlasterCharacter::FireReleased() 
+{
+    if (!WeaponComponent) return;
+
+    WeaponComponent->StopFire();
 }

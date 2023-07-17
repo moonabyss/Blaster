@@ -8,6 +8,8 @@ DECLARE_MULTICAST_DELEGATE(FOnWeaponEquippedDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnWeaponUnequippedDelegate);
 
 const FName LeftHandSocketName = "LeftHandSocket";
+const FName WeaponHipMontageSectionName = "Hip";
+const FName WeaponAimMontageSectionName = "Aim";
 
 UENUM(BlueprintType)
 enum class EWeaponState : uint8
@@ -39,10 +41,14 @@ struct FWeaponProps
     UPROPERTY(EditAnywhere)
     float AimSpeedModifier;
 
+    UPROPERTY(EditAnywhere)
+    UAnimMontage* BlasterFireMontage;
+
     FWeaponProps()
     {
         WeaponType = EWeaponType::EWT_MAX;
         AimSpeedModifier = 1.0f;
+        BlasterFireMontage = nullptr;
     }
 };
 

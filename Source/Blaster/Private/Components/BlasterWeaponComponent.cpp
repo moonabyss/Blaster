@@ -5,6 +5,7 @@
 #include "Net/UnrealNetwork.h"
 
 #include "BlasterCoreTypes.h"
+#include "Character/BlasterAnimInstance.h"
 #include "Character/BlasterCharacter.h"
 #include "Components/BlasterMovementComponent.h"
 #include "Weapon/BlasterBaseWeapon.h"
@@ -19,7 +20,7 @@ void UBlasterWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
     DOREPLIFETIME(UBlasterWeaponComponent, CurrentWeapon);
-    DOREPLIFETIME(UBlasterWeaponComponent, bWantsAiming);
+    DOREPLIFETIME(UBlasterWeaponComponent, bIsAiming);
 }
 
 void UBlasterWeaponComponent::BeginPlay()
@@ -92,9 +93,33 @@ void UBlasterWeaponComponent::StopAiming()
     bWantsAiming = false;
 }
 
-bool UBlasterWeaponComponent::IsAiming() const
+bool UBlasterWeaponComponent::IsAiming()
 {
     if (!Character) return false;
 
-    return bWantsAiming && !Character->GetCharacterMovement()->IsFalling();
+    bIsAiming = bWantsAiming && !Character->GetCharacterMovement()->IsFalling();
+    return bIsAiming;
+}
+
+void UBlasterWeaponComponent::StartFire() 
+{
+    bWantsFire = true;
+    PlayFireMontage();
+}
+
+void UBlasterWeaponComponent::StopFire() 
+{
+    bWantsFire = false;
+}
+
+void UBlasterWeaponComponent::PlayFireMontage() 
+{
+    if (!IsValid(Character) || !IsValid(Character->GetMesh()) || !IsValid(GetCurrentWeapon())) return;
+
+    if (UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance())
+    {
+        AnimInstance->Montage_Play(GetCurrentWeapon()->GetWeaponProps().BlasterFireMontage);
+        const FName SectionName = IsAiming() ? WeaponAimMontageSectionName : WeaponHipMontageSectionName;
+        AnimInstance->Montage_JumpToSection(SectionName);
+    }
 }

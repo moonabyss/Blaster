@@ -34,7 +34,9 @@ public:
     ABlasterBaseWeapon* GetCurrentWeapon() const;
     void StartAiming();
     void StopAiming();
-    bool IsAiming() const;
+    bool IsAiming();
+    void StartFire();
+    void StopFire();
 
 protected:
 
@@ -53,5 +55,10 @@ private:
     void AttachWeaponToSocket(ABlasterBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName);
 
     UPROPERTY(Replicated)
+    bool bIsAiming{false};
     bool bWantsAiming{false};
+
+    bool bWantsFire{false};
+
+    void PlayFireMontage();
 };
