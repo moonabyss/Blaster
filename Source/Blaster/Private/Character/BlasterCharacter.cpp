@@ -48,10 +48,10 @@ ABlasterCharacter::ABlasterCharacter(const FObjectInitializer& ObjInit)
     WeaponComponent->SetCharacter(this);
     WeaponComponent->SetIsReplicated(true);
 
-    if (auto PC = GetController<APlayerController>())
+    /*if (auto PC = GetController<APlayerController>())
     {
         PC->SetAudioListenerOverride(RootComponent, FVector::ZeroVector, FRotator::ZeroRotator);
-    }
+    }*/
 
     NetUpdateFrequency = 66.0f;
     MinNetUpdateFrequency = 33.0f;

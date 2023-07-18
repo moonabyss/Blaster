@@ -34,6 +34,7 @@ ABlasterBaseWeapon::ABlasterBaseWeapon()
     PickupWidget->SetDrawAtDesiredSize(true);
     PickupWidget->SetVisibility(false);
     PickupWidget->SetPivot(FVector2D(0.5f, 1.0f));
+    PickupWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f));
 }
 
 void ABlasterBaseWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
