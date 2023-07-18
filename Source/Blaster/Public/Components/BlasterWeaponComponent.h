@@ -37,6 +37,7 @@ public:
     bool IsAiming();
     void StartFire();
     void StopFire();
+    void Fire();
 
 protected:
 

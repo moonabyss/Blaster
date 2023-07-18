@@ -1,10 +1,12 @@
 // Blaster Multiplayer Game. All rights reserved.
 
 #include "Weapon/BlasterBaseWeapon.h"
-#include "Character/BlasterCharacter.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Net/UnrealNetwork.h"
+
+#include "Character/BlasterCharacter.h"
 
 ABlasterBaseWeapon::ABlasterBaseWeapon()
 {
@@ -31,6 +33,7 @@ ABlasterBaseWeapon::ABlasterBaseWeapon()
     PickupWidget->SetWidgetSpace(EWidgetSpace::Screen);
     PickupWidget->SetDrawAtDesiredSize(true);
     PickupWidget->SetVisibility(false);
+    PickupWidget->SetPivot(FVector2D(0.5f, 1.0f));
 }
 
 void ABlasterBaseWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -115,12 +118,14 @@ void ABlasterBaseWeapon::OnRep_WeaponState_Implementation()
     }
 }
 
-FWeaponProps ABlasterBaseWeapon::GetWeaponProps() const
+void ABlasterBaseWeapon::Fire() 
 {
-    return WeaponProperies;
+    PlayFireAnimation();
 }
 
-USkeletalMeshComponent* ABlasterBaseWeapon::GetMesh() const
+void ABlasterBaseWeapon::PlayFireAnimation() 
 {
-    return WeaponMesh;
+    if (!WeaponProperies.FireAnimation) return;
+
+    WeaponMesh->PlayAnimation(WeaponProperies.FireAnimation, false);
 }

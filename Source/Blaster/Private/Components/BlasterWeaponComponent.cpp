@@ -113,7 +113,7 @@ void UBlasterWeaponComponent::StartFire()
     bWantsFire = true;
     if (Character && !Character->HasAuthority()) ServerSetWantsFire(true);
 
-    PlayFireMontage();
+    Fire();
 }
 
 void UBlasterWeaponComponent::StopFire() 
@@ -127,9 +127,17 @@ void UBlasterWeaponComponent::ServerSetWantsFire_Implementation(bool bIsFiring)
     bWantsFire = bIsFiring;
 }
 
+void UBlasterWeaponComponent::Fire() 
+{
+    if (!IsValid(CurrentWeapon)) return;
+
+    PlayFireMontage();
+    CurrentWeapon->Fire();
+}
+
 void UBlasterWeaponComponent::PlayFireMontage() 
 {
-    if (!IsValid(Character) || !IsValid(Character->GetMesh()) || !IsValid(GetCurrentWeapon())) return;
+    if (!IsValid(Character) || !IsValid(Character->GetMesh())) return;
 
     if (UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance())
     {

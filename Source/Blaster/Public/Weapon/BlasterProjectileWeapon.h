@@ -7,7 +7,7 @@
 
 #include "BlasterProjectileWeapon.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable)
 class BLASTER_API ABlasterProjectileWeapon : public ABlasterBaseWeapon
 {
     GENERATED_BODY()

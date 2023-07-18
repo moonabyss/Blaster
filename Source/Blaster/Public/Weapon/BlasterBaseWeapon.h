@@ -9,10 +9,11 @@
 
 #include "BlasterBaseWeapon.generated.h"
 
+class UAnimationAsset;
 class USphereComponent;
 class UWidgetComponent;
 
-UCLASS()
+UCLASS(NotBlueprintable)
 class BLASTER_API ABlasterBaseWeapon : public AActor
 {
     GENERATED_BODY()
@@ -27,8 +28,11 @@ protected:
 public:
     void ShowPickupWidget(bool bShowWidget);
     void SetWeaponState(EWeaponState State);
-    FWeaponProps GetWeaponProps() const;
-    USkeletalMeshComponent* GetMesh() const;
+    void Fire();
+
+    // Getters
+    FWeaponProps GetWeaponProps() const { return WeaponProperies; };
+    USkeletalMeshComponent* GetMesh() const { return WeaponMesh; };
 
 protected:
     UFUNCTION()
@@ -56,4 +60,6 @@ private:
 
     UPROPERTY(Category = "Weapon Properties", VisibleAnywhere)
     UWidgetComponent* PickupWidget;
+
+    void PlayFireAnimation();
 };

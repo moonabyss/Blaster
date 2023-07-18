@@ -44,11 +44,15 @@ struct FWeaponProps
     UPROPERTY(EditAnywhere)
     UAnimMontage* BlasterFireMontage;
 
+    UPROPERTY(EditAnywhere)
+    UAnimationAsset* FireAnimation;
+
     FWeaponProps()
     {
         WeaponType = EWeaponType::EWT_MAX;
         AimSpeedModifier = 1.0f;
         BlasterFireMontage = nullptr;
+        FireAnimation = nullptr;
     }
 };
 
