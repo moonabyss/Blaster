@@ -68,4 +68,10 @@ private:
     void ServerSetWantsFire(bool bIsFiring);
 
     void PlayFireMontage();
+
+    UFUNCTION(Server, Reliable)
+    void ServerFire();
+
+    UFUNCTION(NetMulticast, Reliable)
+    void MulticastFire();
 };

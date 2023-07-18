@@ -57,7 +57,8 @@ void UBlasterWeaponComponent::OnRep_CurrentWeapon(ABlasterBaseWeapon* LastWeapon
     {
         WeaponEquipped.Broadcast();
     }
-    if (!IsValid(CurrentWeapon) && IsValid(LastWeapon)){
+    if (!IsValid(CurrentWeapon) && IsValid(LastWeapon))
+    {
         WeaponUnequipped.Broadcast();
     }
 }
@@ -75,7 +76,7 @@ bool UBlasterWeaponComponent::IsWeaponEquipped() const
     return IsValid(CurrentWeapon);
 }
 
-ABlasterBaseWeapon* UBlasterWeaponComponent::GetCurrentWeapon() const 
+ABlasterBaseWeapon* UBlasterWeaponComponent::GetCurrentWeapon() const
 {
     if (!IsValid(CurrentWeapon)) return nullptr;
 
@@ -85,7 +86,7 @@ ABlasterBaseWeapon* UBlasterWeaponComponent::GetCurrentWeapon() const
 void UBlasterWeaponComponent::StartAiming()
 {
     if (!IsValid(CurrentWeapon)) return;
-    
+
     bWantsAiming = true;
     if (Character && !Character->HasAuthority()) ServerSetWantsAiming(true);
 }
@@ -103,12 +104,12 @@ bool UBlasterWeaponComponent::IsAiming()
     return bWantsAiming && !Character->GetCharacterMovement()->IsFalling();
 }
 
-void UBlasterWeaponComponent::ServerSetWantsAiming_Implementation(bool bIsAiming) 
+void UBlasterWeaponComponent::ServerSetWantsAiming_Implementation(bool bIsAiming)
 {
     bWantsAiming = bIsAiming;
 }
 
-void UBlasterWeaponComponent::StartFire() 
+void UBlasterWeaponComponent::StartFire()
 {
     bWantsFire = true;
     if (Character && !Character->HasAuthority()) ServerSetWantsFire(true);
@@ -116,18 +117,30 @@ void UBlasterWeaponComponent::StartFire()
     Fire();
 }
 
-void UBlasterWeaponComponent::StopFire() 
+void UBlasterWeaponComponent::StopFire()
 {
     bWantsFire = false;
     if (Character && !Character->HasAuthority()) ServerSetWantsFire(false);
 }
 
-void UBlasterWeaponComponent::ServerSetWantsFire_Implementation(bool bIsFiring) 
+void UBlasterWeaponComponent::ServerSetWantsFire_Implementation(bool bIsFiring)
 {
     bWantsFire = bIsFiring;
 }
 
-void UBlasterWeaponComponent::Fire() 
+void UBlasterWeaponComponent::Fire()
+{
+    if (!IsValid(CurrentWeapon)) return;
+
+    ServerFire();
+}
+
+void UBlasterWeaponComponent::ServerFire_Implementation()
+{
+    MulticastFire();
+}
+
+void UBlasterWeaponComponent::MulticastFire_Implementation()
 {
     if (!IsValid(CurrentWeapon)) return;
 
@@ -135,7 +148,7 @@ void UBlasterWeaponComponent::Fire()
     CurrentWeapon->Fire();
 }
 
-void UBlasterWeaponComponent::PlayFireMontage() 
+void UBlasterWeaponComponent::PlayFireMontage()
 {
     if (!IsValid(Character) || !IsValid(Character->GetMesh())) return;
 
