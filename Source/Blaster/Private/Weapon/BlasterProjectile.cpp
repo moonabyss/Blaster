@@ -5,6 +5,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
+#include "Sound/SoundCue.h"
 
 ABlasterProjectile::ABlasterProjectile()
 {
@@ -21,19 +22,51 @@ ABlasterProjectile::ABlasterProjectile()
 
     ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
     ProjectileMovementComponent->bRotationFollowsVelocity = true;
-    ProjectileMovementComponent->InitialSpeed = BulletSpeed;
-    ProjectileMovementComponent->MaxSpeed = BulletSpeed;
+    ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
+    ProjectileMovementComponent->InitialSpeed = 2000.0f;
+    ProjectileMovementComponent->MaxSpeed = 2000.0f;
 }
 
 void ABlasterProjectile::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (!IsValid(BulletTracer)) return;
-    TracerComponent = UGameplayStatics::SpawnEmitterAttached(BulletTracer, CollisionBox, FName(), GetActorLocation(), GetActorRotation(), EAttachLocation::KeepWorldPosition);
+    if (!IsValid(BulletProps.BulletTracer)) return;
+    TracerComponent = UGameplayStatics::SpawnEmitterAttached(BulletProps.BulletTracer, CollisionBox, FName(), GetActorLocation(), GetActorRotation(), EAttachLocation::KeepWorldPosition);
+
+    if (HasAuthority())
+    {
+        ProjectileMovementComponent->Velocity = ShotDirection * ProjectileMovementComponent->InitialSpeed;
+        CollisionBox->IgnoreActorWhenMoving(GetOwner(), true);
+        CollisionBox->OnComponentHit.AddDynamic(this, &ThisClass::OnHit);
+    }
 }
 
 void ABlasterProjectile::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+}
+
+void ABlasterProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+    if (!GetWorld()) return;
+
+    ProjectileMovementComponent->StopMovementImmediately();
+    SpawnParticles();
+    SpawnSound();
+    Destroy();
+}
+
+void ABlasterProjectile::SpawnParticles()
+{
+    if (!BulletProps.BulletImpactParticles) return;
+
+    UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BulletProps.BulletImpactParticles, GetActorTransform());
+}
+
+void ABlasterProjectile::SpawnSound()
+{
+    if (!BulletProps.BulletImpactSound) return;
+
+    UGameplayStatics::PlaySoundAtLocation(this, BulletProps.BulletImpactSound, GetActorLocation());
 }

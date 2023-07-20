@@ -57,6 +57,28 @@ struct FWeaponProps
     }
 };
 
+USTRUCT(BlueprintType)
+struct FBulletProps
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere)
+    UParticleSystem* BulletTracer;
+
+    UPROPERTY(EditAnywhere)
+    UParticleSystem* BulletImpactParticles;
+
+    UPROPERTY(EditAnywhere)
+    class USoundCue* BulletImpactSound;
+
+    FBulletProps()
+    {
+        BulletTracer = nullptr;
+        BulletImpactParticles = nullptr;
+        BulletImpactSound = nullptr;
+    }
+};
+
 // character
 UENUM(BlueprintType)
 enum class ETurningInPlace : uint8

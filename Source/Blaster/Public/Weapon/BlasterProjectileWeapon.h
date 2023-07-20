@@ -21,5 +21,6 @@ private:
     UPROPERTY(EditDefaultsOnly)
     TSubclassOf<ABlasterProjectile> ProjectileClass;
 
-    void SpawnProjectile(const FVector& SocketLocation, const FVector& HitTarget);
+    UFUNCTION(NetMulticast, Reliable)
+    void MulticastSpawnProjectile(const FVector& StartLocation, const FVector& HitTarget);
 };

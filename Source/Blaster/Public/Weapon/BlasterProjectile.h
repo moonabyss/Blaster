@@ -5,11 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
+#include "BlasterCoreTypes.h"
+
 #include "BlasterProjectile.generated.h"
 
 class UBoxComponent;
 class UProjectileMovementComponent;
-class UParticleSystem;
 class UParticleSystemComponent;
 
 UCLASS()
@@ -24,6 +25,13 @@ public:
 protected:
     virtual void BeginPlay() override;
 
+public:
+    void SetShotDirection(const FVector& Direction) { ShotDirection = Direction; }
+
+protected:
+    UFUNCTION()
+    virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
 private:
     UPROPERTY(Category = "Components", VisibleAnywhere)
     UBoxComponent* CollisionBox;
@@ -32,10 +40,13 @@ private:
     UProjectileMovementComponent* ProjectileMovementComponent;
 
     UPROPERTY(Category = "Bullet Properties", EditDefaultsOnly)
-    float BulletSpeed{15000.0f};
-
-    UPROPERTY(Category = "Bullet Properties", EditDefaultsOnly)
-    UParticleSystem* BulletTracer;
+    FBulletProps BulletProps{FBulletProps()};
 
     UParticleSystemComponent* TracerComponent;
+
+    void SpawnParticles();
+
+    void SpawnSound();
+
+    FVector ShotDirection{FVector()};
 };

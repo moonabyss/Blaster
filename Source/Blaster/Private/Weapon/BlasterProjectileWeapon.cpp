@@ -13,20 +13,22 @@ void ABlasterProjectileWeapon::Fire(const FVector& HitTarget)
     if (!HasAuthority()) return;
     if (ProjectileClass)
     {
-        const auto MuzzleFlashSocket = GetMesh()->GetSocketByName(MuzzleFlashSocketName);
-        const auto SocketTransform = MuzzleFlashSocket->GetSocketTransform(GetMesh());
-        SpawnProjectile(SocketTransform.GetLocation(), HitTarget);
+        const auto StartLocation = GetMesh()->GetSocketLocation(MuzzleFlashSocketName);
+        MulticastSpawnProjectile(StartLocation, HitTarget);
     }
 }
 
-void ABlasterProjectileWeapon::SpawnProjectile(const FVector& SocketLocation, const FVector& HitTarget)
+void ABlasterProjectileWeapon::MulticastSpawnProjectile_Implementation(const FVector& StartLocation, const FVector& HitTarget)
 {
     if (!GetWorld()) return;
 
-    FVector ToTarget = HitTarget - SocketLocation;
-    FRotator TargetRotation = ToTarget.Rotation();
-    FActorSpawnParameters SpawnParams;
-    SpawnParams.Owner = GetOwner();
-    SpawnParams.Instigator = Cast<APawn>(GetOwner());
-    GetWorld()->SpawnActor<ABlasterProjectile>(ProjectileClass, SocketLocation, TargetRotation, SpawnParams);
+    FVector Direction = (HitTarget - StartLocation).GetSafeNormal();
+    const FTransform SpawnTransform(Direction.Rotation(), GetMesh()->GetSocketLocation(MuzzleFlashSocketName));
+    ABlasterProjectile* Projectile = GetWorld()->SpawnActorDeferred<ABlasterProjectile>(ProjectileClass, SpawnTransform);
+    if (Projectile)
+    {
+        Projectile->SetShotDirection(Direction);
+        Projectile->SetOwner(GetOwner());
+        Projectile->FinishSpawning(SpawnTransform);
+    }
 }
