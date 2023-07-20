@@ -37,9 +37,6 @@ void UBlasterWeaponComponent::BeginPlay()
 void UBlasterWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-    FHitResult HitResult;
-    TraceUnderCrosshairs(HitResult);
 }
 
 void UBlasterWeaponComponent::SetCharacter(ABlasterCharacter* BlasterCharacter)
@@ -140,21 +137,24 @@ void UBlasterWeaponComponent::Fire()
 {
     if (!IsValid(CurrentWeapon)) return;
 
-    ServerFire();
+    FHitResult HitResult;
+    TraceUnderCrosshairs(HitResult);
+
+    ServerFire(HitResult.ImpactPoint);
 }
 
-void UBlasterWeaponComponent::ServerFire_Implementation()
+void UBlasterWeaponComponent::ServerFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
-    MulticastFire();
+    MulticastFire(TraceHitTarget);
 }
 
-void UBlasterWeaponComponent::MulticastFire_Implementation()
+void UBlasterWeaponComponent::MulticastFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
     if (!IsValid(CurrentWeapon)) return;
 
     PlayFireMontage();
 
-    CurrentWeapon->Fire(HitTarget);
+    CurrentWeapon->Fire(TraceHitTarget);
 }
 
 void UBlasterWeaponComponent::PlayFireMontage()
@@ -191,16 +191,9 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
         FVector End = Start + CrosshairWorldDirection * 80000.0f;
         GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility);
 
-        if (TraceHitResult.bBlockingHit)
+        if (!TraceHitResult.bBlockingHit)
         {
-            HitTarget = TraceHitResult.ImpactPoint;
-#if !UE_BUILD_SHIPPING
-            DrawDebugSphere(GetWorld(), HitTarget, 30.0f, 12, FColor::Yellow);
-#endif // !UE_BUILD_SHIPPING
-        }
-        else
-        {
-            HitTarget = End;
+            TraceHitResult.ImpactPoint = End;
         }
     }
 }
