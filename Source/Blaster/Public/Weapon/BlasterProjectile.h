@@ -9,6 +9,8 @@
 
 class UBoxComponent;
 class UProjectileMovementComponent;
+class UParticleSystem;
+class UParticleSystemComponent;
 
 UCLASS()
 class BLASTER_API ABlasterProjectile : public AActor
@@ -28,4 +30,12 @@ private:
 
     UPROPERTY(Category = "Components", VisibleAnywhere)
     UProjectileMovementComponent* ProjectileMovementComponent;
+
+    UPROPERTY(Category = "Bullet Properties", EditDefaultsOnly)
+    float BulletSpeed{15000.0f};
+
+    UPROPERTY(Category = "Bullet Properties", EditDefaultsOnly)
+    UParticleSystem* BulletTracer;
+
+    UParticleSystemComponent* TracerComponent;
 };

@@ -3,10 +3,13 @@
 #include "Weapon/BlasterProjectile.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
 
 ABlasterProjectile::ABlasterProjectile()
 {
     PrimaryActorTick.bCanEverTick = true;
+    bReplicates = true;
 
     CollisionBox = CreateDefaultSubobject<UBoxComponent>("CollisionBox");
     SetRootComponent(CollisionBox);
@@ -18,13 +21,16 @@ ABlasterProjectile::ABlasterProjectile()
 
     ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
     ProjectileMovementComponent->bRotationFollowsVelocity = true;
-    ProjectileMovementComponent->InitialSpeed = 15000.0f;
-    ProjectileMovementComponent->MaxSpeed = 15000.0f;
+    ProjectileMovementComponent->InitialSpeed = BulletSpeed;
+    ProjectileMovementComponent->MaxSpeed = BulletSpeed;
 }
 
 void ABlasterProjectile::BeginPlay()
 {
     Super::BeginPlay();
+
+    if (!IsValid(BulletTracer)) return;
+    TracerComponent = UGameplayStatics::SpawnEmitterAttached(BulletTracer, CollisionBox, FName(), GetActorLocation(), GetActorRotation(), EAttachLocation::KeepWorldPosition);
 }
 
 void ABlasterProjectile::Tick(float DeltaTime)
