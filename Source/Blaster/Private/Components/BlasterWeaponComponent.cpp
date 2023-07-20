@@ -2,6 +2,7 @@
 
 #include "Components/BlasterWeaponComponent.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 #include "BlasterCoreTypes.h"
@@ -10,9 +11,13 @@
 #include "Components/BlasterMovementComponent.h"
 #include "Weapon/BlasterBaseWeapon.h"
 
+#if !UE_BUILD_SHIPPING
+#include "DrawDebugHelpers.h"
+#endif  // !UE_BUILD_SHIPPING
+
 UBlasterWeaponComponent::UBlasterWeaponComponent()
 {
-    PrimaryComponentTick.bCanEverTick = false;
+    PrimaryComponentTick.bCanEverTick = true;
 }
 
 void UBlasterWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -32,6 +37,9 @@ void UBlasterWeaponComponent::BeginPlay()
 void UBlasterWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+    FHitResult HitResult;
+    TraceUnderCrosshairs(HitResult);
 }
 
 void UBlasterWeaponComponent::SetCharacter(ABlasterCharacter* BlasterCharacter)
@@ -157,5 +165,36 @@ void UBlasterWeaponComponent::PlayFireMontage()
         AnimInstance->Montage_Play(GetCurrentWeapon()->GetWeaponProps().BlasterFireMontage);
         const FName SectionName = IsAiming() ? WeaponAimMontageSectionName : WeaponHipMontageSectionName;
         AnimInstance->Montage_JumpToSection(SectionName);
+    }
+}
+
+void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
+{
+    if (!GetWorld()) return;
+
+    FVector2D ViewportSize;
+    if (GEngine && GEngine->GameViewport)
+    {
+        GEngine->GameViewport->GetViewportSize(ViewportSize);
+    }
+
+    FVector2D CrosshairLocation(ViewportSize.X / 2.0f, ViewportSize.Y / 2.0f);
+    FVector CrosshairWorldPosition;
+    FVector CrosshairWorldDirection;
+    const bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(UGameplayStatics::GetPlayerController(this, 0), CrosshairLocation, CrosshairWorldPosition, CrosshairWorldDirection);
+
+    if (bScreenToWorld)
+    {
+        FVector Start = CrosshairWorldPosition;
+        // TODO: variable for trace distance
+        FVector End = Start + CrosshairWorldDirection * 80000.0f;
+        GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility);
+
+        if (TraceHitResult.bBlockingHit)
+        {
+#if !UE_BUILD_SHIPPING
+            DrawDebugSphere(GetWorld(), TraceHitResult.ImpactPoint, 30.0f, 12, FColor::Yellow);
+#endif // !UE_BUILD_SHIPPING
+        }
     }
 }

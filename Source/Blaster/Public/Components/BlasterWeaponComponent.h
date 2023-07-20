@@ -74,4 +74,6 @@ private:
 
     UFUNCTION(NetMulticast, Reliable)
     void MulticastFire();
+
+    void TraceUnderCrosshairs(FHitResult& TraceHitResult);
 };
