@@ -28,7 +28,7 @@ protected:
 public:
     void ShowPickupWidget(bool bShowWidget);
     void SetWeaponState(EWeaponState State);
-    void Fire();
+    virtual void Fire(const FVector& HitTarget);
 
     // Getters
     FWeaponProps GetWeaponProps() const { return WeaponProperies; };

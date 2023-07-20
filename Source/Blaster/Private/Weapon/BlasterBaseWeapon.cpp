@@ -119,7 +119,7 @@ void ABlasterBaseWeapon::OnRep_WeaponState_Implementation()
     }
 }
 
-void ABlasterBaseWeapon::Fire() 
+void ABlasterBaseWeapon::Fire(const FVector& HitTarget)
 {
     PlayFireAnimation();
 }

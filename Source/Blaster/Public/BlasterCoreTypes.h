@@ -8,6 +8,7 @@ DECLARE_MULTICAST_DELEGATE(FOnWeaponEquippedDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnWeaponUnequippedDelegate);
 
 const FName LeftHandSocketName = "LeftHandSocket";
+const FName MuzzleFlashSocketName = "MuzzleFlash";
 const FName WeaponHipMontageSectionName = "Hip";
 const FName WeaponAimMontageSectionName = "Aim";
 

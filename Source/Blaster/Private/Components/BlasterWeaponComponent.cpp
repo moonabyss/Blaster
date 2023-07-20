@@ -153,7 +153,8 @@ void UBlasterWeaponComponent::MulticastFire_Implementation()
     if (!IsValid(CurrentWeapon)) return;
 
     PlayFireMontage();
-    CurrentWeapon->Fire();
+
+    CurrentWeapon->Fire(HitTarget);
 }
 
 void UBlasterWeaponComponent::PlayFireMontage()
@@ -192,9 +193,14 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 
         if (TraceHitResult.bBlockingHit)
         {
+            HitTarget = TraceHitResult.ImpactPoint;
 #if !UE_BUILD_SHIPPING
-            DrawDebugSphere(GetWorld(), TraceHitResult.ImpactPoint, 30.0f, 12, FColor::Yellow);
+            DrawDebugSphere(GetWorld(), HitTarget, 30.0f, 12, FColor::Yellow);
 #endif // !UE_BUILD_SHIPPING
+        }
+        else
+        {
+            HitTarget = End;
         }
     }
 }
