@@ -12,6 +12,7 @@
 class UAnimationAsset;
 class USphereComponent;
 class UWidgetComponent;
+class ABlasterWeaponShell;
 
 UCLASS(NotBlueprintable)
 class BLASTER_API ABlasterBaseWeapon : public AActor
@@ -62,4 +63,8 @@ private:
     UWidgetComponent* PickupWidget;
 
     void PlayFireAnimation();
+    void SpawnShell();
+
+    UPROPERTY(EditDefaultsOnly)
+    TSubclassOf<ABlasterWeaponShell> ShellClass;
 };

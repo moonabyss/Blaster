@@ -4,9 +4,11 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Engine/SkeletalMeshSocket.h"
 #include "Net/UnrealNetwork.h"
 
 #include "Character/BlasterCharacter.h"
+#include "Weapon/BlasterWeaponShell.h"
 
 ABlasterBaseWeapon::ABlasterBaseWeapon()
 {
@@ -122,11 +124,22 @@ void ABlasterBaseWeapon::OnRep_WeaponState_Implementation()
 void ABlasterBaseWeapon::Fire(const FVector& HitTarget)
 {
     PlayFireAnimation();
+    SpawnShell();
 }
 
-void ABlasterBaseWeapon::PlayFireAnimation() 
+void ABlasterBaseWeapon::PlayFireAnimation()
 {
     if (!WeaponProperies.FireAnimation) return;
 
     WeaponMesh->PlayAnimation(WeaponProperies.FireAnimation, false);
+}
+
+void ABlasterBaseWeapon::SpawnShell() 
+{
+    if (ShellClass && GetWorld())
+    {
+        auto ShellSocket = WeaponMesh->GetSocketByName(ShellSocketName);
+        auto ShellSocketTransform = ShellSocket->GetSocketTransform(WeaponMesh);
+        GetWorld()->SpawnActor<ABlasterWeaponShell>(ShellClass, ShellSocketTransform);
+    }
 }
