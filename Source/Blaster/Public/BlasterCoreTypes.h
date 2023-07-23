@@ -38,27 +38,27 @@ struct FCrosshairs
     GENERATED_BODY()
 
     UPROPERTY(EditAnywhere)
-    UTexture2D* CrosshairsCenter;
+    UTexture2D* Center;
 
     UPROPERTY(EditAnywhere)
-    UTexture2D* CrosshairsLeft;
+    UTexture2D* Left;
 
     UPROPERTY(EditAnywhere)
-    UTexture2D* CrosshairsRight;
+    UTexture2D* Right;
 
     UPROPERTY(EditAnywhere)
-    UTexture2D* CrosshairsTop;
+    UTexture2D* Top;
 
     UPROPERTY(EditAnywhere)
-    UTexture2D* CrosshairsBottom;
+    UTexture2D* Bottom;
 
     FCrosshairs()
     {
-        CrosshairsCenter = nullptr;
-        CrosshairsLeft = nullptr;
-        CrosshairsRight = nullptr;
-        CrosshairsTop = nullptr;
-        CrosshairsBottom = nullptr;
+        Center = nullptr;
+        Left = nullptr;
+        Right = nullptr;
+        Top = nullptr;
+        Bottom = nullptr;
     }
 };
 

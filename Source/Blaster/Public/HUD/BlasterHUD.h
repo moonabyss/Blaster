@@ -21,4 +21,6 @@ public:
 
 private:
     FCrosshairs Crosshairs;
+
+    void DrawCrosshair(UTexture2D* Texture, const FVector2D& ViewportCenter);
 };
