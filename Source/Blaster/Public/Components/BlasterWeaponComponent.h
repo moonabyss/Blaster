@@ -82,4 +82,8 @@ private:
     void TraceUnderCrosshairs(FHitResult& TraceHitResult);
 
     void SetHUDCrosshairs(float DeltaTime);
+
+    float CalculateCurrentSpreadModifier(float DeltaTime);
+    float CrosshairsVelocityFactor{0.0f};
+    float CrosshairsInAirFactor{0.0f};
 };

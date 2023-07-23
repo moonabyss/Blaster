@@ -52,6 +52,9 @@ struct FCrosshairs
     UPROPERTY(EditAnywhere)
     UTexture2D* Bottom;
 
+    UPROPERTY(EditAnywhere)
+    float SpreadAngle;
+
     FCrosshairs()
     {
         Center = nullptr;
@@ -59,6 +62,7 @@ struct FCrosshairs
         Right = nullptr;
         Top = nullptr;
         Bottom = nullptr;
+        SpreadAngle = 0.0f;
     }
 };
 
@@ -82,6 +86,12 @@ struct FWeaponProps
     UPROPERTY(EditAnywhere)
     FCrosshairs Crosshairs;
 
+    UPROPERTY(EditAnywhere)
+    float DefaultSpreadInDegrees;
+
+    UPROPERTY(EditAnywhere)
+    float SpreadModifierWalk;
+
     FWeaponProps()
     {
         WeaponType = EWeaponType::EWT_MAX;
@@ -89,6 +99,8 @@ struct FWeaponProps
         BlasterFireMontage = nullptr;
         FireAnimation = nullptr;
         Crosshairs = FCrosshairs();
+        DefaultSpreadInDegrees = 0.0f;
+        SpreadModifierWalk = 1.0f;
     }
 };
 

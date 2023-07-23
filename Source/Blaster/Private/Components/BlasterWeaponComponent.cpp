@@ -222,7 +222,30 @@ void UBlasterWeaponComponent::SetHUDCrosshairs(float DeltaTime)
     if (CurrentWeapon)
     {
         Crosshairs = CurrentWeapon->GetWeaponProps().Crosshairs;
+        Crosshairs.SpreadAngle = CurrentWeapon->GetWeaponProps().DefaultSpreadInDegrees * CalculateCurrentSpreadModifier(DeltaTime);
     }
     HUD->SetCrosshairs(Crosshairs);
 
+}
+
+float UBlasterWeaponComponent::CalculateCurrentSpreadModifier(float DeltaTime)
+{
+    float Result = 1.0f;
+    // [0, 600] -> [0, 1]
+    // CrosshairsVelocityFactor
+    const FVector2D WalkSpeedRange(0, Character->GetCharacterMovement()->MaxWalkSpeed);
+    const FVector2D VelocityMultiplierRange(0.0f, CurrentWeapon->GetWeaponProps().SpreadModifierWalk);
+    CrosshairsVelocityFactor = FMath::GetMappedRangeValueClamped(WalkSpeedRange, VelocityMultiplierRange, Character->GetVelocity().Size2D());
+
+    // CrosshairsInAirFactor
+    if (Character->GetCharacterMovement()->IsFalling())
+    {
+        CrosshairsInAirFactor = FMath::FInterpTo(CrosshairsInAirFactor, 2.0f, DeltaTime, 2.0f);
+    }
+    else
+    {
+        CrosshairsInAirFactor = FMath::FInterpTo(CrosshairsInAirFactor, 0.0f, DeltaTime, 20.0f);
+    }
+
+    return Result + CrosshairsVelocityFactor + CrosshairsInAirFactor;
 }
