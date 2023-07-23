@@ -78,4 +78,10 @@ protected:
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
     ETurningInPlace TurningInPlace{ETurningInPlace::ETIP_NotTurning};
+
+    UPROPERTY(Category = "Aim", BlueprintReadOnly)
+    FRotator RightHandRotation;
+
+    UPROPERTY(Category = "Character", BlueprintReadOnly)
+    bool bIsLocallyControlled;
 };

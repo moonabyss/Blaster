@@ -41,6 +41,8 @@ public:
     void StopFire();
     void Fire();
 
+    FVector GetHitTarget() const { return HitTarget; }
+
 protected:
 
 private:
@@ -86,4 +88,6 @@ private:
     float CalculateCurrentSpreadModifier(float DeltaTime);
     float CrosshairsVelocityFactor{0.0f};
     float CrosshairsInAirFactor{0.0f};
+
+    FVector HitTarget;
 };
