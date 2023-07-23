@@ -8,7 +8,9 @@
 #include "BlasterCoreTypes.h"
 #include "Character/BlasterAnimInstance.h"
 #include "Character/BlasterCharacter.h"
+#include "Character/BlasterPlayerController.h"
 #include "Components/BlasterMovementComponent.h"
+#include "HUD/BlasterHUD.h"
 #include "Weapon/BlasterBaseWeapon.h"
 
 #if !UE_BUILD_SHIPPING
@@ -37,6 +39,8 @@ void UBlasterWeaponComponent::BeginPlay()
 void UBlasterWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+    SetHUDCrosshairs(DeltaTime);
 }
 
 void UBlasterWeaponComponent::SetCharacter(ABlasterCharacter* BlasterCharacter)
@@ -196,4 +200,29 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
             TraceHitResult.ImpactPoint = End;
         }
     }
+}
+
+void UBlasterWeaponComponent::SetHUDCrosshairs(float DeltaTime)
+{
+    if (!Character || !Character->GetController()) return;
+
+    if (!Controller)
+    {
+        Controller = Cast<ABlasterPlayerController>(Character->GetController());
+    }
+    if (!Controller) return;
+
+    if (!HUD)
+    {
+        HUD = Cast<ABlasterHUD>(Controller->GetHUD());
+    }
+    if (!HUD) return;
+
+    FCrosshairs Crosshairs = FCrosshairs();
+    if (CurrentWeapon)
+    {
+        Crosshairs = CurrentWeapon->GetWeaponProps().Crosshairs;
+    }
+    HUD->SetCrosshairs(Crosshairs);
+
 }

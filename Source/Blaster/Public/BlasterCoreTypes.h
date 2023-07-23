@@ -33,6 +33,36 @@ enum class EWeaponType : uint8
 };
 
 USTRUCT(BlueprintType)
+struct FCrosshairs
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere)
+    UTexture2D* CrosshairsCenter;
+
+    UPROPERTY(EditAnywhere)
+    UTexture2D* CrosshairsLeft;
+
+    UPROPERTY(EditAnywhere)
+    UTexture2D* CrosshairsRight;
+
+    UPROPERTY(EditAnywhere)
+    UTexture2D* CrosshairsTop;
+
+    UPROPERTY(EditAnywhere)
+    UTexture2D* CrosshairsBottom;
+
+    FCrosshairs()
+    {
+        CrosshairsCenter = nullptr;
+        CrosshairsLeft = nullptr;
+        CrosshairsRight = nullptr;
+        CrosshairsTop = nullptr;
+        CrosshairsBottom = nullptr;
+    }
+};
+
+USTRUCT(BlueprintType)
 struct FWeaponProps
 {
     GENERATED_BODY()
@@ -49,12 +79,16 @@ struct FWeaponProps
     UPROPERTY(EditAnywhere)
     UAnimationAsset* FireAnimation;
 
+    UPROPERTY(EditAnywhere)
+    FCrosshairs Crosshairs;
+
     FWeaponProps()
     {
         WeaponType = EWeaponType::EWT_MAX;
         AimSpeedModifier = 1.0f;
         BlasterFireMontage = nullptr;
         FireAnimation = nullptr;
+        Crosshairs = FCrosshairs();
     }
 };
 

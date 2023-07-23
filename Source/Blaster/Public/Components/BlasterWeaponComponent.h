@@ -11,6 +11,8 @@
 
 class ABlasterBaseWeapon;
 class ABlasterCharacter;
+class ABlasterPlayerController;
+class ABlasterHUD;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BLASTER_API UBlasterWeaponComponent : public UActorComponent
@@ -43,6 +45,8 @@ protected:
 
 private:
     TObjectPtr<ABlasterCharacter> Character{nullptr};
+    TObjectPtr<ABlasterPlayerController> Controller{nullptr};
+    TObjectPtr<ABlasterHUD> HUD{nullptr};
     
     UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_CurrentWeapon)
     ABlasterBaseWeapon* CurrentWeapon{nullptr};
@@ -76,4 +80,6 @@ private:
     void MulticastFire(const FVector_NetQuantize& TraceHitTarget);
 
     void TraceUnderCrosshairs(FHitResult& TraceHitResult);
+
+    void SetHUDCrosshairs(float DeltaTime);
 };
