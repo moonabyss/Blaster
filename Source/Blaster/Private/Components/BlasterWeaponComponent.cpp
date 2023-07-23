@@ -2,6 +2,7 @@
 
 #include "Components/BlasterWeaponComponent.h"
 
+#include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
@@ -34,19 +35,26 @@ void UBlasterWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 void UBlasterWeaponComponent::BeginPlay()
 {
     Super::BeginPlay();
+
+    if (auto PC = Character->GetController<APlayerController>())
+    {
+        DefaultFOV = PC->PlayerCameraManager->DefaultFOV;
+        CurrentFOV = DefaultFOV;
+    }
 }
 
 void UBlasterWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-    SetHUDCrosshairs(DeltaTime);
-
     if (Character && Character->IsLocallyControlled())
     {
         FHitResult HitResult;
         TraceUnderCrosshairs(HitResult);
         HitTarget = HitResult.ImpactPoint;
+        
+        InterpFOV(DeltaTime);
+        SetHUDCrosshairs(DeltaTime);
     }
 }
 
@@ -232,7 +240,6 @@ void UBlasterWeaponComponent::SetHUDCrosshairs(float DeltaTime)
         Crosshairs.SpreadAngle = CurrentWeapon->GetWeaponProps().DefaultSpreadInDegrees * CalculateCurrentSpreadModifier(DeltaTime);
     }
     HUD->SetCrosshairs(Crosshairs);
-
 }
 
 float UBlasterWeaponComponent::CalculateCurrentSpreadModifier(float DeltaTime)
@@ -255,4 +262,23 @@ float UBlasterWeaponComponent::CalculateCurrentSpreadModifier(float DeltaTime)
     }
 
     return Result + CrosshairsVelocityFactor + CrosshairsInAirFactor;
+}
+
+void UBlasterWeaponComponent::InterpFOV(float DeltaTime)
+{
+    if (!CurrentWeapon) return;
+
+    const auto PC = Character->GetController<APlayerController>();
+    if (!PC || !PC->PlayerCameraManager) return;
+
+    if (IsAiming())
+    {
+        CurrentFOV = FMath::FInterpTo(CurrentFOV, CurrentWeapon->GetWeaponProps().ZoomedFOV, DeltaTime, CurrentWeapon->GetWeaponProps().ZoomInterpSpeed);
+        PC->PlayerCameraManager->SetFOV(CurrentFOV);
+    }
+    else
+    {
+        CurrentFOV = FMath::FInterpTo(CurrentFOV, DefaultFOV, DeltaTime, CurrentWeapon->GetWeaponProps().ZoomInterpSpeed);
+        PC->PlayerCameraManager->SetFOV(CurrentFOV);
+    }
 }

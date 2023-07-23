@@ -90,4 +90,11 @@ private:
     float CrosshairsInAirFactor{0.0f};
 
     FVector HitTarget;
+
+    UPROPERTY(Category = "Combat", EditDefaultsOnly)
+    float DefaultFOV{90.0f};
+
+    float CurrentFOV{90.0f};
+
+    void InterpFOV(float DeltaTime);
 };
