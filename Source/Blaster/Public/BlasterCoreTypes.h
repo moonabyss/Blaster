@@ -98,6 +98,9 @@ struct FWeaponProps
     UPROPERTY(EditAnywhere)
     float ZoomInterpSpeed;
 
+    UPROPERTY(EditAnywhere)
+    float SpreadModifierZoom;
+
     FWeaponProps()
     {
         WeaponType = EWeaponType::EWT_MAX;
@@ -109,6 +112,7 @@ struct FWeaponProps
         SpreadModifierWalk = 1.0f;
         ZoomedFOV = 30.0f;
         ZoomInterpSpeed = 20.0f;
+        SpreadModifierZoom = 0.0f;
     }
 };
 

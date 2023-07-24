@@ -86,9 +86,10 @@ private:
     void SetHUDCrosshairs(float DeltaTime);
 
     float CalculateCurrentSpreadModifier(float DeltaTime);
+    float CurrentSpreadAngle{0.0f};
     float CrosshairsVelocityFactor{0.0f};
     float CrosshairsInAirFactor{0.0f};
-    float CurrentSpreadAngle{0.0f};
+    float CrosshairsAimFactor{0.0f};
 
     FVector HitTarget;
     FVector HitTargetNoSpread;

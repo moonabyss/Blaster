@@ -206,21 +206,19 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, b
     if (bScreenToWorld)
     {
         FVector Start = CrosshairWorldPosition;
-        const auto HalfRad = FMath::DegreesToRadians(CurrentSpreadAngle);
-        const FVector ShootDirection = FMath::VRandCone(CrosshairWorldDirection, HalfRad);
         // TODO: variable for trace distance
-        FVector EndWithSpread = Start + ShootDirection * 80000.0f;
-        FVector EndNoSpread = Start + CrosshairWorldDirection * 80000.0f;
         FVector End;
         if (bWithSpread)
         {
-            GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, EndWithSpread, ECollisionChannel::ECC_Visibility);
-            End = EndWithSpread;
+            const auto HalfRad = FMath::DegreesToRadians(CurrentSpreadAngle / 2.0f);
+            const FVector ShootDirection = FMath::VRandCone(CrosshairWorldDirection, HalfRad);
+            End = Start + ShootDirection * 80000.0f;
+            GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility);
         }
         else
         {
-            GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, EndNoSpread, ECollisionChannel::ECC_Visibility);
-            End = EndNoSpread;
+            End = Start + CrosshairWorldDirection * 80000.0f;
+            GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility);
         }
 
         if (!TraceHitResult.bBlockingHit)
@@ -251,6 +249,9 @@ void UBlasterWeaponComponent::SetHUDCrosshairs(float DeltaTime)
     {
         Crosshairs = CurrentWeapon->GetWeaponProps().Crosshairs;
         Crosshairs.SpreadAngle = CurrentWeapon->GetWeaponProps().DefaultSpreadInDegrees * CalculateCurrentSpreadModifier(DeltaTime);
+        CurrentSpreadAngle = Crosshairs.SpreadAngle;
+        GEngine->AddOnScreenDebugMessage(1, 0.0f, FColor::Yellow, FString::Printf(TEXT("CurrentSpreadAngle: %.2f"), CurrentSpreadAngle));
+
     }
     HUD->SetCrosshairs(Crosshairs);
 }
@@ -258,6 +259,7 @@ void UBlasterWeaponComponent::SetHUDCrosshairs(float DeltaTime)
 float UBlasterWeaponComponent::CalculateCurrentSpreadModifier(float DeltaTime)
 {
     float Result = 1.0f;
+
     // [0, 600] -> [0, 1]
     // CrosshairsVelocityFactor
     const FVector2D WalkSpeedRange(0, Character->GetCharacterMovement()->MaxWalkSpeed);
@@ -274,8 +276,18 @@ float UBlasterWeaponComponent::CalculateCurrentSpreadModifier(float DeltaTime)
         CrosshairsInAirFactor = FMath::FInterpTo(CrosshairsInAirFactor, 0.0f, DeltaTime, 20.0f);
     }
 
-    CurrentSpreadAngle = Result + CrosshairsVelocityFactor + CrosshairsInAirFactor;
-    return CurrentSpreadAngle;
+    // CrosshairsAimFactor
+    if (IsAiming())
+    {
+        CrosshairsAimFactor = FMath::FInterpTo(CrosshairsAimFactor, CurrentWeapon->GetWeaponProps().SpreadModifierZoom, DeltaTime, 30.0f);
+    }
+    else
+    {
+        CrosshairsAimFactor = FMath::FInterpTo(CrosshairsAimFactor, 0.0f, DeltaTime, 30.0f); 
+    }
+
+    const float SpreadFactor = FMath::Max(0.0f, Result + CrosshairsVelocityFactor + CrosshairsInAirFactor - CrosshairsAimFactor);
+    return SpreadFactor;
 }
 
 void UBlasterWeaponComponent::InterpFOV(float DeltaTime)
