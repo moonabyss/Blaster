@@ -111,7 +111,7 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
         FTransform RightHandTransform = BlasterCharacter->GetCurrentWeapon()->GetMesh()->GetSocketTransform(FName("Hand_R"), ERelativeTransformSpace::RTS_World);
         RightHandRotation = UKismetMathLibrary::FindLookAtRotation(                                                     //
             RightHandTransform.GetLocation(),                                                                           //
-            RightHandTransform.GetLocation() + (RightHandTransform.GetLocation() - BlasterCharacter->GetHitTarget()));  //
+            RightHandTransform.GetLocation() + (RightHandTransform.GetLocation() - BlasterCharacter->GetHitTargetNoSpread()));  //
 
         // FTransform MuzzleTipTransform = BlasterCharacter->GetCurrentWeapon()->GetMesh()->GetSocketTransform(MuzzleFlashSocketName, ERelativeTransformSpace::RTS_World);
         // FVector MuzzleX(FRotationMatrix(MuzzleTipTransform.GetRotation().Rotator()).GetUnitAxis(EAxis::X));

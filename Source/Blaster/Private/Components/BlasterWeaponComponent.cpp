@@ -50,9 +50,9 @@ void UBlasterWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType
     if (Character && Character->IsLocallyControlled())
     {
         FHitResult HitResult;
-        TraceUnderCrosshairs(HitResult);
-        HitTarget = HitResult.ImpactPoint;
-        
+        TraceUnderCrosshairs(HitResult, false);
+        HitTargetNoSpread = HitResult.ImpactPoint;
+
         InterpFOV(DeltaTime);
         SetHUDCrosshairs(DeltaTime);
     }
@@ -157,7 +157,7 @@ void UBlasterWeaponComponent::Fire()
     if (!IsValid(CurrentWeapon)) return;
 
     FHitResult HitResult;
-    TraceUnderCrosshairs(HitResult);
+    TraceUnderCrosshairs(HitResult, true);
 
     ServerFire(HitResult.ImpactPoint);
 }
@@ -188,7 +188,7 @@ void UBlasterWeaponComponent::PlayFireMontage()
     }
 }
 
-void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
+void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, bool bWithSpread)
 {
     if (!GetWorld()) return;
 
@@ -206,9 +206,22 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
     if (bScreenToWorld)
     {
         FVector Start = CrosshairWorldPosition;
+        const auto HalfRad = FMath::DegreesToRadians(CurrentSpreadAngle);
+        const FVector ShootDirection = FMath::VRandCone(CrosshairWorldDirection, HalfRad);
         // TODO: variable for trace distance
-        FVector End = Start + CrosshairWorldDirection * 80000.0f;
-        GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility);
+        FVector EndWithSpread = Start + ShootDirection * 80000.0f;
+        FVector EndNoSpread = Start + CrosshairWorldDirection * 80000.0f;
+        FVector End;
+        if (bWithSpread)
+        {
+            GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, EndWithSpread, ECollisionChannel::ECC_Visibility);
+            End = EndWithSpread;
+        }
+        else
+        {
+            GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, EndNoSpread, ECollisionChannel::ECC_Visibility);
+            End = EndNoSpread;
+        }
 
         if (!TraceHitResult.bBlockingHit)
         {
@@ -261,7 +274,8 @@ float UBlasterWeaponComponent::CalculateCurrentSpreadModifier(float DeltaTime)
         CrosshairsInAirFactor = FMath::FInterpTo(CrosshairsInAirFactor, 0.0f, DeltaTime, 20.0f);
     }
 
-    return Result + CrosshairsVelocityFactor + CrosshairsInAirFactor;
+    CurrentSpreadAngle = Result + CrosshairsVelocityFactor + CrosshairsInAirFactor;
+    return CurrentSpreadAngle;
 }
 
 void UBlasterWeaponComponent::InterpFOV(float DeltaTime)

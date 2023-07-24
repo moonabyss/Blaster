@@ -40,7 +40,7 @@ public:
     float GetAimYaw() const;
     float GetAimPitch() const;
     ETurningInPlace GetTurningInPlace() const;
-    FVector GetHitTarget() const;
+    FVector GetHitTargetNoSpread() const;
 
 protected:
     void MoveForward(float Value);

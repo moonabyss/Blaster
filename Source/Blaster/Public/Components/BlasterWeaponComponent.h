@@ -41,7 +41,7 @@ public:
     void StopFire();
     void Fire();
 
-    FVector GetHitTarget() const { return HitTarget; }
+    FVector GetHitTargetNoSpread() const { return HitTargetNoSpread; }
 
 protected:
 
@@ -81,15 +81,17 @@ private:
     UFUNCTION(NetMulticast, Reliable)
     void MulticastFire(const FVector_NetQuantize& TraceHitTarget);
 
-    void TraceUnderCrosshairs(FHitResult& TraceHitResult);
+    void TraceUnderCrosshairs(FHitResult& TraceHitResult, bool bWithSpread);
 
     void SetHUDCrosshairs(float DeltaTime);
 
     float CalculateCurrentSpreadModifier(float DeltaTime);
     float CrosshairsVelocityFactor{0.0f};
     float CrosshairsInAirFactor{0.0f};
+    float CurrentSpreadAngle{0.0f};
 
     FVector HitTarget;
+    FVector HitTargetNoSpread;
 
     UPROPERTY(Category = "Combat", EditDefaultsOnly)
     float DefaultFOV{90.0f};

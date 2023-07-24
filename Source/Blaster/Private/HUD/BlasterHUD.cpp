@@ -14,7 +14,7 @@ void ABlasterHUD::DrawHUD()
 
     const auto PC = GetOwningPlayerController();
     float FOVAngle = PC->PlayerCameraManager->GetFOVAngle();
-    const float Spread = ViewportSize.X / FOVAngle * Crosshairs.SpreadAngle;
+    const float Spread = ViewportSize.X / FOVAngle * Crosshairs.SpreadAngle / 2.0f;
 
     if (Crosshairs.Center)
     {

@@ -375,9 +375,9 @@ void ABlasterCharacter::FireReleased()
     WeaponComponent->StopFire();
 }
 
-FVector ABlasterCharacter::GetHitTarget() const 
+FVector ABlasterCharacter::GetHitTargetNoSpread() const
 {
     if (!WeaponComponent) return FVector();
 
-    return WeaponComponent->GetHitTarget();
+    return WeaponComponent->GetHitTargetNoSpread();
 }
