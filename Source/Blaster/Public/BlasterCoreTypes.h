@@ -55,6 +55,9 @@ struct FCrosshairs
     UPROPERTY(EditAnywhere)
     float SpreadAngle;
 
+    UPROPERTY(EditAnywhere)
+    FColor Color;
+
     FCrosshairs()
     {
         Center = nullptr;
@@ -63,6 +66,7 @@ struct FCrosshairs
         Top = nullptr;
         Bottom = nullptr;
         SpreadAngle = 0.0f;
+        Color = FColor::White;
     }
 };
 

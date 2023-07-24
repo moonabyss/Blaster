@@ -192,7 +192,7 @@ void UBlasterWeaponComponent::PlayFireMontage()
 
 void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, bool bWithSpread)
 {
-    if (!GetWorld()) return;
+    if (!GetWorld() || !IsValid(CurrentWeapon)) return;
 
     FVector2D ViewportSize;
     if (GEngine && GEngine->GameViewport)
@@ -210,17 +210,32 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, b
         FVector Start = CrosshairWorldPosition;
         // TODO: variable for trace distance
         FVector End;
+
+        FCollisionQueryParams QueryParams;
+        QueryParams.AddIgnoredActor(GetOwner());
+
         if (bWithSpread)
         {
+            // Shooting
             const auto HalfRad = FMath::DegreesToRadians(CurrentSpreadAngle / 2.0f);
             const FVector ShootDirection = FMath::VRandCone(CrosshairWorldDirection, HalfRad);
             End = Start + ShootDirection * 80000.0f;
-            GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility);
+            GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility, QueryParams);
         }
         else
         {
+            // Aiming
             End = Start + CrosshairWorldDirection * 80000.0f;
-            GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility);
+            GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility, QueryParams);
+
+            if (IsValid(TraceHitResult.GetActor()) && TraceHitResult.GetActor()->Implements<UInteractWithCrosshairs>())
+            {
+                Crosshairs.Color = CrosshairsEnemyColor;
+            }
+            else
+            {
+                Crosshairs.Color = CrosshairsDefaultColor;
+            }
         }
 
         if (!TraceHitResult.bBlockingHit)
@@ -246,13 +261,15 @@ void UBlasterWeaponComponent::SetHUDCrosshairs(float DeltaTime)
     }
     if (!HUD) return;
 
-    FCrosshairs Crosshairs = FCrosshairs();
     if (CurrentWeapon)
     {
-        Crosshairs = CurrentWeapon->GetWeaponProps().Crosshairs;
+        Crosshairs.Center = CurrentWeapon->GetWeaponProps().Crosshairs.Center;
+        Crosshairs.Left = CurrentWeapon->GetWeaponProps().Crosshairs.Left;
+        Crosshairs.Right = CurrentWeapon->GetWeaponProps().Crosshairs.Right;
+        Crosshairs.Top = CurrentWeapon->GetWeaponProps().Crosshairs.Top;
+        Crosshairs.Bottom = CurrentWeapon->GetWeaponProps().Crosshairs.Bottom;
         Crosshairs.SpreadAngle = CurrentWeapon->GetWeaponProps().DefaultSpreadInDegrees * CalculateCurrentSpreadModifier(DeltaTime);
         CurrentSpreadAngle = Crosshairs.SpreadAngle;
-        GEngine->AddOnScreenDebugMessage(1, 0.0f, FColor::Yellow, FString::Printf(TEXT("CurrentSpreadAngle: %.2f"), CurrentSpreadAngle));
 
     }
     HUD->SetCrosshairs(Crosshairs);

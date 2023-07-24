@@ -85,6 +85,7 @@ private:
 
     void SetHUDCrosshairs(float DeltaTime);
 
+    FCrosshairs Crosshairs{FCrosshairs()};
     float CalculateCurrentSpreadModifier(float DeltaTime);
     float CurrentSpreadAngle{0.0f};
     float CrosshairsVelocityFactor{0.0f};
@@ -101,4 +102,10 @@ private:
     float CurrentFOV{90.0f};
 
     void InterpFOV(float DeltaTime);
+
+    UPROPERTY(Category = "UI|Crosshairs", EditDefaultsOnly)
+    FColor CrosshairsDefaultColor{FColor::White};
+
+    UPROPERTY(Category = "UI|Crosshairs", EditDefaultsOnly)
+    FColor CrosshairsEnemyColor{FColor::Red};
 };

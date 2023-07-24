@@ -30,6 +30,7 @@ ABlasterCharacter::ABlasterCharacter(const FObjectInitializer& ObjInit)
     FollowCamera->bUsePawnControlRotation = false;
     GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
     GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+    GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 
     OverheadWidget = CreateDefaultSubobject<UWidgetComponent>("OverheadWidget");
     check(OverheadWidget);

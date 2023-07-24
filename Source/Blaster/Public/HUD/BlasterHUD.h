@@ -22,6 +22,6 @@ public:
 private:
     FCrosshairs Crosshairs;
 
-    void DrawCrosshair(UTexture2D* Texture, const FVector2D& ViewportCenter, const FVector2D& Spreads);
+    void DrawCrosshair(UTexture2D* Texture, const FVector2D& ViewportCenter, const FVector2D& Spreads, const FColor& SpreadColor = FColor::White);
     float CurrentSpread{0.0f};
 };
