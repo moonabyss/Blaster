@@ -212,7 +212,7 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, b
         FVector End;
 
         FCollisionQueryParams QueryParams;
-        QueryParams.AddIgnoredActor(GetOwner());
+        QueryParams.AddIgnoredComponent(Cast<ABlasterCharacter>(GetOwner())->GetMesh());
 
         if (bWithSpread)
         {
