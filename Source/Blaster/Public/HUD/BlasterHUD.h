@@ -23,4 +23,5 @@ private:
     FCrosshairs Crosshairs;
 
     void DrawCrosshair(UTexture2D* Texture, const FVector2D& ViewportCenter, const FVector2D& Spreads);
+    float CurrentSpread{0.0f};
 };

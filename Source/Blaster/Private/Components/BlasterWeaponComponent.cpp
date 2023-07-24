@@ -160,6 +160,8 @@ void UBlasterWeaponComponent::Fire()
     TraceUnderCrosshairs(HitResult, true);
 
     ServerFire(HitResult.ImpactPoint);
+
+    CrosshairsShootingFactor = FMath::Min(CurrentWeapon->GetWeaponProps().SpreadModifierShootingMax, CrosshairsShootingFactor + CurrentWeapon->GetWeaponProps().SpreadModifierPerShoot);
 }
 
 void UBlasterWeaponComponent::ServerFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
@@ -286,7 +288,10 @@ float UBlasterWeaponComponent::CalculateCurrentSpreadModifier(float DeltaTime)
         CrosshairsAimFactor = FMath::FInterpTo(CrosshairsAimFactor, 0.0f, DeltaTime, 30.0f); 
     }
 
-    const float SpreadFactor = FMath::Max(0.0f, Result + CrosshairsVelocityFactor + CrosshairsInAirFactor - CrosshairsAimFactor);
+    // CrosshairsShootingFactor
+    CrosshairsShootingFactor = FMath::FInterpConstantTo(CrosshairsShootingFactor, 0.0f, DeltaTime, 4.0f);
+
+    const float SpreadFactor = FMath::Max(0.0f, Result + CrosshairsVelocityFactor + CrosshairsInAirFactor - CrosshairsAimFactor + CrosshairsShootingFactor);
     return SpreadFactor;
 }
 

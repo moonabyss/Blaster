@@ -15,6 +15,7 @@ void ABlasterHUD::DrawHUD()
     const auto PC = GetOwningPlayerController();
     float FOVAngle = PC->PlayerCameraManager->GetFOVAngle();
     const float Spread = ViewportSize.X / FOVAngle * Crosshairs.SpreadAngle / 2.0f;
+    CurrentSpread = FMath::FInterpTo(CurrentSpread, Spread, GetWorld()->DeltaTimeSeconds, 10.0f);
 
     if (Crosshairs.Center)
     {
@@ -23,22 +24,22 @@ void ABlasterHUD::DrawHUD()
     }
     if (Crosshairs.Left)
     {
-        FVector2D Spreads(-Spread, 0.0f);
+        FVector2D Spreads(-CurrentSpread, 0.0f);
         DrawCrosshair(Crosshairs.Left, ViewportCenter, Spreads);
     }
     if (Crosshairs.Right)
     {
-        FVector2D Spreads(Spread, 0.0f);
+        FVector2D Spreads(CurrentSpread, 0.0f);
         DrawCrosshair(Crosshairs.Right, ViewportCenter, Spreads);
     }
     if (Crosshairs.Top)
     {
-        FVector2D Spreads(0.0f, -Spread);
+        FVector2D Spreads(0.0f, -CurrentSpread);
         DrawCrosshair(Crosshairs.Top, ViewportCenter, Spreads);
     }
     if (Crosshairs.Bottom)
     {
-        FVector2D Spreads(0.0f, Spread);
+        FVector2D Spreads(0.0f, CurrentSpread);
         DrawCrosshair(Crosshairs.Bottom, ViewportCenter, Spreads);
     }
 }

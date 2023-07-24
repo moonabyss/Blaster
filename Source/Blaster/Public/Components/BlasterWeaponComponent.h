@@ -90,6 +90,7 @@ private:
     float CrosshairsVelocityFactor{0.0f};
     float CrosshairsInAirFactor{0.0f};
     float CrosshairsAimFactor{0.0f};
+    float CrosshairsShootingFactor{0.0f};
 
     FVector HitTarget;
     FVector HitTargetNoSpread;
