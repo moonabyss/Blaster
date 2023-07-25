@@ -3,6 +3,7 @@
 #include "Character/BlasterCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -28,6 +29,12 @@ ABlasterCharacter::ABlasterCharacter(const FObjectInitializer& ObjInit)
     check(FollowCamera);
     FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
     FollowCamera->bUsePawnControlRotation = false;
+
+    CameraCollisionComponent = CreateDefaultSubobject<USphereComponent>("CameraCollisionComponent");
+    CameraCollisionComponent->SetupAttachment(FollowCamera);
+    CameraCollisionComponent->SetSphereRadius(50.0f);
+    CameraCollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+
     GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
     GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
     GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
@@ -75,6 +82,9 @@ void ABlasterCharacter::BeginPlay()
     check(WeaponComponent);
     WeaponComponent->WeaponEquipped.AddUObject(this, &ThisClass::OnWeaponEquipped);
     WeaponComponent->WeaponUnequipped.AddUObject(this, &ThisClass::OnWeaponUnequipped);
+
+    CameraCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnCameraCollisionBeginOverlap);
+    CameraCollisionComponent->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnCameraCollisionEndOverlap);
 }
 
 void ABlasterCharacter::Tick(float DeltaTime)
@@ -137,7 +147,7 @@ void ABlasterCharacter::LookUp(float Value)
     AddControllerPitchInput(Value);
 }
 
-void ABlasterCharacter::Jump() 
+void ABlasterCharacter::Jump()
 {
     if (bIsCrouched)
     {
@@ -362,14 +372,14 @@ ETurningInPlace ABlasterCharacter::GetTurningInPlace() const
     return TurningInPlace;
 }
 
-void ABlasterCharacter::FirePressed() 
+void ABlasterCharacter::FirePressed()
 {
     if (!WeaponComponent) return;
 
     WeaponComponent->StartFire();
 }
 
-void ABlasterCharacter::FireReleased() 
+void ABlasterCharacter::FireReleased()
 {
     if (!WeaponComponent) return;
 
@@ -381,4 +391,33 @@ FVector ABlasterCharacter::GetHitTargetNoSpread() const
     if (!WeaponComponent) return FVector();
 
     return WeaponComponent->GetHitTargetNoSpread();
+}
+
+void ABlasterCharacter::OnCameraCollisionBeginOverlap(
+    UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    CheckCameraOverlap();
+}
+
+void ABlasterCharacter::OnCameraCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+    CheckCameraOverlap();
+}
+
+void ABlasterCharacter::CheckCameraOverlap() 
+{
+    const auto HideMesh = CameraCollisionComponent->IsOverlappingComponent(GetCapsuleComponent());
+    GetMesh()->SetOwnerNoSee(HideMesh);
+
+    TArray<USceneComponent*> MeshChildren;
+    GetMesh()->GetChildrenComponents(true, MeshChildren);
+
+    for (auto Child : MeshChildren)
+    {
+        const auto ChildGeometry = Cast<UPrimitiveComponent>(Child);
+        if (ChildGeometry)
+        {
+            ChildGeometry->SetOwnerNoSee(HideMesh);
+        }
+    }
 }

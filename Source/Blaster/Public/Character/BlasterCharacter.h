@@ -11,6 +11,7 @@
 #include "BlasterCharacter.generated.h"
 
 class UCameraComponent;
+class USphereComponent;
 class USpringArmComponent;
 class UWidgetComponent;
 class ABlasterBaseWeapon;
@@ -64,6 +65,9 @@ private:
     UCameraComponent* FollowCamera;
 
     UPROPERTY(Category = "Components", VisibleAnywhere)
+    USphereComponent* CameraCollisionComponent;
+
+    UPROPERTY(Category = "Components", VisibleAnywhere)
     UWidgetComponent* OverheadWidget;
 
     UPROPERTY(Category = "Components", VisibleAnywhere)
@@ -98,4 +102,12 @@ private:
     UPROPERTY(Replicated)
     ETurningInPlace TurningInPlace{ETurningInPlace::ETIP_NotTurning};
     void TurnInPlace(float DeltaTime);
+
+    UFUNCTION()
+    void OnCameraCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+    UFUNCTION()
+    void OnCameraCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+    void CheckCameraOverlap();
 };

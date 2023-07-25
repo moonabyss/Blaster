@@ -208,11 +208,14 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, b
     if (bScreenToWorld)
     {
         FVector Start = CrosshairWorldPosition;
+
+        if (IsValid(Character))
+        {
+            float DistanceToCharacter = (Character->GetActorLocation() - Start).Size();
+            Start += CrosshairWorldDirection * (DistanceToCharacter + 100.0f);
+        }
         // TODO: variable for trace distance
         FVector End;
-
-        FCollisionQueryParams QueryParams;
-        QueryParams.AddIgnoredComponent(Cast<ABlasterCharacter>(GetOwner())->GetMesh());
 
         if (bWithSpread)
         {
@@ -220,13 +223,13 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, b
             const auto HalfRad = FMath::DegreesToRadians(CurrentSpreadAngle / 2.0f);
             const FVector ShootDirection = FMath::VRandCone(CrosshairWorldDirection, HalfRad);
             End = Start + ShootDirection * 80000.0f;
-            GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility, QueryParams);
+            GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility);
         }
         else
         {
             // Aiming
             End = Start + CrosshairWorldDirection * 80000.0f;
-            GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility, QueryParams);
+            GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility);
 
             if (IsValid(TraceHitResult.GetActor()) && TraceHitResult.GetActor()->Implements<UInteractWithCrosshairs>())
             {
