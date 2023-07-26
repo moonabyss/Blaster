@@ -7,6 +7,8 @@
 #include "Particles/ParticleSystem.h"
 #include "Sound/SoundCue.h"
 
+#include "Interfaces/Hitable.h"
+
 ABlasterProjectile::ABlasterProjectile()
 {
     PrimaryActorTick.bCanEverTick = true;
@@ -50,6 +52,11 @@ void ABlasterProjectile::Tick(float DeltaTime)
 void ABlasterProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
     if (!GetWorld()) return;
+
+    if (IsValid(OtherActor) && OtherActor->Implements<UHitable>())
+    {
+        
+    }
 
     ProjectileMovementComponent->StopMovementImmediately();
     SpawnParticles();

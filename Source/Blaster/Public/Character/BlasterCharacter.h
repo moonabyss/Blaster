@@ -7,9 +7,11 @@
 
 #include "BlasterCoreTypes.h"
 #include "Interfaces/InteractWithCrosshairs.h"
+#include "Interfaces/Hitable.h"
 
 #include "BlasterCharacter.generated.h"
 
+class UAnimMontage;
 class UCameraComponent;
 class USphereComponent;
 class USpringArmComponent;
@@ -19,7 +21,7 @@ class UBlasterMovementComponent;
 class UBlasterWeaponComponent;
 
 UCLASS()
-class BLASTER_API ABlasterCharacter : public ACharacter, public IInteractWithCrosshairs
+class BLASTER_API ABlasterCharacter : public ACharacter, public IInteractWithCrosshairs, public IHitable
 {
     GENERATED_BODY()
 
@@ -110,4 +112,7 @@ private:
     void OnCameraCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
     void CheckCameraOverlap();
+
+    UPROPERTY(Category = "Combat", EditDefaultsOnly)
+    UAnimMontage* HitReactMontage;
 };
