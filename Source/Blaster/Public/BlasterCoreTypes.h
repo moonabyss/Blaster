@@ -3,6 +3,8 @@
 #pragma once
 #include "BlasterCoreTypes.generated.h"
 
+#define ECC_SkeletalMesh ECollisionChannel::ECC_GameTraceChannel1
+
 // weapon
 DECLARE_MULTICAST_DELEGATE(FOnWeaponEquippedDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnWeaponUnequippedDelegate);

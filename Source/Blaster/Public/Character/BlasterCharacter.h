@@ -45,6 +45,7 @@ public:
     float GetAimPitch() const;
     ETurningInPlace GetTurningInPlace() const;
     FVector GetHitTargetNoSpread() const;
+    virtual void HitByProjectile() override;
 
 protected:
     void MoveForward(float Value);
@@ -115,4 +116,9 @@ private:
 
     UPROPERTY(Category = "Combat", EditDefaultsOnly)
     UAnimMontage* HitReactMontage;
+
+    void PlayHitReactMontage();
+
+    UFUNCTION(NetMulticast, Unreliable)
+    void MulticastHit();
 };

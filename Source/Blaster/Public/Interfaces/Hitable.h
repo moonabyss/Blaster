@@ -18,4 +18,5 @@ class BLASTER_API IHitable
     GENERATED_BODY()
 
 public:
+    virtual void HitByProjectile() {}
 };

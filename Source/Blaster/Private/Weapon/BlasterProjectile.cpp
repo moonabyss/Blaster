@@ -21,6 +21,7 @@ ABlasterProjectile::ABlasterProjectile()
     CollisionBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
     CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
     CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
+    CollisionBox->SetCollisionResponseToChannel(ECC_SkeletalMesh, ECollisionResponse::ECR_Block);
 
     ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
     ProjectileMovementComponent->bRotationFollowsVelocity = true;
@@ -55,7 +56,8 @@ void ABlasterProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherA
 
     if (IsValid(OtherActor) && OtherActor->Implements<UHitable>())
     {
-        
+        auto Victim = Cast<IHitable>(OtherActor);
+        Victim->HitByProjectile();
     }
 
     ProjectileMovementComponent->StopMovementImmediately();

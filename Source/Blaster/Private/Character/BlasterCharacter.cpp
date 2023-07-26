@@ -36,6 +36,7 @@ ABlasterCharacter::ABlasterCharacter(const FObjectInitializer& ObjInit)
     CameraCollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 
     GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+    GetMesh()->SetCollisionObjectType(ECC_SkeletalMesh);
     GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
     GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 
@@ -420,4 +421,26 @@ void ABlasterCharacter::CheckCameraOverlap()
             ChildGeometry->SetOwnerNoSee(HideMesh);
         }
     }
+}
+
+void ABlasterCharacter::HitByProjectile() 
+{
+    MulticastHit();
+}
+
+void ABlasterCharacter::PlayHitReactMontage() 
+{
+    if (!IsValid(GetMesh()) || !HitReactMontage) return;
+    if (!WeaponComponent || !WeaponComponent->GetCurrentWeapon()) return;
+
+    if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+    {
+        AnimInstance->Montage_Play(HitReactMontage);
+        AnimInstance->Montage_JumpToSection("FromFront");
+    }
+}
+
+void ABlasterCharacter::MulticastHit_Implementation() 
+{
+    PlayHitReactMontage();
 }
