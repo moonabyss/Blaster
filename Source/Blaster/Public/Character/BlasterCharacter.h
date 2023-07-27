@@ -30,6 +30,7 @@ public:
     virtual void Tick(float DeltaTime) override;
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
     virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+    virtual void OnRep_ReplicatedMovement() override;
 
 protected:
     virtual void BeginPlay() override;
@@ -46,6 +47,7 @@ public:
     ETurningInPlace GetTurningInPlace() const;
     FVector GetHitTargetNoSpread() const;
     virtual void HitByProjectile() override;
+    bool ShouldRotateRootBone() { return bRotateRootBone; }
 
 protected:
     void MoveForward(float Value);
@@ -57,6 +59,8 @@ protected:
     void AimPressed();
     void AimReleased();
     void AimOffset(float DeltaTime);
+    void CalculateAO_Pitch();
+
     void FirePressed();
     void FireReleased();
 
@@ -93,16 +97,14 @@ private:
     UFUNCTION()
     void OnWeaponUnequipped();
 
-    UPROPERTY(Replicated)
     float AO_Yaw{0.0f};
-    UPROPERTY(Replicated)
+
     float AO_Pitch{0.0f};
 
     float InterpAO_Yaw{0.0f};
 
     FRotator StartingAimRotation{FRotator()};
 
-    UPROPERTY(Replicated)
     ETurningInPlace TurningInPlace{ETurningInPlace::ETIP_NotTurning};
     void TurnInPlace(float DeltaTime);
 
@@ -121,4 +123,10 @@ private:
 
     UFUNCTION(NetMulticast, Unreliable)
     void MulticastHit();
+
+    void SimProxiesTurn();
+
+    bool bRotateRootBone;
+
+    float TimeSinceLastMovementReplication{0.0f};
 };

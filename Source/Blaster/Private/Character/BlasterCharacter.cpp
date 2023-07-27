@@ -57,10 +57,10 @@ ABlasterCharacter::ABlasterCharacter(const FObjectInitializer& ObjInit)
     WeaponComponent->SetCharacter(this);
     WeaponComponent->SetIsReplicated(true);
 
-    /*if (auto PC = GetController<APlayerController>())
+    if (auto PC = GetController<APlayerController>())
     {
         PC->SetAudioListenerOverride(RootComponent, FVector::ZeroVector, FRotator::ZeroRotator);
-    }*/
+    }
 
     NetUpdateFrequency = 66.0f;
     MinNetUpdateFrequency = 33.0f;
@@ -71,9 +71,6 @@ void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
     DOREPLIFETIME_CONDITION(ABlasterCharacter, OverlappingWeapon, COND_OwnerOnly);
-    DOREPLIFETIME_CONDITION(ABlasterCharacter, AO_Yaw, COND_SimulatedOnly);
-    DOREPLIFETIME_CONDITION(ABlasterCharacter, AO_Pitch, COND_SimulatedOnly);
-    DOREPLIFETIME_CONDITION(ABlasterCharacter, TurningInPlace, COND_SimulatedOnly);
 }
 
 void ABlasterCharacter::BeginPlay()
@@ -96,6 +93,23 @@ void ABlasterCharacter::Tick(float DeltaTime)
     {
         AimOffset(DeltaTime);
     }
+    else
+    {
+        TimeSinceLastMovementReplication += DeltaTime;
+        if (TimeSinceLastMovementReplication > 0.25f)
+        {
+            OnRep_ReplicatedMovement();
+        }
+        CalculateAO_Pitch();
+    }
+}
+
+void ABlasterCharacter::OnRep_ReplicatedMovement() 
+{
+    Super::OnRep_ReplicatedMovement();
+
+    SimProxiesTurn();
+    TimeSinceLastMovementReplication = 0.0f;
 }
 
 void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -295,12 +309,12 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 {
     if (!IsValid(GetCurrentWeapon())) return;
 
-    FVector Velocity = GetVelocity().GetSafeNormal2D();
-    float Speed = Velocity.Size();
-    bool bIsInAir = GetCharacterMovement()->IsFalling();
+    const float Speed = GetVelocity().Size2D();
+    const bool bIsInAir = GetCharacterMovement()->IsFalling();
 
     if (FMath::IsNearlyZero(Speed) && !bIsInAir)  // standing still, not jumping
     {
+        bRotateRootBone = true;
         FRotator CurrentAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
         FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotation, StartingAimRotation);
         AO_Yaw = DeltaAimRotation.Yaw;
@@ -316,6 +330,7 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
 
     if (Speed > 0.0f || bIsInAir)  // running or jumping
     {
+        bRotateRootBone = false;
         StartingAimRotation = FRotator(0.0f, GetBaseAimRotation().Yaw, 0.0f);
         AO_Yaw = 0.0f;
         bUseControllerRotationYaw = true;
@@ -323,6 +338,11 @@ void ABlasterCharacter::AimOffset(float DeltaTime)
         TurningInPlace = ETurningInPlace::ETIP_NotTurning;
     }
 
+    CalculateAO_Pitch();
+}
+
+void ABlasterCharacter::CalculateAO_Pitch()
+{
     AO_Pitch = GetBaseAimRotation().Pitch;
     // fix for compressed data that come to the server
     if (AO_Pitch > 90.0f && !IsLocallyControlled())
@@ -443,4 +463,11 @@ void ABlasterCharacter::PlayHitReactMontage()
 void ABlasterCharacter::MulticastHit_Implementation() 
 {
     PlayHitReactMontage();
+}
+
+void ABlasterCharacter::SimProxiesTurn() 
+{
+    if (!WeaponComponent || !WeaponComponent->GetCurrentWeapon()) return;
+
+    bRotateRootBone = false;
 }

@@ -55,6 +55,7 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     bIsCrouched = BlasterCharacter->bIsCrouched;
     bIsAiming = BlasterCharacter->IsAiming();
     TurningInPlace = BlasterCharacter->GetTurningInPlace();
+    bRotateRootBone = BlasterCharacter->ShouldRotateRootBone();
     if (BlasterCharacter->GetCurrentWeapon())
     {
         AimSpeedModifier = BlasterCharacter->GetCurrentWeapon()->GetWeaponProps().AimSpeedModifier;

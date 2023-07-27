@@ -84,4 +84,7 @@ protected:
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
     bool bIsLocallyControlled;
+
+    UPROPERTY(Category = "Character", BlueprintReadOnly)
+    bool bRotateRootBone;
 };
