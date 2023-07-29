@@ -14,5 +14,4 @@ class BLASTER_API UBlasterMovementComponent : public UCharacterMovementComponent
 
 public:
     virtual float GetMaxSpeed() const override;
-
 };

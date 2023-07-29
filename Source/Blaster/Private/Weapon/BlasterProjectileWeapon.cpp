@@ -3,10 +3,10 @@
 #include "Weapon/BlasterProjectileWeapon.h"
 #include "Engine/SkeletalMeshSocket.h"
 
-#include "Weapon/BlasterProjectile.h"
 #include "BlasterCoreTypes.h"
+#include "Weapon/BlasterProjectile.h"
 
-void ABlasterProjectileWeapon::Fire(const FVector& HitTarget) 
+void ABlasterProjectileWeapon::Fire(const FVector& HitTarget)
 {
     Super::Fire(HitTarget);
 

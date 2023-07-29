@@ -69,7 +69,7 @@ protected:
 
     UPROPERTY(Category = "Movement", EditAnywhere)
     float LeanInterpSpeed{3.0f};
-    
+
     UPROPERTY(Category = "Movement", EditAnywhere)
     float AimInterpSpeed{10.0f};
 

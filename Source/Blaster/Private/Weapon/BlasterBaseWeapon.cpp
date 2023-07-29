@@ -59,8 +59,7 @@ void ABlasterBaseWeapon::BeginPlay()
     }
 }
 
-void ABlasterBaseWeapon::OnSphereBeginOverlap(
-    UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ABlasterBaseWeapon::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
     if (auto Player = Cast<ABlasterCharacter>(OtherActor))
     {
@@ -134,7 +133,7 @@ void ABlasterBaseWeapon::PlayFireAnimation()
     WeaponMesh->PlayAnimation(WeaponProperies.FireAnimation, false);
 }
 
-void ABlasterBaseWeapon::SpawnShell() 
+void ABlasterBaseWeapon::SpawnShell()
 {
     if (ShellClass && GetWorld())
     {

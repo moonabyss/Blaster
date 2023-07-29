@@ -9,7 +9,7 @@ BraceWrapping:
   AfterClass: true
   AfterCaseLabel: true
   BeforeLambdaBody: true
-ColumnLimit: '200'
+ColumnLimit: '2000'
 AccessModifierOffset: '-4'
 SortIncludes: true
 AllowShortBlocksOnASingleLine: Empty

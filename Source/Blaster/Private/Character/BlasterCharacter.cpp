@@ -104,7 +104,7 @@ void ABlasterCharacter::Tick(float DeltaTime)
     }
 }
 
-void ABlasterCharacter::OnRep_ReplicatedMovement() 
+void ABlasterCharacter::OnRep_ReplicatedMovement()
 {
     Super::OnRep_ReplicatedMovement();
 
@@ -414,8 +414,7 @@ FVector ABlasterCharacter::GetHitTargetNoSpread() const
     return WeaponComponent->GetHitTargetNoSpread();
 }
 
-void ABlasterCharacter::OnCameraCollisionBeginOverlap(
-    UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ABlasterCharacter::OnCameraCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
     CheckCameraOverlap();
 }
@@ -425,7 +424,7 @@ void ABlasterCharacter::OnCameraCollisionEndOverlap(UPrimitiveComponent* Overlap
     CheckCameraOverlap();
 }
 
-void ABlasterCharacter::CheckCameraOverlap() 
+void ABlasterCharacter::CheckCameraOverlap()
 {
     const auto HideMesh = CameraCollisionComponent->IsOverlappingComponent(GetCapsuleComponent());
     GetMesh()->SetOwnerNoSee(HideMesh);
@@ -443,12 +442,12 @@ void ABlasterCharacter::CheckCameraOverlap()
     }
 }
 
-void ABlasterCharacter::HitByProjectile() 
+void ABlasterCharacter::HitByProjectile()
 {
     MulticastHit();
 }
 
-void ABlasterCharacter::PlayHitReactMontage() 
+void ABlasterCharacter::PlayHitReactMontage()
 {
     if (!IsValid(GetMesh()) || !HitReactMontage) return;
     if (!WeaponComponent || !WeaponComponent->GetCurrentWeapon()) return;
@@ -460,12 +459,12 @@ void ABlasterCharacter::PlayHitReactMontage()
     }
 }
 
-void ABlasterCharacter::MulticastHit_Implementation() 
+void ABlasterCharacter::MulticastHit_Implementation()
 {
     PlayHitReactMontage();
 }
 
-void ABlasterCharacter::SimProxiesTurn() 
+void ABlasterCharacter::SimProxiesTurn()
 {
     if (!WeaponComponent || !WeaponComponent->GetCurrentWeapon()) return;
 

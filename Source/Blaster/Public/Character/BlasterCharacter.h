@@ -6,8 +6,8 @@
 #include "GameFramework/Character.h"
 
 #include "BlasterCoreTypes.h"
-#include "Interfaces/InteractWithCrosshairs.h"
 #include "Interfaces/Hitable.h"
+#include "Interfaces/InteractWithCrosshairs.h"
 
 #include "BlasterCharacter.generated.h"
 

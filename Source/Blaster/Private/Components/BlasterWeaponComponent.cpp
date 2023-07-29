@@ -273,7 +273,6 @@ void UBlasterWeaponComponent::SetHUDCrosshairs(float DeltaTime)
         Crosshairs.Bottom = CurrentWeapon->GetWeaponProps().Crosshairs.Bottom;
         Crosshairs.SpreadAngle = CurrentWeapon->GetWeaponProps().DefaultSpreadInDegrees * CalculateCurrentSpreadModifier(DeltaTime);
         CurrentSpreadAngle = Crosshairs.SpreadAngle;
-
     }
     HUD->SetCrosshairs(Crosshairs);
 }
@@ -305,7 +304,7 @@ float UBlasterWeaponComponent::CalculateCurrentSpreadModifier(float DeltaTime)
     }
     else
     {
-        CrosshairsAimFactor = FMath::FInterpTo(CrosshairsAimFactor, 0.0f, DeltaTime, 30.0f); 
+        CrosshairsAimFactor = FMath::FInterpTo(CrosshairsAimFactor, 0.0f, DeltaTime, 30.0f);
     }
 
     // CrosshairsShootingFactor

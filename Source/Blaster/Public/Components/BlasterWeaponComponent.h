@@ -44,12 +44,11 @@ public:
     FVector GetHitTargetNoSpread() const { return HitTargetNoSpread; }
 
 protected:
-
 private:
     TObjectPtr<ABlasterCharacter> Character{nullptr};
     TObjectPtr<ABlasterPlayerController> Controller{nullptr};
     TObjectPtr<ABlasterHUD> HUD{nullptr};
-    
+
     UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_CurrentWeapon)
     ABlasterBaseWeapon* CurrentWeapon{nullptr};
 

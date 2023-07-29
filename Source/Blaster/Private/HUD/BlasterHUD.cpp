@@ -48,10 +48,7 @@ void ABlasterHUD::DrawCrosshair(UTexture2D* Texture, const FVector2D& ViewportCe
 {
     const float TextureWidth = Texture->GetSizeX();
     const float TextureHeight = Texture->GetSizeY();
-    const FVector2D TextuteDrawPoint(
-        ViewportCenter.X - TextureWidth / 2.0f + Spreads.X,
-        ViewportCenter.Y - TextureHeight / 2.0f + Spreads.Y
-    );
+    const FVector2D TextuteDrawPoint(ViewportCenter.X - TextureWidth / 2.0f + Spreads.X, ViewportCenter.Y - TextureHeight / 2.0f + Spreads.Y);
 
     DrawTexture(Texture, TextuteDrawPoint.X, TextuteDrawPoint.Y, TextureWidth, TextureHeight, 0.0f, 0.0f, 1.0f, 1.0f, SpreadColor);
 }
