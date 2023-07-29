@@ -107,4 +107,10 @@ private:
 
     UPROPERTY(Category = "UI|Crosshairs", EditDefaultsOnly)
     FColor CrosshairsEnemyColor{FColor::Red};
+
+    FTimerHandle FireTimer;
+
+    void StartFireTimer();
+    void FireTimerFinished();
+    bool bCanFire{true};
 };

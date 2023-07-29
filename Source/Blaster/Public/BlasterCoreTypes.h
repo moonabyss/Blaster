@@ -113,6 +113,12 @@ struct FWeaponProps
     UPROPERTY(EditAnywhere)
     float SpreadModifierShootingMax;
 
+    UPROPERTY(EditAnywhere)
+    bool bIsAutomatic;
+
+    UPROPERTY(EditAnywhere)
+    float FireDelay;
+
     FWeaponProps()
     {
         WeaponType = EWeaponType::EWT_MAX;
@@ -127,6 +133,8 @@ struct FWeaponProps
         SpreadModifierZoom = 0.0f;
         SpreadModifierPerShoot = 0.0f;
         SpreadModifierShootingMax = 0.0f;
+        bIsAutomatic = false;
+        FireDelay = 0.0f;
     }
 };
 

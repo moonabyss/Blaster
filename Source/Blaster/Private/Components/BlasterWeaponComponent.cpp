@@ -5,6 +5,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "TimerManager.h"
 
 #include "BlasterCoreTypes.h"
 #include "Character/BlasterAnimInstance.h"
@@ -155,18 +156,24 @@ void UBlasterWeaponComponent::ServerSetWantsFire_Implementation(bool bIsFiring)
 void UBlasterWeaponComponent::Fire()
 {
     if (!IsValid(CurrentWeapon)) return;
+    if (!Character || !bCanFire) return;
 
-    FHitResult HitResult;
-    TraceUnderCrosshairs(HitResult, true);
+    if (Character->IsLocallyControlled())
+    {
+        FHitResult HitResult;
+        TraceUnderCrosshairs(HitResult, true);
+        ServerFire(HitResult.ImpactPoint);
+        CrosshairsShootingFactor = FMath::Min(CurrentWeapon->GetWeaponProps().SpreadModifierShootingMax, CrosshairsShootingFactor + CurrentWeapon->GetWeaponProps().SpreadModifierPerShoot);
 
-    ServerFire(HitResult.ImpactPoint);
-
-    CrosshairsShootingFactor = FMath::Min(CurrentWeapon->GetWeaponProps().SpreadModifierShootingMax, CrosshairsShootingFactor + CurrentWeapon->GetWeaponProps().SpreadModifierPerShoot);
+        StartFireTimer();
+        bCanFire = false;
+    }
 }
 
 void UBlasterWeaponComponent::ServerFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
     MulticastFire(TraceHitTarget);
+    StartFireTimer();
 }
 
 void UBlasterWeaponComponent::MulticastFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
@@ -187,6 +194,22 @@ void UBlasterWeaponComponent::PlayFireMontage()
         AnimInstance->Montage_Play(GetCurrentWeapon()->GetWeaponProps().BlasterFireMontage);
         const FName SectionName = IsAiming() ? WeaponAimMontageSectionName : WeaponHipMontageSectionName;
         AnimInstance->Montage_JumpToSection(SectionName);
+    }
+}
+
+void UBlasterWeaponComponent::StartFireTimer()
+{
+    if (!IsValid(CurrentWeapon) || !Character) return;
+
+    Character->GetWorldTimerManager().SetTimer(FireTimer, this, &ThisClass::FireTimerFinished, CurrentWeapon->GetWeaponProps().FireDelay, false);
+}
+
+void UBlasterWeaponComponent::FireTimerFinished()
+{
+    bCanFire = true;
+    if (bWantsFire && CurrentWeapon->GetWeaponProps().bIsAutomatic)
+    {
+        Fire();
     }
 }
 
