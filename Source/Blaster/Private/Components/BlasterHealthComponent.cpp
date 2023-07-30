@@ -26,6 +26,13 @@ void UBlasterHealthComponent::BeginPlay()
     check(Character);
 
     SetHealth(MaxHealth);
+    HealthChangedDelegate.Broadcast(Health, MaxHealth);
+
+    //Character->OnTakeAnyDamage.AddDynamic(this, &ThisClass::OnTakeAnyDamageHandle);
+    if (AActor* ComponentOwner = GetOwner())
+    {
+        ComponentOwner->OnTakeAnyDamage.AddDynamic(this, &ThisClass::OnTakeAnyDamageHandle);
+    }
 }
 
 void UBlasterHealthComponent::SetCharacter(ABlasterCharacter* BlasterCharacter)
@@ -33,15 +40,22 @@ void UBlasterHealthComponent::SetCharacter(ABlasterCharacter* BlasterCharacter)
     Character = BlasterCharacter;
 }
 
-void UBlasterHealthComponent::SetHealth(float InHealth) 
+void UBlasterHealthComponent::SetHealth(float InHealth)
 {
-    if (!Character && !Character->HasAuthority()) return;
+    if (!Character || !Character->HasAuthority()) return;
 
     Health = InHealth;
+    HealthChangedDelegate.Broadcast(Health, MaxHealth);
 }
 
 void UBlasterHealthComponent::OnRep_Health(float PrevHealth) 
 {
-    UE_LOG(LogBlasterHealthComponent, Display, TEXT("Health: %f"), Health);
-    HealthChangedDelegate.Broadcast(Health);
+    HealthChangedDelegate.Broadcast(Health, MaxHealth);
 }
+
+void UBlasterHealthComponent::OnTakeAnyDamageHandle(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser) 
+{
+    Health = FMath::Clamp(Health - Damage, 0.0f, MaxHealth);
+    HealthChangedDelegate.Broadcast(Health, MaxHealth);
+}
+

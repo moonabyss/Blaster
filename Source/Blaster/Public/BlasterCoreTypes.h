@@ -172,4 +172,4 @@ enum class ETurningInPlace : uint8
 };
 
 // Health
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChangedDelegate, float NewHealth);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChangedDelegate, float NewHealth, float MaxHealth);

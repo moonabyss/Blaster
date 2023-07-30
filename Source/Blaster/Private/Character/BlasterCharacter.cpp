@@ -83,8 +83,11 @@ void ABlasterCharacter::BeginPlay()
     check(OverheadWidget);
     check(WeaponComponent);
     check(HealthComponent);
+
     WeaponComponent->WeaponEquipped.AddUObject(this, &ThisClass::OnWeaponEquipped);
     WeaponComponent->WeaponUnequipped.AddUObject(this, &ThisClass::OnWeaponUnequipped);
+
+
 
     CameraCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnCameraCollisionBeginOverlap);
     CameraCollisionComponent->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnCameraCollisionEndOverlap);

@@ -16,9 +16,15 @@ class BLASTER_API UHealth : public UUserWidget
     GENERATED_BODY()
 
 public:
+    virtual bool Initialize() override;
+
+public:
     UPROPERTY(meta = (BindWidget))
     UProgressBar* HealthBar;
 
     UPROPERTY(meta = (BindWidget))
     UTextBlock* HealthText;
+
+private:
+    void OnHealthChanged(float NewHealth, float MaxHealth);
 };
