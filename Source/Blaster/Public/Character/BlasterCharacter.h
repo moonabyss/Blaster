@@ -17,6 +17,7 @@ class USphereComponent;
 class USpringArmComponent;
 class UWidgetComponent;
 class ABlasterBaseWeapon;
+class UBlasterHealthComponent;
 class UBlasterMovementComponent;
 class UBlasterWeaponComponent;
 
@@ -79,6 +80,9 @@ private:
 
     UPROPERTY(Category = "Components", VisibleAnywhere)
     UBlasterWeaponComponent* WeaponComponent;
+
+    UPROPERTY(Category = "Components", VisibleAnywhere)
+    UBlasterHealthComponent* HealthComponent;
 
     UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
     ABlasterBaseWeapon* OverlappingWeapon{nullptr};

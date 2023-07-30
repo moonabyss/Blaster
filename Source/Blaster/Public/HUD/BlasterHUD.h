@@ -9,6 +9,8 @@
 
 #include "BlasterHUD.generated.h"
 
+class UCharacterOverlay;
+
 UCLASS()
 class BLASTER_API ABlasterHUD : public AHUD
 {
@@ -17,6 +19,10 @@ class BLASTER_API ABlasterHUD : public AHUD
 public:
     virtual void DrawHUD() override;
 
+protected:
+    virtual void BeginPlay() override;
+
+public:
     void SetCrosshairs(const FCrosshairs& InCrosshairs) { Crosshairs = InCrosshairs; };
 
 private:
@@ -24,4 +30,11 @@ private:
 
     void DrawCrosshair(UTexture2D* Texture, const FVector2D& ViewportCenter, const FVector2D& Spreads, const FColor& SpreadColor = FColor::White);
     float CurrentSpread{0.0f};
+
+    UPROPERTY(EditDefaultsOnly)
+    TSubclassOf<UUserWidget> CharacterOverlayClass;
+
+    UCharacterOverlay* CharacterOverlay;
+
+    void AddCharacterOverlay();
 };

@@ -9,6 +9,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
+#include "Components/BlasterHealthComponent.h"
 #include "Components/BlasterMovementComponent.h"
 #include "Components/BlasterWeaponComponent.h"
 #include "HUD/OverheadWidget.h"
@@ -41,7 +42,6 @@ ABlasterCharacter::ABlasterCharacter(const FObjectInitializer& ObjInit)
     GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 
     OverheadWidget = CreateDefaultSubobject<UWidgetComponent>("OverheadWidget");
-    check(OverheadWidget);
     OverheadWidget->SetupAttachment(GetRootComponent());
     OverheadWidget->SetWidgetSpace(EWidgetSpace::Screen);
     OverheadWidget->SetDrawAtDesiredSize(true);
@@ -53,9 +53,12 @@ ABlasterCharacter::ABlasterCharacter(const FObjectInitializer& ObjInit)
     GetCharacterMovement()->RotationRate = FRotator(0.0f, 0.0f, 720.0f);
 
     WeaponComponent = CreateDefaultSubobject<UBlasterWeaponComponent>("WeaponComponent");
-    check(WeaponComponent);
     WeaponComponent->SetCharacter(this);
     WeaponComponent->SetIsReplicated(true);
+
+    HealthComponent = CreateDefaultSubobject<UBlasterHealthComponent>("HealthComponent");
+    HealthComponent->SetCharacter(this);
+    HealthComponent->SetIsReplicated(true);
 
     if (auto PC = GetController<APlayerController>())
     {
@@ -77,7 +80,9 @@ void ABlasterCharacter::BeginPlay()
 {
     Super::BeginPlay();
 
+    check(OverheadWidget);
     check(WeaponComponent);
+    check(HealthComponent);
     WeaponComponent->WeaponEquipped.AddUObject(this, &ThisClass::OnWeaponEquipped);
     WeaponComponent->WeaponUnequipped.AddUObject(this, &ThisClass::OnWeaponUnequipped);
 

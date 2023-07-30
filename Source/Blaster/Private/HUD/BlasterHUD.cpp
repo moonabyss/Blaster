@@ -1,6 +1,16 @@
 // Blaster Multiplayer Game. All rights reserved.
 
 #include "HUD/BlasterHUD.h"
+#include "GameFramework/PlayerController.h"
+
+#include "HUD/CharacterOverlay.h"
+
+void ABlasterHUD::BeginPlay() 
+{
+    Super::BeginPlay();
+
+    AddCharacterOverlay();
+}
 
 void ABlasterHUD::DrawHUD()
 {
@@ -51,4 +61,15 @@ void ABlasterHUD::DrawCrosshair(UTexture2D* Texture, const FVector2D& ViewportCe
     const FVector2D TextuteDrawPoint(ViewportCenter.X - TextureWidth / 2.0f + Spreads.X, ViewportCenter.Y - TextureHeight / 2.0f + Spreads.Y);
 
     DrawTexture(Texture, TextuteDrawPoint.X, TextuteDrawPoint.Y, TextureWidth, TextureHeight, 0.0f, 0.0f, 1.0f, 1.0f, SpreadColor);
+}
+
+void ABlasterHUD::AddCharacterOverlay() 
+{
+    if (!CharacterOverlayClass) return;
+
+    if (auto PC = GetOwningPlayerController())
+    {
+        CharacterOverlay = CreateWidget<UCharacterOverlay>(PC, CharacterOverlayClass);
+        CharacterOverlay->AddToViewport();
+    }
 }

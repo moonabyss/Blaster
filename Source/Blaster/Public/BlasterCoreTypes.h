@@ -170,3 +170,6 @@ enum class ETurningInPlace : uint8
 
     ETIP_MAX UMETA(Hidden)
 };
+
+// Health
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChangedDelegate, float NewHealth);
