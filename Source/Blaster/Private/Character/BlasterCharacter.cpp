@@ -33,7 +33,8 @@ ABlasterCharacter::ABlasterCharacter(const FObjectInitializer& ObjInit)
 
     CameraCollisionComponent = CreateDefaultSubobject<USphereComponent>("CameraCollisionComponent");
     CameraCollisionComponent->SetupAttachment(FollowCamera);
-    CameraCollisionComponent->SetSphereRadius(50.0f);
+    CameraCollisionComponent->SetSphereRadius(200.0f);
+    CameraCollisionComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldStatic);
     CameraCollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 
     GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
