@@ -33,8 +33,8 @@ bool UHealth::Initialize()
 
 void UHealth::OnHealthChanged(float NewHealth, float MaxHealth)
 {
-    const auto Health = NewHealth / 100.0f;
+    const auto HealthPercent = NewHealth / MaxHealth;
 
-    HealthBar->SetPercent(Health);
-    HealthText->SetText(FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), NewHealth, MaxHealth)));
+    HealthBar->SetPercent(HealthPercent);
+    HealthText->SetText(FText::FromString(FString::Printf(TEXT("%.0f/%.0f"), NewHealth, MaxHealth)));
 }

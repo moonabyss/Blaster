@@ -28,7 +28,6 @@ void UBlasterHealthComponent::BeginPlay()
     SetHealth(MaxHealth);
     HealthChangedDelegate.Broadcast(Health, MaxHealth);
 
-    //Character->OnTakeAnyDamage.AddDynamic(this, &ThisClass::OnTakeAnyDamageHandle);
     if (AActor* ComponentOwner = GetOwner())
     {
         ComponentOwner->OnTakeAnyDamage.AddDynamic(this, &ThisClass::OnTakeAnyDamageHandle);
