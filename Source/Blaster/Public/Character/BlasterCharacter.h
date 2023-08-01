@@ -49,6 +49,7 @@ public:
     FVector GetHitTargetNoSpread() const;
     virtual void HitByProjectile() override;
     bool ShouldRotateRootBone() { return bRotateRootBone; }
+    void Elim();
 
 protected:
     void MoveForward(float Value);

@@ -479,3 +479,8 @@ void ABlasterCharacter::SimProxiesTurn()
 
     bRotateRootBone = false;
 }
+
+void ABlasterCharacter::Elim() 
+{
+
+}
