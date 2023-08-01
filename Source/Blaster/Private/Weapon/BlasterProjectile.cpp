@@ -34,11 +34,13 @@ void ABlasterProjectile::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (!IsValid(BulletProps.BulletTracer)) return;
-    TracerComponent = UGameplayStatics::SpawnEmitterAttached(BulletProps.BulletTracer, CollisionBox, FName(), GetActorLocation(), GetActorRotation(), EAttachLocation::KeepWorldPosition);
-
     if (HasAuthority())
     {
+        if (IsValid(BulletProps.BulletTracer))
+        {
+            TracerComponent = UGameplayStatics::SpawnEmitterAttached(BulletProps.BulletTracer, CollisionBox, FName(), GetActorLocation(), GetActorRotation(), EAttachLocation::KeepWorldPosition);
+        }
+
         ProjectileMovementComponent->Velocity = ShotDirection * ProjectileMovementComponent->InitialSpeed;
         CollisionBox->IgnoreActorWhenMoving(GetOwner(), true);
         CollisionBox->OnComponentHit.AddDynamic(this, &ThisClass::OnHit);
@@ -52,14 +54,6 @@ void ABlasterProjectile::Tick(float DeltaTime)
 
 void ABlasterProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-    if (!GetWorld()) return;
-
-    if (IsValid(OtherActor) && OtherActor->Implements<UHitable>())
-    {
-        auto Victim = Cast<IHitable>(OtherActor);
-        Victim->HitByProjectile();
-    }
-
     ProjectileMovementComponent->StopMovementImmediately();
     SpawnParticles();
     SpawnSound();

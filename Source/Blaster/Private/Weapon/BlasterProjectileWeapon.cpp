@@ -29,6 +29,7 @@ void ABlasterProjectileWeapon::MulticastSpawnProjectile_Implementation(const FVe
     {
         Projectile->SetShotDirection(Direction);
         Projectile->SetOwner(GetOwner());
+        Projectile->SetInstigator(Cast<APawn>(GetOwner()));
         Projectile->FinishSpawning(SpawnTransform);
     }
 }
