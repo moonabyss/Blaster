@@ -153,10 +153,14 @@ void UBlasterWeaponComponent::ServerSetWantsFire_Implementation(bool bIsFiring)
     bWantsFire = bIsFiring;
 }
 
+bool UBlasterWeaponComponent::CanShoot() const 
+{
+    return Character && Character->IsAlive() && bCanFire;
+}
+
 void UBlasterWeaponComponent::Fire()
 {
-    if (!IsValid(CurrentWeapon)) return;
-    if (!Character || !bCanFire) return;
+    if (!CanShoot() || !IsValid(CurrentWeapon)) return;
 
     if (Character->IsLocallyControlled())
     {

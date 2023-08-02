@@ -113,4 +113,5 @@ private:
     void StartFireTimer();
     void FireTimerFinished();
     bool bCanFire{true};
+    bool CanShoot() const;
 };

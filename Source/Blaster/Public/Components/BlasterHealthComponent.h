@@ -26,8 +26,9 @@ protected:
 public:
     FOnHealthChangedDelegate HealthChangedDelegate;
 
+    bool IsAlive() const { return Health > 0.0f; }
+
     void SetCharacter(ABlasterCharacter* BlasterCharacter);
-    void SetHealth(float InHealth);
 
 private:
     UPROPERTY(Category = "Player Stats", EditAnywhere)

@@ -88,8 +88,6 @@ void ABlasterCharacter::BeginPlay()
     WeaponComponent->WeaponEquipped.AddUObject(this, &ThisClass::OnWeaponEquipped);
     WeaponComponent->WeaponUnequipped.AddUObject(this, &ThisClass::OnWeaponUnequipped);
 
-
-
     CameraCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnCameraCollisionBeginOverlap);
     CameraCollisionComponent->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnCameraCollisionEndOverlap);
 }
@@ -453,7 +451,10 @@ void ABlasterCharacter::CheckCameraOverlap()
 
 void ABlasterCharacter::HitByProjectile()
 {
-    MulticastHit();
+    if (IsAlive())
+    {
+        MulticastHit();
+    }
 }
 
 void ABlasterCharacter::PlayHitReactMontage()
@@ -480,7 +481,9 @@ void ABlasterCharacter::SimProxiesTurn()
     bRotateRootBone = false;
 }
 
-void ABlasterCharacter::Elim() 
+bool ABlasterCharacter::IsAlive() const
 {
-
+    return HealthComponent && HealthComponent->IsAlive();
 }
+
+void ABlasterCharacter::Elim() {}

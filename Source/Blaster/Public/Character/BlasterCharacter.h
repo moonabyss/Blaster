@@ -50,6 +50,7 @@ public:
     virtual void HitByProjectile() override;
     bool ShouldRotateRootBone() { return bRotateRootBone; }
     void Elim();
+    bool IsAlive() const;
 
 protected:
     void MoveForward(float Value);

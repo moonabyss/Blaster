@@ -4,6 +4,8 @@
 #include "Net/UnrealNetwork.h"
 
 #include "Character/BlasterCharacter.h"
+#include "Character/BlasterPlayerController.h"
+#include "GameMode/BlasterGameMode.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBlasterHealthComponent, All, All);
 
@@ -25,7 +27,7 @@ void UBlasterHealthComponent::BeginPlay()
 
     check(Character);
 
-    SetHealth(MaxHealth);
+    Health = MaxHealth;
     HealthChangedDelegate.Broadcast(Health, MaxHealth);
 
     if (AActor* ComponentOwner = GetOwner())
@@ -42,14 +44,6 @@ void UBlasterHealthComponent::SetCharacter(ABlasterCharacter* BlasterCharacter)
     Character = BlasterCharacter;
 }
 
-void UBlasterHealthComponent::SetHealth(float InHealth)
-{
-    if (!Character || !Character->HasAuthority()) return;
-
-    Health = InHealth;
-    HealthChangedDelegate.Broadcast(Health, MaxHealth);
-}
-
 void UBlasterHealthComponent::OnRep_Health(float PrevHealth)
 {
     HealthChangedDelegate.Broadcast(Health, MaxHealth);
@@ -58,5 +52,21 @@ void UBlasterHealthComponent::OnRep_Health(float PrevHealth)
 void UBlasterHealthComponent::OnTakeAnyDamageHandle(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
     Health = FMath::Clamp(Health - Damage, 0.0f, MaxHealth);
+
+    if (FMath::IsNearlyZero(Health))
+    {
+        Health = 0.0f;
+
+        auto BlasterGameMode = GetWorld()->GetAuthGameMode<ABlasterGameMode>();
+        auto PlayerController = Cast<ABlasterPlayerController>(Character->Controller);
+        auto AttackerController = Cast<ABlasterPlayerController>(InstigatedBy);
+        if (BlasterGameMode && PlayerController && AttackerController)
+        {
+            BlasterGameMode->PlayerEliminated(Character, PlayerController, AttackerController);
+        }
+
+        // DIE
+    }
+    
     HealthChangedDelegate.Broadcast(Health, MaxHealth);
 }
