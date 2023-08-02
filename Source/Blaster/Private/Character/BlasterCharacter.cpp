@@ -12,6 +12,7 @@
 #include "Components/BlasterHealthComponent.h"
 #include "Components/BlasterMovementComponent.h"
 #include "Components/BlasterWeaponComponent.h"
+#include "GameMode/BlasterGameMode.h"
 #include "HUD/OverheadWidget.h"
 #include "Weapon/BlasterBaseWeapon.h"
 
@@ -19,6 +20,7 @@ ABlasterCharacter::ABlasterCharacter(const FObjectInitializer& ObjInit)
     : Super(ObjInit.SetDefaultSubobjectClass<UBlasterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
     PrimaryActorTick.bCanEverTick = true;
+    SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>("CameraBoom");
     check(CameraBoom);
@@ -474,16 +476,6 @@ void ABlasterCharacter::PlayHitReactMontage()
     }
 }
 
-void ABlasterCharacter::PlayElimMontage()
-{
-    if (!IsValid(GetMesh()) || !ElimMontage) return;
-
-    if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
-    {
-        AnimInstance->Montage_Play(ElimMontage);
-    }
-}
-
 void ABlasterCharacter::SimProxiesTurn()
 {
     if (!WeaponComponent || !WeaponComponent->GetCurrentWeapon()) return;
@@ -499,6 +491,7 @@ bool ABlasterCharacter::IsAlive() const
 void ABlasterCharacter::Elim()
 {
     MulticastElim();
+    GetWorldTimerManager().SetTimer(ElimTimer, this, &ThisClass::ElimTimerFinished, ElimDelay);
 }
 
 void ABlasterCharacter::MulticastElim_Implementation()
@@ -507,5 +500,24 @@ void ABlasterCharacter::MulticastElim_Implementation()
     {
         bIsElimmed = true;
         PlayElimMontage();
+    }
+}
+
+void ABlasterCharacter::PlayElimMontage()
+{
+    if (!IsValid(GetMesh()) || !ElimMontage) return;
+
+    if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+    {
+        AnimInstance->Montage_Play(ElimMontage);
+    }
+}
+
+void ABlasterCharacter::ElimTimerFinished() 
+{
+    auto BlasterGameMode = GetWorld()->GetAuthGameMode<ABlasterGameMode>();
+    if (BlasterGameMode)
+    {
+        BlasterGameMode->RequestRespawn(this, Controller);
     }
 }

@@ -50,9 +50,6 @@ public:
     virtual void HitByProjectile() override;
     bool ShouldRotateRootBone() { return bRotateRootBone; }
     void Elim();
-
-    UFUNCTION(NetMulticast, Reliable)
-    void MulticastElim();
     bool IsElimmed() const { return bIsElimmed; }
     bool IsAlive() const;
 
@@ -131,13 +128,6 @@ private:
 
     void PlayHitReactMontage();
 
-    UPROPERTY(Category = "Combat", EditDefaultsOnly)
-    UAnimMontage* ElimMontage{nullptr};
-
-    void PlayElimMontage();
-
-    bool bIsElimmed{false};
-
     UFUNCTION(NetMulticast, Unreliable)
     void MulticastHit();
 
@@ -146,4 +136,21 @@ private:
     bool bRotateRootBone;
 
     float TimeSinceLastMovementReplication{0.0f};
+
+    UPROPERTY(Category = "Combat", EditDefaultsOnly)
+    UAnimMontage* ElimMontage{nullptr};
+
+    void PlayElimMontage();
+
+    bool bIsElimmed{false};
+
+    UFUNCTION(NetMulticast, Reliable)
+    void MulticastElim();
+
+    UPROPERTY(Category = "Combat", EditDefaultsOnly)
+    float ElimDelay{3.0f};
+
+    FTimerHandle ElimTimer;
+
+    void ElimTimerFinished();
 };
