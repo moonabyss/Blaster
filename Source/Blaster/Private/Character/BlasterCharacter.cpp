@@ -457,6 +457,11 @@ void ABlasterCharacter::HitByProjectile()
     }
 }
 
+void ABlasterCharacter::MulticastHit_Implementation()
+{
+    PlayHitReactMontage();
+}
+
 void ABlasterCharacter::PlayHitReactMontage()
 {
     if (!IsValid(GetMesh()) || !HitReactMontage) return;
@@ -469,9 +474,14 @@ void ABlasterCharacter::PlayHitReactMontage()
     }
 }
 
-void ABlasterCharacter::MulticastHit_Implementation()
+void ABlasterCharacter::PlayElimMontage()
 {
-    PlayHitReactMontage();
+    if (!IsValid(GetMesh()) || !ElimMontage) return;
+
+    if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+    {
+        AnimInstance->Montage_Play(ElimMontage);
+    }
 }
 
 void ABlasterCharacter::SimProxiesTurn()
@@ -486,4 +496,16 @@ bool ABlasterCharacter::IsAlive() const
     return HealthComponent && HealthComponent->IsAlive();
 }
 
-void ABlasterCharacter::Elim() {}
+void ABlasterCharacter::Elim()
+{
+    MulticastElim();
+}
+
+void ABlasterCharacter::MulticastElim_Implementation()
+{
+    if (!bIsElimmed)
+    {
+        bIsElimmed = true;
+        PlayElimMontage();
+    }
+}

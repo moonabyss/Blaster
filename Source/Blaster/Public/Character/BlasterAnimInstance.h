@@ -87,4 +87,7 @@ protected:
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
     bool bRotateRootBone;
+
+    UPROPERTY(Category = "Character", BlueprintReadOnly)
+    bool bIsElimmed;
 };

@@ -7,5 +7,8 @@
 
 void ABlasterGameMode::PlayerEliminated(ABlasterCharacter* ElimmedCharacter, ABlasterPlayerController* VictimController, ABlasterPlayerController* AttackerController)
 {
-
+    if (IsValid(ElimmedCharacter))
+    {
+        ElimmedCharacter->Elim();
+    }
 }

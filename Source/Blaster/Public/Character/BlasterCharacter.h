@@ -50,6 +50,10 @@ public:
     virtual void HitByProjectile() override;
     bool ShouldRotateRootBone() { return bRotateRootBone; }
     void Elim();
+
+    UFUNCTION(NetMulticast, Reliable)
+    void MulticastElim();
+    bool IsElimmed() const { return bIsElimmed; }
     bool IsAlive() const;
 
 protected:
@@ -123,9 +127,16 @@ private:
     void CheckCameraOverlap();
 
     UPROPERTY(Category = "Combat", EditDefaultsOnly)
-    UAnimMontage* HitReactMontage;
+    UAnimMontage* HitReactMontage{nullptr};
 
     void PlayHitReactMontage();
+
+    UPROPERTY(Category = "Combat", EditDefaultsOnly)
+    UAnimMontage* ElimMontage{nullptr};
+
+    void PlayElimMontage();
+
+    bool bIsElimmed{false};
 
     UFUNCTION(NetMulticast, Unreliable)
     void MulticastHit();
