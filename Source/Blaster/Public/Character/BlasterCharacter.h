@@ -174,4 +174,6 @@ private:
     // Material instance set on the Blueprint, used with the dynamic material instance
     UPROPERTY(Category = "Combat", EditDefaultsOnly)
     UMaterialInstance* DissolveMaterialInstance;
+
+    void StopMovement();
 };

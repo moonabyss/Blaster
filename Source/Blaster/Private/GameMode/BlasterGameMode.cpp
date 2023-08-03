@@ -1,6 +1,7 @@
 // Blaster Multiplayer Game. All rights reserved.
 
 #include "GameMode/BlasterGameMode.h"
+#include "GameFramework/Controller.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -15,7 +16,7 @@ void ABlasterGameMode::PlayerEliminated(ABlasterCharacter* ElimmedCharacter, ABl
     }
 }
 
-void ABlasterGameMode::RequestRespawn(ACharacter* ElimmedCharacter, AController* ElimmedController) 
+void ABlasterGameMode::RequestRespawn(ACharacter* ElimmedCharacter, AController* ElimmedController)
 {
     if (ElimmedCharacter)
     {

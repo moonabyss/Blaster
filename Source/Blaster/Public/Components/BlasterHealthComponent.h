@@ -28,6 +28,8 @@ public:
 
     bool IsAlive() const { return Health > 0.0f; }
 
+    float GetHealth() const { return Health; }
+
     void SetCharacter(ABlasterCharacter* BlasterCharacter);
 
 private:

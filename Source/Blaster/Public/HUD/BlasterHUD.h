@@ -23,7 +23,9 @@ protected:
     virtual void BeginPlay() override;
 
 public:
-    void SetCrosshairs(const FCrosshairs& InCrosshairs) { Crosshairs = InCrosshairs; };
+    void SetCrosshairs(const FCrosshairs& InCrosshairs) { Crosshairs = InCrosshairs; }
+
+    void Init();
 
 private:
     FCrosshairs Crosshairs;

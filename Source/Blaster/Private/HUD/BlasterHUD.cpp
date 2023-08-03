@@ -2,8 +2,10 @@
 
 #include "HUD/BlasterHUD.h"
 #include "GameFramework/PlayerController.h"
+#include "Net/UnrealNetwork.h"
 
 #include "HUD/CharacterOverlay.h"
+#include "HUD/Health.h"
 
 void ABlasterHUD::BeginPlay() 
 {
@@ -71,5 +73,15 @@ void ABlasterHUD::AddCharacterOverlay()
     {
         CharacterOverlay = CreateWidget<UCharacterOverlay>(PC, CharacterOverlayClass);
         CharacterOverlay->AddToViewport();
+    }
+}
+
+void ABlasterHUD::Init() 
+{
+    UE_LOG(LogTemp, Warning, TEXT("ReInit()"));
+    if (auto Health = Cast<UHealth>(CharacterOverlay->WBP_Health))
+    {
+        Health->Init();
+        UE_LOG(LogTemp, Warning, TEXT("ReInit() cast"));
     }
 }

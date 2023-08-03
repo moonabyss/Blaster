@@ -9,6 +9,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
+#include "Character/BlasterPlayerController.h"
 #include "Components/BlasterHealthComponent.h"
 #include "Components/BlasterMovementComponent.h"
 #include "Components/BlasterWeaponComponent.h"
@@ -94,11 +95,25 @@ void ABlasterCharacter::BeginPlay()
 
     CameraCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnCameraCollisionBeginOverlap);
     CameraCollisionComponent->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnCameraCollisionEndOverlap);
+
+    UE_LOG(LogTemp, Warning, TEXT("BeginPlay()"));
+    if (ABlasterPlayerController* PC = Cast<ABlasterPlayerController>(Controller))
+    {
+        PC->InitHUD();
+        UE_LOG(LogTemp, Warning, TEXT("BeginPlay() cast"));
+    }
 }
 
 void ABlasterCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
+        if (ABlasterPlayerController* PC = Cast<ABlasterPlayerController>(Controller))
+        {
+            PC->InitHUD();
+            UE_LOG(LogTemp, Warning, TEXT("BeginPlay() cast"));
+        }
+
 
     if (HasAuthority() || IsLocallyControlled())
     {
@@ -511,6 +526,10 @@ void ABlasterCharacter::MulticastElim_Implementation()
         DynamicDissolveMaterialInstance->SetScalarParameterValue("Glow", 100.0f);
     }
     StartDissolve();
+    StopMovement();
+
+    GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ABlasterCharacter::PlayElimMontage()
@@ -546,4 +565,14 @@ void ABlasterCharacter::UpdateDissolveMaterial(float DissolveValue)
     if (!DynamicDissolveMaterialInstance) return;
 
     DynamicDissolveMaterialInstance->SetScalarParameterValue("Dissolve", -DissolveValue);
+}
+
+void ABlasterCharacter::StopMovement() 
+{
+    GetCharacterMovement()->DisableMovement();
+    GetCharacterMovement()->StopMovementImmediately();
+    if (auto PC = GetController<APlayerController>())
+    {
+        DisableInput(PC);
+    }
 }

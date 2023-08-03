@@ -15,6 +15,10 @@ bool UHealth::Initialize()
         return false;
     }
 
+    return true;
+}
+
+void UHealth::Init() {
     if (auto Pawn = GetOwningPlayerPawn())
     {
         auto Character = Cast<ABlasterCharacter>(Pawn);
@@ -24,11 +28,11 @@ bool UHealth::Initialize()
             if (HealthComponent)
             {
                 HealthComponent->HealthChangedDelegate.AddUObject(this, &ThisClass::OnHealthChanged);
+                const auto Health = HealthComponent->GetHealth();
+                OnHealthChanged(Health, Health);
             }
         }
     }
-
-    return true;
 }
 
 void UHealth::OnHealthChanged(float NewHealth, float MaxHealth)
