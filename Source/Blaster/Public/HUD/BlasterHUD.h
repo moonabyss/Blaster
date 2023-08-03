@@ -25,8 +25,6 @@ protected:
 public:
     void SetCrosshairs(const FCrosshairs& InCrosshairs) { Crosshairs = InCrosshairs; }
 
-    void Init();
-
 private:
     FCrosshairs Crosshairs;
 

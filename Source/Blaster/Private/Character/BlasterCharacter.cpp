@@ -95,25 +95,11 @@ void ABlasterCharacter::BeginPlay()
 
     CameraCollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnCameraCollisionBeginOverlap);
     CameraCollisionComponent->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnCameraCollisionEndOverlap);
-
-    UE_LOG(LogTemp, Warning, TEXT("BeginPlay()"));
-    if (ABlasterPlayerController* PC = Cast<ABlasterPlayerController>(Controller))
-    {
-        PC->InitHUD();
-        UE_LOG(LogTemp, Warning, TEXT("BeginPlay() cast"));
-    }
 }
 
 void ABlasterCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-
-        if (ABlasterPlayerController* PC = Cast<ABlasterPlayerController>(Controller))
-        {
-            PC->InitHUD();
-            UE_LOG(LogTemp, Warning, TEXT("BeginPlay() cast"));
-        }
-
 
     if (HasAuthority() || IsLocallyControlled())
     {

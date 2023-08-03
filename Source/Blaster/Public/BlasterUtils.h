@@ -12,7 +12,15 @@
         }                                                                     \
     }
 
-namespace Blaster
+class BlasterUtils
 {
+public:
+    template <typename T>
+    static T* GetBlasterPlayerComponent(AActor* PlayerPawn)
+    {
+        if (!PlayerPawn) return nullptr;
 
-}
+        const auto Component = PlayerPawn->GetComponentByClass(T::StaticClass());
+        return Cast<T>(Component);
+    }
+};

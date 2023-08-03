@@ -12,6 +12,6 @@ class BLASTER_API ABlasterPlayerController : public APlayerController
 {
     GENERATED_BODY()
 
-public:
-    void InitHUD();
+protected:
+    virtual void OnPossess(APawn* aPawn) override;
 };

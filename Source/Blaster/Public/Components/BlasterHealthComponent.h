@@ -29,6 +29,8 @@ public:
     bool IsAlive() const { return Health > 0.0f; }
 
     float GetHealth() const { return Health; }
+    float GetMaxHealth() const { return MaxHealth; }
+    float GetHealthPercent() const { return Health / MaxHealth; }
 
     void SetCharacter(ABlasterCharacter* BlasterCharacter);
 

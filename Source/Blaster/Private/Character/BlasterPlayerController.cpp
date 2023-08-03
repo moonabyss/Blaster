@@ -3,12 +3,9 @@
 #include "Character/BlasterPlayerController.h"
 #include "HUD/BlasterHUD.h"
 
-void ABlasterPlayerController::InitHUD() 
+void ABlasterPlayerController::OnPossess(APawn* aPawn) 
 {
-    UE_LOG(LogTemp, Warning, TEXT("InitHUD()"));
-    if (auto BlasterHUD = Cast<ABlasterHUD>(MyHUD))
-    {
-        BlasterHUD->Init();
-        UE_LOG(LogTemp, Warning, TEXT("InitHUD() cast"));
-    }
+    Super::OnPossess(aPawn);
+
+    OnNewPawn.Broadcast(aPawn);
 }
