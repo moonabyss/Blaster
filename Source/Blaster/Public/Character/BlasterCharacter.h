@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Components/TimelineComponent.h"
 
 #include "BlasterCoreTypes.h"
 #include "Interfaces/Hitable.h"
@@ -87,6 +88,9 @@ private:
     UPROPERTY(Category = "Components", VisibleAnywhere)
     UBlasterHealthComponent* HealthComponent;
 
+    UPROPERTY(Category = "Components", VisibleAnywhere)
+    UTimelineComponent* DissolveTimeline;
+
     UPROPERTY(ReplicatedUsing = OnRep_OverlappingWeapon)
     ABlasterBaseWeapon* OverlappingWeapon{nullptr};
 
@@ -153,4 +157,21 @@ private:
     FTimerHandle ElimTimer;
 
     void ElimTimerFinished();
+
+    FOnTimelineFloat DissolveTrack;
+
+    UFUNCTION()
+    void UpdateDissolveMaterial(float DissolveValue);
+
+    void StartDissolve();
+
+    UPROPERTY(Category = "Combat", EditDefaultsOnly)
+    UCurveFloat* DissolveCurve;
+
+    // Dynamic instance that we can change at runtime
+    UMaterialInstanceDynamic* DynamicDissolveMaterialInstance;
+
+    // Material instance set on the Blueprint, used with the dynamic material instance
+    UPROPERTY(Category = "Combat", EditDefaultsOnly)
+    UMaterialInstance* DissolveMaterialInstance;
 };
