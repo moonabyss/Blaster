@@ -493,6 +493,10 @@ bool ABlasterCharacter::IsAlive() const
 
 void ABlasterCharacter::Elim()
 {
+    if (WeaponComponent)
+    {
+        WeaponComponent->DropWeapon();
+    }
     MulticastElim();
     GetWorldTimerManager().SetTimer(ElimTimer, this, &ThisClass::ElimTimerFinished, ElimDelay);
 }
@@ -500,7 +504,7 @@ void ABlasterCharacter::Elim()
 void ABlasterCharacter::MulticastElim_Implementation()
 {
     if (bIsElimmed) return;
-    
+
     bIsElimmed = true;
     PlayElimMontage();
 
@@ -513,9 +517,7 @@ void ABlasterCharacter::MulticastElim_Implementation()
     }
     StartDissolve();
     StopMovement();
-
-    GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    DisableCollision();
 }
 
 void ABlasterCharacter::PlayElimMontage()
@@ -528,7 +530,7 @@ void ABlasterCharacter::PlayElimMontage()
     }
 }
 
-void ABlasterCharacter::ElimTimerFinished() 
+void ABlasterCharacter::ElimTimerFinished()
 {
     auto BlasterGameMode = GetWorld()->GetAuthGameMode<ABlasterGameMode>();
     if (BlasterGameMode)
@@ -537,7 +539,7 @@ void ABlasterCharacter::ElimTimerFinished()
     }
 }
 
-void ABlasterCharacter::StartDissolve() 
+void ABlasterCharacter::StartDissolve()
 {
     if (!DissolveCurve || !DissolveTimeline) return;
 
@@ -546,14 +548,14 @@ void ABlasterCharacter::StartDissolve()
     DissolveTimeline->Play();
 }
 
-void ABlasterCharacter::UpdateDissolveMaterial(float DissolveValue) 
+void ABlasterCharacter::UpdateDissolveMaterial(float DissolveValue)
 {
     if (!DynamicDissolveMaterialInstance) return;
 
     DynamicDissolveMaterialInstance->SetScalarParameterValue("Dissolve", -DissolveValue);
 }
 
-void ABlasterCharacter::StopMovement() 
+void ABlasterCharacter::StopMovement()
 {
     GetCharacterMovement()->DisableMovement();
     GetCharacterMovement()->StopMovementImmediately();
@@ -561,4 +563,10 @@ void ABlasterCharacter::StopMovement()
     {
         DisableInput(PC);
     }
+}
+
+void ABlasterCharacter::DisableCollision()
+{
+    GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }

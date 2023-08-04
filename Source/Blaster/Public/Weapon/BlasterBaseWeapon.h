@@ -52,7 +52,7 @@ private:
     UPROPERTY(Category = "Weapon Properties", VisibleAnywhere, ReplicatedUsing = OnRep_WeaponState)
     EWeaponState WeaponState{EWeaponState::EWS_Initial};
 
-    UFUNCTION(Server, Reliable)
+    UFUNCTION()
     void OnRep_WeaponState();
 
     UPROPERTY(Category = "Weapon Properties", EditAnywhere)

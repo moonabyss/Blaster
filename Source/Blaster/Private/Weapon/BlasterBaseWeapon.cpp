@@ -43,7 +43,7 @@ void ABlasterBaseWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-    DOREPLIFETIME_CONDITION(ABlasterBaseWeapon, WeaponState, COND_OwnerOnly);
+    DOREPLIFETIME(ABlasterBaseWeapon, WeaponState);
 }
 
 void ABlasterBaseWeapon::BeginPlay()
@@ -99,24 +99,74 @@ void ABlasterBaseWeapon::SetWeaponState(EWeaponState State)
             case EWeaponState::EWS_Initial:
             {
                 AreaSphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+                WeaponMesh->SetSimulatePhysics(false);
+                WeaponMesh->SetEnableGravity(false);
+                WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
                 break;
             }
             case EWeaponState::EWS_Equipped:
             {
                 AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+                WeaponMesh->SetSimulatePhysics(false);
+                WeaponMesh->SetEnableGravity(false);
+                WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
                 break;
             }
-            case EWeaponState::EWS_Dropped: break;
+            case EWeaponState::EWS_Dropped:
+            {
+                AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+                WeaponMesh->SetSimulatePhysics(true);
+                WeaponMesh->SetEnableGravity(true);
+                WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+                
+                auto NewWeaponState = [=]()
+                {
+                    SetWeaponState(EWeaponState::EWS_Initial);
+                };
+                FTimerDelegate TimerDelegate;
+                TimerDelegate.BindLambda(NewWeaponState);
+                FTimerHandle TimerHandle;
+                GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.0f, false);
+
+                break;
+            }
         }
         WeaponState = State;
     }
 }
 
-void ABlasterBaseWeapon::OnRep_WeaponState_Implementation()
+void ABlasterBaseWeapon::OnRep_WeaponState()
 {
     if (IsValid(PickupWidget))
     {
         PickupWidget->SetVisibility(false);
+    }
+    UE_LOG(LogTemp, Warning, TEXT("WeaponState: %s"), *UEnum::GetValueAsString(WeaponState));
+
+    switch (WeaponState)
+    {
+        case EWeaponState::EWS_Initial:
+        {
+            WeaponMesh->SetSimulatePhysics(false);
+            WeaponMesh->SetEnableGravity(false);
+            WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+            break;
+        }
+        case EWeaponState::EWS_Equipped:
+        {
+            WeaponMesh->SetSimulatePhysics(false);
+            WeaponMesh->SetEnableGravity(false);
+            WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+            break;
+        }
+        case EWeaponState::EWS_Dropped:
+        {
+            WeaponMesh->SetSimulatePhysics(true);
+            WeaponMesh->SetEnableGravity(true);
+            WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+            break;
+        }
     }
 }
 

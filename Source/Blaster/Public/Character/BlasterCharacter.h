@@ -176,4 +176,5 @@ private:
     UMaterialInstance* DissolveMaterialInstance;
 
     void StopMovement();
+    void DisableCollision();
 };

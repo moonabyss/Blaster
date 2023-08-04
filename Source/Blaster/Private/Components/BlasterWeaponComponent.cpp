@@ -76,6 +76,16 @@ void UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
     WeaponEquipped.Broadcast();
 }
 
+void UBlasterWeaponComponent::DropWeapon() 
+{
+    if (!IsValid(CurrentWeapon) || !Character) return;
+
+    CurrentWeapon->SetWeaponState(EWeaponState::EWS_Dropped);
+    DetachWeapon(CurrentWeapon);
+    CurrentWeapon->SetOwner(nullptr);
+    CurrentWeapon = nullptr;
+}
+
 void UBlasterWeaponComponent::OnRep_CurrentWeapon(ABlasterBaseWeapon* LastWeapon)
 {
     if (IsValid(CurrentWeapon) && !LastWeapon)
@@ -93,7 +103,15 @@ void UBlasterWeaponComponent::AttachWeaponToSocket(ABlasterBaseWeapon* Weapon, U
     if (!Weapon || !SceneComponent) return;
 
     FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
-    Weapon->AttachToComponent(SceneComponent, AttachmentRules, SocketName);
+    Weapon->GetMesh()->AttachToComponent(SceneComponent, AttachmentRules, SocketName);
+}
+
+void UBlasterWeaponComponent::DetachWeapon(ABlasterBaseWeapon* Weapon)
+{
+    if (!Weapon) return;
+
+    FDetachmentTransformRules DetachRule(EDetachmentRule::KeepWorld, true);
+    Weapon->GetMesh()->DetachFromComponent(DetachRule);
 }
 
 bool UBlasterWeaponComponent::IsWeaponEquipped() const
@@ -300,6 +318,10 @@ void UBlasterWeaponComponent::SetHUDCrosshairs(float DeltaTime)
         Crosshairs.Bottom = CurrentWeapon->GetWeaponProps().Crosshairs.Bottom;
         Crosshairs.SpreadAngle = CurrentWeapon->GetWeaponProps().DefaultSpreadInDegrees * CalculateCurrentSpreadModifier(DeltaTime);
         CurrentSpreadAngle = Crosshairs.SpreadAngle;
+    }
+    else
+    {
+        Crosshairs = FCrosshairs();
     }
     HUD->SetCrosshairs(Crosshairs);
 }

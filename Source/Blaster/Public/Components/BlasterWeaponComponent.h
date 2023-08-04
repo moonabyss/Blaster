@@ -32,6 +32,7 @@ public:
     FOnWeaponUnequippedDelegate WeaponUnequipped;
     void SetCharacter(ABlasterCharacter* BlasterCharacter);
     void EquipWeapon(ABlasterBaseWeapon* WeaponToEquip);
+    void DropWeapon();
     bool IsWeaponEquipped() const;
     ABlasterBaseWeapon* GetCurrentWeapon() const;
     void StartAiming();
@@ -59,6 +60,7 @@ private:
     FName WeaponRightHandSocket{FName("Weapon_R")};
 
     void AttachWeaponToSocket(ABlasterBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName);
+    void DetachWeapon(ABlasterBaseWeapon* Weapon);
 
     UPROPERTY(Replicated)
     bool bWantsAiming{false};
