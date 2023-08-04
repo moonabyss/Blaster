@@ -6,8 +6,11 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Sound/SoundCue.h"
 
 #include "Character/BlasterPlayerController.h"
 #include "Components/BlasterHealthComponent.h"
@@ -183,6 +186,16 @@ void ABlasterCharacter::Jump()
     else
     {
         Super::Jump();
+    }
+}
+
+void ABlasterCharacter::Destroyed() 
+{
+    Super::Destroyed();
+
+    if (IsValid(ElimBotComponent))
+    {
+        ElimBotComponent->DestroyComponent();
     }
 }
 
@@ -518,6 +531,7 @@ void ABlasterCharacter::MulticastElim_Implementation()
     StartDissolve();
     StopMovement();
     DisableCollision();
+    SpawnElimBot();
 }
 
 void ABlasterCharacter::PlayElimMontage()
@@ -536,6 +550,11 @@ void ABlasterCharacter::ElimTimerFinished()
     if (BlasterGameMode)
     {
         BlasterGameMode->RequestRespawn(this, Controller);
+    }
+
+    if (ElimBotComponent)
+    {
+        ElimBotComponent->DestroyComponent();
     }
 }
 
@@ -569,4 +588,13 @@ void ABlasterCharacter::DisableCollision()
 {
     GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void ABlasterCharacter::SpawnElimBot() 
+{
+    if (!ElimBotEffect || !ElimBotSound) return;
+
+    const FVector ElimBotSpawnPoint(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z + 200.0f);
+    ElimBotComponent = UGameplayStatics::SpawnEmitterAtLocation(this, ElimBotEffect, ElimBotSpawnPoint, GetActorRotation(), true);
+    UGameplayStatics::PlaySoundAtLocation(this, ElimBotSound, ElimBotSpawnPoint);
 }

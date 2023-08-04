@@ -14,6 +14,9 @@
 
 class UAnimMontage;
 class UCameraComponent;
+class UParticleSystem;
+class UParticleSystemComponent;
+class USoundCue;
 class USphereComponent;
 class USpringArmComponent;
 class UWidgetComponent;
@@ -37,6 +40,7 @@ public:
 protected:
     virtual void BeginPlay() override;
     virtual void Jump() override;
+    virtual void Destroyed() override;
 
 public:
     virtual void SetOverlappedWeapon(ABlasterBaseWeapon* Weapon);
@@ -141,7 +145,7 @@ private:
 
     float TimeSinceLastMovementReplication{0.0f};
 
-    UPROPERTY(Category = "Combat", EditDefaultsOnly)
+    UPROPERTY(Category = "Combat|Elim", EditDefaultsOnly)
     UAnimMontage* ElimMontage{nullptr};
 
     void PlayElimMontage();
@@ -151,7 +155,7 @@ private:
     UFUNCTION(NetMulticast, Reliable)
     void MulticastElim();
 
-    UPROPERTY(Category = "Combat", EditDefaultsOnly)
+    UPROPERTY(Category = "Combat|Elim", EditDefaultsOnly)
     float ElimDelay{3.0f};
 
     FTimerHandle ElimTimer;
@@ -165,16 +169,26 @@ private:
 
     void StartDissolve();
 
-    UPROPERTY(Category = "Combat", EditDefaultsOnly)
+    UPROPERTY(Category = "Combat|Elim", EditDefaultsOnly)
     UCurveFloat* DissolveCurve;
 
     // Dynamic instance that we can change at runtime
     UMaterialInstanceDynamic* DynamicDissolveMaterialInstance;
 
     // Material instance set on the Blueprint, used with the dynamic material instance
-    UPROPERTY(Category = "Combat", EditDefaultsOnly)
+    UPROPERTY(Category = "Combat|Elim", EditDefaultsOnly)
     UMaterialInstance* DissolveMaterialInstance;
 
     void StopMovement();
     void DisableCollision();
+
+    UPROPERTY(Category = "Combat|Elim", EditDefaultsOnly)
+    UParticleSystem* ElimBotEffect;
+
+    UParticleSystemComponent* ElimBotComponent;
+
+    UPROPERTY(Category = "Combat|Elim", EditDefaultsOnly)
+    USoundCue* ElimBotSound;
+
+    void SpawnElimBot();
 };

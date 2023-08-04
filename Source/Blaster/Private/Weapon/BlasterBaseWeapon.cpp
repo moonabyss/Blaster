@@ -142,7 +142,6 @@ void ABlasterBaseWeapon::OnRep_WeaponState()
     {
         PickupWidget->SetVisibility(false);
     }
-    UE_LOG(LogTemp, Warning, TEXT("WeaponState: %s"), *UEnum::GetValueAsString(WeaponState));
 
     switch (WeaponState)
     {
