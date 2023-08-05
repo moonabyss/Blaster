@@ -2,6 +2,8 @@
 
 #include "HUD/CharacterOverlay.h"
 
+#include "GameFramework/PlayerState.h"
+
 #include "BlasterUtils.h"
 #include "Components/BlasterHealthComponent.h"
 
@@ -36,4 +38,15 @@ float UCharacterOverlay::GetHealthPercent()
     if (!HealthComponent) return 0.0f;
 
     return HealthComponent->GetHealthPercent();
+}
+
+float UCharacterOverlay::GetScore()
+{
+    float Score = 0.0f;
+    if (auto PlayerState = GetOwningPlayerState())
+    {
+        Score = PlayerState->GetScore();
+    }
+
+    return FMath::Floor(Score);
 }

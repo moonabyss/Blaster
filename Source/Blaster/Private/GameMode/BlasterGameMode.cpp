@@ -7,12 +7,20 @@
 
 #include "Character/BlasterCharacter.h"
 #include "Character/BlasterPlayerController.h"
+#include "Character/BlasterPlayerState.h"
 
 void ABlasterGameMode::PlayerEliminated(ABlasterCharacter* ElimmedCharacter, ABlasterPlayerController* VictimController, ABlasterPlayerController* AttackerController)
 {
     if (IsValid(ElimmedCharacter))
     {
         ElimmedCharacter->Elim();
+    }
+
+    auto AttackerPlayerState = AttackerController ? Cast<ABlasterPlayerState>(AttackerController->PlayerState) : nullptr;
+    // auto VictimPlayerState = VictimController ? Cast<ABlasterPlayerState>(VictimController->PlayerState) : nullptr;
+    if (AttackerPlayerState && AttackerController != VictimController)
+    {
+        AttackerPlayerState->AddToScore(1.0f);
     }
 }
 

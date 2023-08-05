@@ -24,6 +24,9 @@ protected:
     UFUNCTION(Category = "UI", BlueprintPure)
     float GetHealthPercent();
 
+    UFUNCTION(Category = "UI", BlueprintPure)
+    float GetScore();
+
 private:
     UBlasterHealthComponent* HealthComponent{nullptr};
 };
