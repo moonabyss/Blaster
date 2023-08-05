@@ -3,7 +3,7 @@
 #include "Character/BlasterPlayerController.h"
 #include "HUD/BlasterHUD.h"
 
-void ABlasterPlayerController::OnPossess(APawn* aPawn) 
+void ABlasterPlayerController::OnPossess(APawn* aPawn)
 {
     Super::OnPossess(aPawn);
 

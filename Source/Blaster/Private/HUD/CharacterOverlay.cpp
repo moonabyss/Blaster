@@ -5,7 +5,7 @@
 #include "BlasterUtils.h"
 #include "Components/BlasterHealthComponent.h"
 
-float UCharacterOverlay::GetHealth() 
+float UCharacterOverlay::GetHealth()
 {
     if (!IsValid(HealthComponent))
     {
@@ -16,7 +16,8 @@ float UCharacterOverlay::GetHealth()
     return HealthComponent->GetHealth();
 }
 
-float UCharacterOverlay::GetMaxHealth() {
+float UCharacterOverlay::GetMaxHealth()
+{
     if (!IsValid(HealthComponent))
     {
         HealthComponent = BlasterUtils::GetBlasterPlayerComponent<UBlasterHealthComponent>(GetOwningPlayerPawn());

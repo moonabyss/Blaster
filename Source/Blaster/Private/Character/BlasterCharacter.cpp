@@ -189,7 +189,7 @@ void ABlasterCharacter::Jump()
     }
 }
 
-void ABlasterCharacter::Destroyed() 
+void ABlasterCharacter::Destroyed()
 {
     Super::Destroyed();
 
@@ -590,7 +590,7 @@ void ABlasterCharacter::DisableCollision()
     GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-void ABlasterCharacter::SpawnElimBot() 
+void ABlasterCharacter::SpawnElimBot()
 {
     if (!ElimBotEffect || !ElimBotSound) return;
 

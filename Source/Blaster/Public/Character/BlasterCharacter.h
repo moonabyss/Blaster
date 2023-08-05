@@ -2,9 +2,9 @@
 
 #pragma once
 
+#include "Components/TimelineComponent.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Components/TimelineComponent.h"
 
 #include "BlasterCoreTypes.h"
 #include "Interfaces/Hitable.h"

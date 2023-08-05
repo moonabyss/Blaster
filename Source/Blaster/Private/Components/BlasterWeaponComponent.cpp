@@ -76,7 +76,7 @@ void UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
     WeaponEquipped.Broadcast();
 }
 
-void UBlasterWeaponComponent::DropWeapon() 
+void UBlasterWeaponComponent::DropWeapon()
 {
     if (!IsValid(CurrentWeapon) || !Character) return;
 
@@ -171,7 +171,7 @@ void UBlasterWeaponComponent::ServerSetWantsFire_Implementation(bool bIsFiring)
     bWantsFire = bIsFiring;
 }
 
-bool UBlasterWeaponComponent::CanShoot() const 
+bool UBlasterWeaponComponent::CanShoot() const
 {
     return Character && Character->IsAlive() && bCanFire;
 }

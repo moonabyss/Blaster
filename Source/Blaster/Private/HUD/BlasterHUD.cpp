@@ -6,7 +6,7 @@
 
 #include "HUD/CharacterOverlay.h"
 
-void ABlasterHUD::BeginPlay() 
+void ABlasterHUD::BeginPlay()
 {
     Super::BeginPlay();
 
@@ -64,7 +64,7 @@ void ABlasterHUD::DrawCrosshair(UTexture2D* Texture, const FVector2D& ViewportCe
     DrawTexture(Texture, TextuteDrawPoint.X, TextuteDrawPoint.Y, TextureWidth, TextureHeight, 0.0f, 0.0f, 1.0f, 1.0f, SpreadColor);
 }
 
-void ABlasterHUD::AddCharacterOverlay() 
+void ABlasterHUD::AddCharacterOverlay()
 {
     if (!CharacterOverlayClass) return;
 

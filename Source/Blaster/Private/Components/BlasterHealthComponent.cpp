@@ -67,6 +67,6 @@ void UBlasterHealthComponent::OnTakeAnyDamageHandle(AActor* DamagedActor, float 
 
         // DIE
     }
-    
+
     HealthChangedDelegate.Broadcast(Health, MaxHealth);
 }
