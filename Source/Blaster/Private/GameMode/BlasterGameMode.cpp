@@ -17,10 +17,14 @@ void ABlasterGameMode::PlayerEliminated(ABlasterCharacter* ElimmedCharacter, ABl
     }
 
     auto AttackerPlayerState = AttackerController ? Cast<ABlasterPlayerState>(AttackerController->PlayerState) : nullptr;
-    // auto VictimPlayerState = VictimController ? Cast<ABlasterPlayerState>(VictimController->PlayerState) : nullptr;
+    auto VictimPlayerState = VictimController ? Cast<ABlasterPlayerState>(VictimController->PlayerState) : nullptr;
     if (AttackerPlayerState && AttackerController != VictimController)
     {
-        AttackerPlayerState->AddToScore(1.0f);
+        AttackerPlayerState->AddToKilled(1);
+    }
+    if (VictimPlayerState)
+    {
+        VictimPlayerState->IncrementDefeats();
     }
 }
 

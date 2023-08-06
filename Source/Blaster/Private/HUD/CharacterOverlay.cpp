@@ -5,6 +5,7 @@
 #include "GameFramework/PlayerState.h"
 
 #include "BlasterUtils.h"
+#include "Character/BlasterPlayerState.h"
 #include "Components/BlasterHealthComponent.h"
 
 float UCharacterOverlay::GetHealth()
@@ -40,7 +41,7 @@ float UCharacterOverlay::GetHealthPercent()
     return HealthComponent->GetHealthPercent();
 }
 
-float UCharacterOverlay::GetScore()
+float UCharacterOverlay::GetScore() const
 {
     float Score = 0.0f;
     if (auto PlayerState = GetOwningPlayerState())
@@ -49,4 +50,26 @@ float UCharacterOverlay::GetScore()
     }
 
     return FMath::Floor(Score);
+}
+
+int32 UCharacterOverlay::GetKilled() const
+{
+    int32 Killed = 0;
+    if (auto PlayerState = Cast<ABlasterPlayerState>(GetOwningPlayerState()))
+    {
+        Killed = PlayerState->GetKilled();
+    }
+
+    return Killed;
+}
+
+int32 UCharacterOverlay::GetDefeats() const
+{
+    int32 Defeats = 0;
+    if (auto PlayerState = Cast<ABlasterPlayerState>(GetOwningPlayerState()))
+    {
+        Defeats = PlayerState->GetDefeats();
+    }
+
+    return Defeats;
 }

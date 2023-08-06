@@ -25,7 +25,13 @@ protected:
     float GetHealthPercent();
 
     UFUNCTION(Category = "UI", BlueprintPure)
-    float GetScore();
+    float GetScore() const;
+
+    UFUNCTION(Category = "UI", BlueprintPure)
+    int32 GetKilled() const;
+
+    UFUNCTION(Category = "UI", BlueprintPure)
+    int32 GetDefeats() const;
 
 private:
     UBlasterHealthComponent* HealthComponent{nullptr};
