@@ -30,10 +30,13 @@ public:
     void ShowPickupWidget(bool bShowWidget);
     void SetWeaponState(EWeaponState State);
     virtual void Fire(const FVector& HitTarget);
+    void DecrementAmmo();
 
     // Getters
     FWeaponProps GetWeaponProps() const { return WeaponProperies; };
     USkeletalMeshComponent* GetMesh() const { return WeaponMesh; };
+    int32 GetAmmoInCLip() const { return AmmoInClip; }
+    int32 GetClipCapacity() const { return WeaponProperies.ClipCapacity; }
 
 protected:
     UFUNCTION()
@@ -66,4 +69,10 @@ private:
 
     UPROPERTY(EditDefaultsOnly)
     TSubclassOf<ABlasterWeaponShell> ShellClass;
+
+    UPROPERTY(Category = "Weapon Properties", EditAnywhere, ReplicatedUsing = OnRep_AmmoInClip)
+    int32 AmmoInClip{0};
+
+    UFUNCTION()
+    void OnRep_AmmoInClip();
 };

@@ -44,6 +44,7 @@ void ABlasterBaseWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
     DOREPLIFETIME(ABlasterBaseWeapon, WeaponState);
+    DOREPLIFETIME(ABlasterBaseWeapon, AmmoInClip);
 }
 
 void ABlasterBaseWeapon::BeginPlay()
@@ -189,5 +190,15 @@ void ABlasterBaseWeapon::SpawnShell()
         auto ShellSocket = WeaponMesh->GetSocketByName(ShellSocketName);
         auto ShellSocketTransform = ShellSocket->GetSocketTransform(WeaponMesh);
         GetWorld()->SpawnActor<ABlasterWeaponShell>(ShellClass, ShellSocketTransform);
+    }
+}
+
+void ABlasterBaseWeapon::OnRep_AmmoInClip() {}
+
+void ABlasterBaseWeapon::DecrementAmmo()
+{
+    if (AmmoInClip > 0)
+    {
+        --AmmoInClip;
     }
 }

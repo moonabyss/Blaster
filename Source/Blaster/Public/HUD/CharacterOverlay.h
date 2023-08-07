@@ -8,6 +8,7 @@
 #include "CharacterOverlay.generated.h"
 
 class UBlasterHealthComponent;
+class UBlasterWeaponComponent;
 
 UCLASS()
 class BLASTER_API UCharacterOverlay : public UUserWidget
@@ -33,6 +34,16 @@ protected:
     UFUNCTION(Category = "UI", BlueprintPure)
     int32 GetDefeats() const;
 
+    UFUNCTION(Category = "UI", BlueprintPure)
+    int32 GetAmmoInCLip();
+
+    UFUNCTION(Category = "UI", BlueprintPure)
+    int32 GetClipCapacity();
+
+    UFUNCTION(Category = "UI", BlueprintPure)
+    bool ShowAmmoWidget() const;
+
 private:
     UBlasterHealthComponent* HealthComponent{nullptr};
+    UBlasterWeaponComponent* WeaponComponent{nullptr};
 };

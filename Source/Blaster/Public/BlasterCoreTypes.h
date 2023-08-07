@@ -119,6 +119,9 @@ struct FWeaponProps
     UPROPERTY(EditAnywhere)
     float FireDelay;
 
+    UPROPERTY(EditAnywhere)
+    int32 ClipCapacity;
+
     FWeaponProps()
     {
         WeaponType = EWeaponType::EWT_MAX;
@@ -135,6 +138,7 @@ struct FWeaponProps
         SpreadModifierShootingMax = 0.0f;
         bIsAutomatic = false;
         FireDelay = 0.0f;
+        ClipCapacity = 0;
     }
 };
 

@@ -68,6 +68,11 @@ void UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
 {
     if (!IsValid(WeaponToEquip) || !Character) return;
 
+    if (IsValid(CurrentWeapon))
+    {
+        DropWeapon();
+    }
+
     CurrentWeapon = WeaponToEquip;
     CurrentWeapon->SetWeaponState(EWeaponState::EWS_Equipped);
     CurrentWeapon->SetOwner(Character);
@@ -175,7 +180,7 @@ void UBlasterWeaponComponent::ServerSetWantsFire_Implementation(bool bIsFiring)
 
 bool UBlasterWeaponComponent::CanShoot() const
 {
-    return Character && Character->IsAlive() && bCanFire;
+    return Character && Character->IsAlive() && bCanFire && IsValid(CurrentWeapon) && CurrentWeapon->GetAmmoInCLip() > 0;
 }
 
 void UBlasterWeaponComponent::Fire()
@@ -196,6 +201,7 @@ void UBlasterWeaponComponent::Fire()
 
 void UBlasterWeaponComponent::ServerFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
+    CurrentWeapon->DecrementAmmo();
     MulticastFire(TraceHitTarget);
     StartFireTimer();
 }
@@ -230,6 +236,8 @@ void UBlasterWeaponComponent::StartFireTimer()
 
 void UBlasterWeaponComponent::FireTimerFinished()
 {
+    if (!CurrentWeapon) return;
+
     bCanFire = true;
     if (bWantsFire && CurrentWeapon->GetWeaponProps().bIsAutomatic)
     {
@@ -367,10 +375,15 @@ float UBlasterWeaponComponent::CalculateCurrentSpreadModifier(float DeltaTime)
 
 void UBlasterWeaponComponent::InterpFOV(float DeltaTime)
 {
-    if (!CurrentWeapon) return;
-
     const auto PC = Character->GetController<APlayerController>();
     if (!PC || !PC->PlayerCameraManager) return;
+
+    if (!CurrentWeapon)
+    {
+        CurrentFOV = FMath::FInterpTo(CurrentFOV, DefaultFOV, DeltaTime, DefaultInterpSpeed);
+        PC->PlayerCameraManager->SetFOV(CurrentFOV);
+        return;
+    }
 
     if (IsAiming())
     {

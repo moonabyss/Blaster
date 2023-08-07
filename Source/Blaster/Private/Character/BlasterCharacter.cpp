@@ -518,6 +518,9 @@ void ABlasterCharacter::MulticastElim_Implementation()
 {
     if (bIsElimmed) return;
 
+    if (!WeaponComponent) return;
+    WeaponComponent->StopAiming();
+
     bIsElimmed = true;
     PlayElimMontage();
 
@@ -552,7 +555,7 @@ void ABlasterCharacter::ElimTimerFinished()
         BlasterGameMode->RequestRespawn(this, Controller);
     }
 
-    if (ElimBotComponent)
+    if (IsValid(ElimBotComponent))
     {
         ElimBotComponent->DestroyComponent();
     }

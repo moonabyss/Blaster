@@ -102,6 +102,9 @@ private:
 
     float CurrentFOV{90.0f};
 
+    UPROPERTY(Category = "Combat", EditDefaultsOnly)
+    float DefaultInterpSpeed{20.0f};
+
     void InterpFOV(float DeltaTime);
 
     UPROPERTY(Category = "UI|Crosshairs", EditDefaultsOnly)

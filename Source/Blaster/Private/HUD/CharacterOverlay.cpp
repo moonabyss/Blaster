@@ -7,6 +7,8 @@
 #include "BlasterUtils.h"
 #include "Character/BlasterPlayerState.h"
 #include "Components/BlasterHealthComponent.h"
+#include "Components/BlasterWeaponComponent.h"
+#include "Weapon/BlasterBaseWeapon.h"
 
 float UCharacterOverlay::GetHealth()
 {
@@ -72,4 +74,31 @@ int32 UCharacterOverlay::GetDefeats() const
     }
 
     return Defeats;
+}
+
+int32 UCharacterOverlay::GetAmmoInCLip()
+{
+    if (!IsValid(WeaponComponent))
+    {
+        WeaponComponent = BlasterUtils::GetBlasterPlayerComponent<UBlasterWeaponComponent>(GetOwningPlayerPawn());
+    }
+    if (!WeaponComponent || !WeaponComponent->GetCurrentWeapon()) return 0;
+
+    return WeaponComponent->GetCurrentWeapon()->GetAmmoInCLip();
+}
+
+int32 UCharacterOverlay::GetClipCapacity()
+{
+    if (!IsValid(WeaponComponent))
+    {
+        WeaponComponent = BlasterUtils::GetBlasterPlayerComponent<UBlasterWeaponComponent>(GetOwningPlayerPawn());
+    }
+    if (!WeaponComponent || !WeaponComponent->GetCurrentWeapon()) return 0;
+
+    return WeaponComponent->GetCurrentWeapon()->GetClipCapacity();
+}
+
+bool UCharacterOverlay::ShowAmmoWidget() const 
+{
+    return IsValid(WeaponComponent) && WeaponComponent->GetCurrentWeapon();
 }
