@@ -78,12 +78,14 @@ void UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
 
 void UBlasterWeaponComponent::DropWeapon()
 {
-    if (!IsValid(CurrentWeapon) || !Character) return;
+    if (!IsValid(CurrentWeapon)) return;
 
     CurrentWeapon->SetWeaponState(EWeaponState::EWS_Dropped);
     DetachWeapon(CurrentWeapon);
     CurrentWeapon->SetOwner(nullptr);
     CurrentWeapon = nullptr;
+
+    WeaponUnequipped.Broadcast();
 }
 
 void UBlasterWeaponComponent::OnRep_CurrentWeapon(ABlasterBaseWeapon* LastWeapon)
