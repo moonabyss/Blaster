@@ -60,7 +60,7 @@ void UBlasterHealthComponent::OnTakeAnyDamageHandle(AActor* DamagedActor, float 
         auto BlasterGameMode = GetWorld()->GetAuthGameMode<ABlasterGameMode>();
         auto PlayerController = Cast<ABlasterPlayerController>(Character->Controller);
         auto AttackerController = Cast<ABlasterPlayerController>(InstigatedBy);
-        if (BlasterGameMode && PlayerController)
+        if (BlasterGameMode && PlayerController && AttackerController)
         {
             BlasterGameMode->PlayerEliminated(Character, PlayerController, AttackerController);
         }

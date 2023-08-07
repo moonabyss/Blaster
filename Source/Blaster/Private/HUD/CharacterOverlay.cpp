@@ -87,18 +87,18 @@ int32 UCharacterOverlay::GetAmmoInCLip()
     return WeaponComponent->GetCurrentWeapon()->GetAmmoInCLip();
 }
 
-int32 UCharacterOverlay::GetCarriedAmmo()
+int32 UCharacterOverlay::GetClipCapacity()
 {
     if (!IsValid(WeaponComponent))
     {
         WeaponComponent = BlasterUtils::GetBlasterPlayerComponent<UBlasterWeaponComponent>(GetOwningPlayerPawn());
     }
-    if (!WeaponComponent || !WeaponComponent->GetCurrentWeapon() || WeaponComponent->GetCurrentWeapon()->GetWeaponProps().WeaponType == EWeaponType::None) return 0;
+    if (!WeaponComponent || !WeaponComponent->GetCurrentWeapon()) return 0;
 
-    return WeaponComponent->GetCarriedAmmo();
+    return WeaponComponent->GetCurrentWeapon()->GetClipCapacity();
 }
 
-bool UCharacterOverlay::ShowAmmoWidget() const
+bool UCharacterOverlay::ShowAmmoWidget() const 
 {
-    return IsValid(WeaponComponent) && WeaponComponent->GetCurrentWeapon() && WeaponComponent->GetCurrentWeapon()->GetWeaponProps().WeaponType != EWeaponType::None;
+    return IsValid(WeaponComponent) && WeaponComponent->GetCurrentWeapon();
 }

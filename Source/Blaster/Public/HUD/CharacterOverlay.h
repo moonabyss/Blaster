@@ -38,7 +38,7 @@ protected:
     int32 GetAmmoInCLip();
 
     UFUNCTION(Category = "UI", BlueprintPure)
-    int32 GetCarriedAmmo();
+    int32 GetClipCapacity();
 
     UFUNCTION(Category = "UI", BlueprintPure)
     bool ShowAmmoWidget() const;
