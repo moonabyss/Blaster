@@ -517,9 +517,7 @@ void ABlasterCharacter::Elim()
 void ABlasterCharacter::MulticastElim_Implementation()
 {
     if (bIsElimmed) return;
-
     if (!WeaponComponent) return;
-    WeaponComponent->StopAiming();
 
     bIsElimmed = true;
     PlayElimMontage();

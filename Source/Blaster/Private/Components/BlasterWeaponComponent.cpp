@@ -31,6 +31,7 @@ void UBlasterWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
     DOREPLIFETIME(UBlasterWeaponComponent, CurrentWeapon);
     DOREPLIFETIME_CONDITION(UBlasterWeaponComponent, bWantsAiming, COND_SkipOwner);
     DOREPLIFETIME_CONDITION(UBlasterWeaponComponent, bWantsFire, COND_SkipOwner);
+    DOREPLIFETIME_CONDITION(UBlasterWeaponComponent, CarriedAmmo, COND_OwnerOnly);
 }
 
 void UBlasterWeaponComponent::BeginPlay()
@@ -42,6 +43,8 @@ void UBlasterWeaponComponent::BeginPlay()
         DefaultFOV = PC->PlayerCameraManager->DefaultFOV;
         CurrentFOV = DefaultFOV;
     }
+
+    InitializeAmmoMap();
 }
 
 void UBlasterWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -77,6 +80,7 @@ void UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
     CurrentWeapon->SetWeaponState(EWeaponState::EWS_Equipped);
     CurrentWeapon->SetOwner(Character);
     AttachWeaponToSocket(CurrentWeapon, Character->GetMesh(), WeaponRightHandSocket);
+    CarriedAmmo = CarriedAmmoMap.FindOrAdd(CurrentWeapon->GetWeaponProps().WeaponType);
 
     WeaponEquipped.Broadcast();
 }
@@ -394,5 +398,23 @@ void UBlasterWeaponComponent::InterpFOV(float DeltaTime)
     {
         CurrentFOV = FMath::FInterpTo(CurrentFOV, DefaultFOV, DeltaTime, CurrentWeapon->GetWeaponProps().ZoomInterpSpeed);
         PC->PlayerCameraManager->SetFOV(CurrentFOV);
+    }
+}
+
+void UBlasterWeaponComponent::InitializeAmmoMap() 
+{
+    for (int32 WeaponTypeIndex = 0; WeaponTypeIndex < (int32) EWeaponType::MAX; ++WeaponTypeIndex)
+    {
+        EWeaponType WeaponType = static_cast<EWeaponType>(WeaponTypeIndex);
+
+        int32* AmmoPtr = LoadoutMap.Find(WeaponType);
+        if (AmmoPtr)
+        {
+            CarriedAmmoMap.Add(WeaponType, *AmmoPtr);
+        }
+        else
+        {
+            CarriedAmmoMap.Add(WeaponType, 0);
+        }
     }
 }

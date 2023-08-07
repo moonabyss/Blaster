@@ -28,10 +28,11 @@ enum class EWeaponState : uint8
 UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
+    None,
     EWT_Pistol UMETA(DisplayName = "Pistol"),
     EWT_Rifle UMETA(DisplayName = "Rifle"),
 
-    EWT_MAX UMETA(Hidden)
+    MAX UMETA(Hidden)
 };
 
 USTRUCT(BlueprintType)
@@ -124,7 +125,7 @@ struct FWeaponProps
 
     FWeaponProps()
     {
-        WeaponType = EWeaponType::EWT_MAX;
+        WeaponType = EWeaponType::None;
         AimSpeedModifier = 1.0f;
         BlasterFireMontage = nullptr;
         FireAnimation = nullptr;
