@@ -43,6 +43,8 @@ public:
     void Fire();
 
     FVector GetHitTargetNoSpread() const { return HitTargetNoSpread; }
+    // for currently equipped weapon
+    int32 GetCarriedAmmo() { return CarriedAmmo; }
 
 protected:
 private:
@@ -119,4 +121,15 @@ private:
     void FireTimerFinished();
     bool bCanFire{true};
     bool CanShoot() const;
+
+    // Carried ammo for the currently equipped weapon
+    UPROPERTY(Replicated)
+    int32 CarriedAmmo{0};
+
+    UPROPERTY(Category = "Combat", EditDefaultsOnly)
+    TMap<EWeaponType, int32> LoadoutMap;
+
+    UPROPERTY(Category = "Combat", VisibleAnywhere)
+    TMap<EWeaponType, int32> CarriedAmmoMap;
+    void InitializeAmmoMap();
 };
