@@ -191,4 +191,6 @@ private:
     USoundCue* ElimBotSound;
 
     void SpawnElimBot();
+
+    void ReloadPressed();
 };

@@ -138,6 +138,7 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     PlayerInputComponent->BindAction("Aim", EInputEvent::IE_Released, this, &ThisClass::AimReleased);
     PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Pressed, this, &ThisClass::FirePressed);
     PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Released, this, &ThisClass::FireReleased);
+    PlayerInputComponent->BindAction("Reload", EInputEvent::IE_Pressed, this, &ThisClass::ReloadPressed);
 
     PlayerInputComponent->BindAxis("MoveForward", this, &ThisClass::MoveForward);
     PlayerInputComponent->BindAxis("MoveRight", this, &ThisClass::MoveRight);
@@ -598,4 +599,12 @@ void ABlasterCharacter::SpawnElimBot()
     const FVector ElimBotSpawnPoint(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z + 200.0f);
     ElimBotComponent = UGameplayStatics::SpawnEmitterAtLocation(this, ElimBotEffect, ElimBotSpawnPoint, GetActorRotation(), true);
     UGameplayStatics::PlaySoundAtLocation(this, ElimBotSound, ElimBotSpawnPoint);
+}
+
+void ABlasterCharacter::ReloadPressed()
+{
+    if (IsValid(WeaponComponent))
+    {
+        WeaponComponent->Reload();
+    }
 }

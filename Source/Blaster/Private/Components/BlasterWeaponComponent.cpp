@@ -401,7 +401,7 @@ void UBlasterWeaponComponent::InterpFOV(float DeltaTime)
     }
 }
 
-void UBlasterWeaponComponent::InitializeAmmoMap() 
+void UBlasterWeaponComponent::InitializeAmmoMap()
 {
     for (int32 WeaponTypeIndex = 0; WeaponTypeIndex < (int32) EWeaponType::MAX; ++WeaponTypeIndex)
     {
@@ -416,5 +416,19 @@ void UBlasterWeaponComponent::InitializeAmmoMap()
         {
             CarriedAmmoMap.Add(WeaponType, 0);
         }
+    }
+}
+
+void UBlasterWeaponComponent::Reload() {}
+
+void UBlasterWeaponComponent::PlayReloadMontage()
+{
+
+    if (!IsValid(Character) || !IsValid(Character->GetMesh())) return;
+
+    if (UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance())
+    {
+        AnimInstance->Montage_Play(GetCurrentWeapon()->GetWeaponProps().BlasterReloadMontage);
+        AnimInstance->Montage_JumpToSection(GetCurrentWeapon()->GetWeaponProps().ReloadSectionName);
     }
 }

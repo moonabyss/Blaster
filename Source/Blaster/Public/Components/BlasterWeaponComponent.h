@@ -41,6 +41,7 @@ public:
     void StartFire();
     void StopFire();
     void Fire();
+    void Reload();
 
     FVector GetHitTargetNoSpread() const { return HitTargetNoSpread; }
     int32 GetCarriedAmmo() const { return CarriedAmmo; }
@@ -82,6 +83,8 @@ private:
 
     UFUNCTION(NetMulticast, Reliable)
     void MulticastFire(const FVector_NetQuantize& TraceHitTarget);
+
+    void PlayReloadMontage();
 
     void TraceUnderCrosshairs(FHitResult& TraceHitResult, bool bWithSpread);
 
