@@ -90,4 +90,7 @@ protected:
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
     bool bIsElimmed;
+
+    UPROPERTY(Category = "Character", BlueprintReadOnly)
+    bool bUseFABRIKForLeftHand;
 };

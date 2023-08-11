@@ -180,5 +180,14 @@ enum class ETurningInPlace : uint8
     ETIP_MAX UMETA(Hidden)
 };
 
+UENUM(BlueprintType)
+enum class ECombatState : uint8
+{
+    ECS_Unoccupied UMETA(DisplayName = "Unoccupied"),
+    ECS_Reloading UMETA(DisplayName = "Reloading"),
+
+    MAX UMETA(Hidden)
+};
+
 // Health
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHealthChangedDelegate, float NewHealth, float MaxHealth);

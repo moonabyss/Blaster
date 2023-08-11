@@ -31,7 +31,7 @@ public:
     FOnWeaponEquippedDelegate WeaponEquipped;
     FOnWeaponUnequippedDelegate WeaponUnequipped;
     void SetCharacter(ABlasterCharacter* BlasterCharacter);
-    void EquipWeapon(ABlasterBaseWeapon* WeaponToEquip);
+    bool EquipWeapon(ABlasterBaseWeapon* WeaponToEquip);
     void DropWeapon();
     bool IsWeaponEquipped() const;
     ABlasterBaseWeapon* GetCurrentWeapon() const;
@@ -45,6 +45,7 @@ public:
 
     FVector GetHitTargetNoSpread() const { return HitTargetNoSpread; }
     int32 GetCarriedAmmo() const { return CarriedAmmo; }
+    ECombatState GetCombatState() const { return CombatState; }
 
 protected:
 private:
@@ -85,12 +86,6 @@ private:
     void MulticastFire(const FVector_NetQuantize& TraceHitTarget);
 
     void PlayReloadMontage();
-
-    UFUNCTION(Server, Reliable)
-    void ServerReload();
-
-    UFUNCTION(NetMulticast, Reliable)
-    void MulticastReload();
 
     void TraceUnderCrosshairs(FHitResult& TraceHitResult, bool bWithSpread);
 
@@ -141,4 +136,20 @@ private:
     TMap<EWeaponType, int32> LoadoutMap;
 
     void InitializeAmmoMap();
+
+    UPROPERTY(ReplicatedUsing = OnRep_CombatState)
+    ECombatState CombatState{ECombatState::ECS_Unoccupied};
+
+    UFUNCTION()
+    void OnRep_CombatState();
+
+    UFUNCTION(Server, Reliable)
+    void ServerReload();
+
+    void HandleReload();
+
+    UFUNCTION()
+    void FinishReloading();
+
+    void ChargeClip();
 };

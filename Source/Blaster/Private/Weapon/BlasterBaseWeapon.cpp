@@ -202,3 +202,8 @@ void ABlasterBaseWeapon::DecrementAmmo()
         --AmmoInClip;
     }
 }
+
+void ABlasterBaseWeapon::AddAmmoToClip(int32 AmmoCount) 
+{
+    AmmoInClip = FMath::Min(AmmoInClip + AmmoCount, GetWeaponProps().ClipCapacity);
+}

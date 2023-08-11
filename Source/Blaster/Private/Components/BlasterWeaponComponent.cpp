@@ -32,6 +32,7 @@ void UBlasterWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
     DOREPLIFETIME_CONDITION(UBlasterWeaponComponent, bWantsAiming, COND_SkipOwner);
     DOREPLIFETIME_CONDITION(UBlasterWeaponComponent, bWantsFire, COND_SkipOwner);
     DOREPLIFETIME_CONDITION(UBlasterWeaponComponent, CarriedAmmo, COND_OwnerOnly);
+    DOREPLIFETIME(UBlasterWeaponComponent, CombatState);
 }
 
 void UBlasterWeaponComponent::BeginPlay()
@@ -67,12 +68,13 @@ void UBlasterWeaponComponent::SetCharacter(ABlasterCharacter* BlasterCharacter)
     Character = BlasterCharacter;
 }
 
-void UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
+bool UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
 {
-    if (!IsValid(WeaponToEquip) || !Character) return;
+    if (!IsValid(WeaponToEquip) || !Character) return false;
 
     if (IsValid(CurrentWeapon))
     {
+        if (CombatState != ECombatState::ECS_Unoccupied) return false;
         DropWeapon();
     }
 
@@ -83,6 +85,7 @@ void UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
     CarriedAmmo = CarriedAmmoMap.FindOrAdd(CurrentWeapon->GetWeaponProps().WeaponType);
 
     WeaponEquipped.Broadcast();
+    return true;
 }
 
 void UBlasterWeaponComponent::DropWeapon()
@@ -423,7 +426,9 @@ void UBlasterWeaponComponent::Reload()
 {
     if (!IsValid(CurrentWeapon)) return;
 
-    if (CarriedAmmo > 0)
+    if (!CurrentWeapon->bClipIsFull() &&                               //
+        CarriedAmmo > 0 &&                                             //
+        CombatState == ECombatState::ECS_Unoccupied)                   //
     {
         ServerReload();
     }
@@ -442,10 +447,60 @@ void UBlasterWeaponComponent::PlayReloadMontage()
 
 void UBlasterWeaponComponent::ServerReload_Implementation()
 {
-    MulticastReload();
+    if (CarriedAmmoMap.FindOrAdd(CurrentWeapon->GetWeaponProps().WeaponType) == 0) return;
+
+    CombatState = ECombatState::ECS_Reloading;
+
+    FTimerDelegate TimerDelegate;
+    TimerDelegate.BindUFunction(this, "FinishReloading");
+    FTimerHandle TimerHandle;
+    GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.0f, false);
+
+    HandleReload();
 }
 
-void UBlasterWeaponComponent::MulticastReload_Implementation()
+void UBlasterWeaponComponent::HandleReload()
 {
     PlayReloadMontage();
+}
+
+void UBlasterWeaponComponent::OnRep_CombatState()
+{
+    switch (CombatState)
+    {
+        case ECombatState::ECS_Unoccupied:
+        {
+            break;
+        }
+        case ECombatState::ECS_Reloading:
+        {
+            HandleReload();
+            break;
+        }
+    }
+}
+
+void UBlasterWeaponComponent::FinishReloading()
+{
+    CombatState = ECombatState::ECS_Unoccupied;
+
+    ChargeClip();
+}
+
+void UBlasterWeaponComponent::ChargeClip()
+{
+    if (!CurrentWeapon) return;
+
+    const int32 NeededAmmo = CurrentWeapon->GetWeaponProps().ClipCapacity - CurrentWeapon->GetAmmoInCLip();
+    if (NeededAmmo <= CarriedAmmo)
+    {
+        CurrentWeapon->AddAmmoToClip(NeededAmmo);
+        CarriedAmmo = FMath::Max(CarriedAmmo - NeededAmmo, 0);
+    }
+    else
+    {
+        CurrentWeapon->AddAmmoToClip(CarriedAmmo);
+        CarriedAmmo = 0;
+    }
+    CarriedAmmoMap.FindOrAdd(CurrentWeapon->GetWeaponProps().WeaponType) = CarriedAmmo;
 }

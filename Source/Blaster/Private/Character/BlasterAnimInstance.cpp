@@ -97,17 +97,6 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     AO_Yaw = NextRotator.Yaw;
     AO_Pitch = NextRotator.Pitch;
 
-    // FABRIK
-    if (bIsWeaponEquipped)
-    {
-        LeftHandTransform = BlasterCharacter->GetCurrentWeapon()->GetMesh()->GetSocketTransform(LeftHandSocketName, ERelativeTransformSpace::RTS_World);
-        FVector OutPosition;
-        FRotator OutRotation;
-        BlasterCharacter->GetMesh()->TransformToBoneSpace(FName("Hand_R"), LeftHandTransform.GetLocation(), FRotator::ZeroRotator, OutPosition, OutRotation);
-        LeftHandTransform.SetLocation(OutPosition);
-        LeftHandTransform.SetRotation(FQuat(OutRotation));
-    }
-
     // Correcting the weapon rotation to aim
     if (bIsWeaponEquipped && BlasterCharacter->IsLocallyControlled())
     {
@@ -123,4 +112,17 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
         // DrawDebugLine(GetWorld(), MuzzleTipTransform.GetLocation(), MuzzleTipTransform.GetLocation() + MuzzleX * 1000.0f, FColor::Yellow, false, -1.0f, (uint8)0U, 3.0f);
         // DrawDebugLine(GetWorld(), MuzzleTipTransform.GetLocation(), BlasterCharacter->GetHitTarget(), FColor::Orange, false, -1.0f, (uint8) 0U, 3.0f);
     }
+
+    // FABRIK for left hand
+    if (bIsWeaponEquipped)
+    {
+        LeftHandTransform = BlasterCharacter->GetCurrentWeapon()->GetMesh()->GetSocketTransform(LeftHandSocketName, ERelativeTransformSpace::RTS_World);
+        FVector OutPosition;
+        FRotator OutRotation;
+        BlasterCharacter->GetMesh()->TransformToBoneSpace(FName("Hand_R"), LeftHandTransform.GetLocation(), FRotator::ZeroRotator, OutPosition, OutRotation);
+        LeftHandTransform.SetLocation(OutPosition);
+        LeftHandTransform.SetRotation(FQuat(OutRotation));
+    }
+
+    bUseFABRIKForLeftHand = BlasterCharacter->GetCombatState() != ECombatState::ECS_Reloading;
 }

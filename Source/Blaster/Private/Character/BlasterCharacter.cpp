@@ -206,8 +206,10 @@ void ABlasterCharacter::EquipPressed()
     {
         if (HasAuthority())
         {
-            WeaponComponent->EquipWeapon(OverlappingWeapon);
-            UnsetOverlappedWeapon(OverlappingWeapon);
+            if (WeaponComponent->EquipWeapon(OverlappingWeapon))
+            {
+                UnsetOverlappedWeapon(OverlappingWeapon);
+            }
         }
         else
         {
@@ -220,8 +222,10 @@ void ABlasterCharacter::ServerEquipPressed_Implementation()
 {
     if (IsValid(WeaponComponent))
     {
-        WeaponComponent->EquipWeapon(OverlappingWeapon);
-        UnsetOverlappedWeapon(OverlappingWeapon);
+        if (WeaponComponent->EquipWeapon(OverlappingWeapon))
+        {
+            UnsetOverlappedWeapon(OverlappingWeapon);
+        }
     }
 }
 
@@ -607,4 +611,10 @@ void ABlasterCharacter::ReloadPressed()
     {
         WeaponComponent->Reload();
     }
+}
+
+ECombatState ABlasterCharacter::GetCombatState() const
+{
+    if (!WeaponComponent) return ECombatState::MAX;
+    return WeaponComponent->GetCombatState();
 }

@@ -57,6 +57,7 @@ public:
     void Elim();
     bool IsElimmed() const { return bIsElimmed; }
     bool IsAlive() const;
+    ECombatState GetCombatState() const;
 
 protected:
     void MoveForward(float Value);

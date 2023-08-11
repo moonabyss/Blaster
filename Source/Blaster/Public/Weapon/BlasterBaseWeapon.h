@@ -31,12 +31,14 @@ public:
     void SetWeaponState(EWeaponState State);
     virtual void Fire(const FVector& HitTarget);
     void DecrementAmmo();
+    void AddAmmoToClip(int32 AmmoCount);
 
     // Getters
     FWeaponProps GetWeaponProps() const { return WeaponProperies; };
     USkeletalMeshComponent* GetMesh() const { return WeaponMesh; };
     int32 GetAmmoInCLip() const { return AmmoInClip; }
     int32 GetClipCapacity() const { return WeaponProperies.ClipCapacity; }
+    bool bClipIsFull() const { return AmmoInClip == WeaponProperies.ClipCapacity; }
 
 protected:
     UFUNCTION()
