@@ -10,6 +10,7 @@ ABlasterWeaponShell::ABlasterWeaponShell()
 
     ShellMesh = CreateDefaultSubobject<UStaticMeshComponent>("ShellMesh");
     SetRootComponent(ShellMesh);
+    ShellMesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
     ShellMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
     ShellMesh->SetSimulatePhysics(true);
     ShellMesh->SetEnableGravity(true);
