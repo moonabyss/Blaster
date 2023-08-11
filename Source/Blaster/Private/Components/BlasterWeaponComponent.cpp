@@ -419,7 +419,15 @@ void UBlasterWeaponComponent::InitializeAmmoMap()
     }
 }
 
-void UBlasterWeaponComponent::Reload() {}
+void UBlasterWeaponComponent::Reload()
+{
+    if (!IsValid(CurrentWeapon)) return;
+
+    if (CarriedAmmo > 0)
+    {
+        ServerReload();
+    }
+}
 
 void UBlasterWeaponComponent::PlayReloadMontage()
 {
@@ -429,6 +437,15 @@ void UBlasterWeaponComponent::PlayReloadMontage()
     if (UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance())
     {
         AnimInstance->Montage_Play(GetCurrentWeapon()->GetWeaponProps().BlasterReloadMontage);
-        AnimInstance->Montage_JumpToSection(GetCurrentWeapon()->GetWeaponProps().ReloadSectionName);
     }
+}
+
+void UBlasterWeaponComponent::ServerReload_Implementation()
+{
+    MulticastReload();
+}
+
+void UBlasterWeaponComponent::MulticastReload_Implementation()
+{
+    PlayReloadMontage();
 }

@@ -86,6 +86,12 @@ private:
 
     void PlayReloadMontage();
 
+    UFUNCTION(Server, Reliable)
+    void ServerReload();
+
+    UFUNCTION(NetMulticast, Reliable)
+    void MulticastReload();
+
     void TraceUnderCrosshairs(FHitResult& TraceHitResult, bool bWithSpread);
 
     void SetHUDCrosshairs(float DeltaTime);
