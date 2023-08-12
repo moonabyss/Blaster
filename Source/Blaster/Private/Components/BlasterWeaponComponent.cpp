@@ -187,7 +187,10 @@ void UBlasterWeaponComponent::ServerSetWantsFire_Implementation(bool bIsFiring)
 
 bool UBlasterWeaponComponent::CanShoot() const
 {
-    return Character && Character->IsAlive() && bCanFire && IsValid(CurrentWeapon) && CurrentWeapon->GetAmmoInCLip() > 0;
+    return Character && Character->IsAlive() &&                             //
+           bCanFire &&                                                      //
+           IsValid(CurrentWeapon) && CurrentWeapon->GetAmmoInCLip() > 0 &&  //
+           CombatState == ECombatState::ECS_Unoccupied;
 }
 
 void UBlasterWeaponComponent::Fire()
@@ -208,6 +211,8 @@ void UBlasterWeaponComponent::Fire()
 
 void UBlasterWeaponComponent::ServerFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
+    if (!CanShoot() || !IsValid(CurrentWeapon)) return;
+
     CurrentWeapon->DecrementAmmo();
     MulticastFire(TraceHitTarget);
     StartFireTimer();
@@ -426,9 +431,9 @@ void UBlasterWeaponComponent::Reload()
 {
     if (!IsValid(CurrentWeapon)) return;
 
-    if (!CurrentWeapon->bClipIsFull() &&                               //
-        CarriedAmmo > 0 &&                                             //
-        CombatState == ECombatState::ECS_Unoccupied)                   //
+    if (!CurrentWeapon->bClipIsFull() &&              //
+        CarriedAmmo > 0 &&                            //
+        CombatState == ECombatState::ECS_Unoccupied)  //
     {
         ServerReload();
     }
@@ -454,7 +459,7 @@ void UBlasterWeaponComponent::ServerReload_Implementation()
     FTimerDelegate TimerDelegate;
     TimerDelegate.BindUFunction(this, "FinishReloading");
     FTimerHandle TimerHandle;
-    GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.0f, false);
+    GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, CurrentWeapon->GetWeaponProps().ReloadTime, false);
 
     HandleReload();
 }

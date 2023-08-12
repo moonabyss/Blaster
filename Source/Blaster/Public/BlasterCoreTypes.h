@@ -126,6 +126,9 @@ struct FWeaponProps
     UPROPERTY(EditAnywhere)
     UAnimMontage* BlasterReloadMontage;
 
+    UPROPERTY(EditAnywhere)
+    float ReloadTime;
+
     FWeaponProps()
     {
         WeaponType = EWeaponType::None;
@@ -144,6 +147,7 @@ struct FWeaponProps
         FireDelay = 0.0f;
         ClipCapacity = 0;
         BlasterReloadMontage = nullptr;
+        ReloadTime = 0.0f;
     }
 };
 

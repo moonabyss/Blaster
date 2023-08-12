@@ -16,6 +16,7 @@ ABlasterProjectile::ABlasterProjectile()
 
     CollisionBox = CreateDefaultSubobject<UBoxComponent>("CollisionBox");
     SetRootComponent(CollisionBox);
+    CollisionBox->SetBoxExtent(FVector(4.0f, 32.0f, 4.0f));
     CollisionBox->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
     CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
     CollisionBox->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
