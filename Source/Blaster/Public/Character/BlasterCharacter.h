@@ -194,4 +194,9 @@ private:
     void SpawnElimBot();
 
     void ReloadPressed();
+
+    void Drop();
+
+    UFUNCTION(Server, Reliable)
+    void ServerDrop();
 };

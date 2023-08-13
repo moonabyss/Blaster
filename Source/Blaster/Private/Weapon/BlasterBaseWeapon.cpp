@@ -129,7 +129,6 @@ void ABlasterBaseWeapon::SetWeaponState(EWeaponState State)
                 TimerDelegate.BindLambda(NewWeaponState);
                 FTimerHandle TimerHandle;
                 GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.0f, false);
-
                 break;
             }
         }
@@ -203,7 +202,10 @@ void ABlasterBaseWeapon::DecrementAmmo()
     }
 }
 
-void ABlasterBaseWeapon::AddAmmoToClip(int32 AmmoCount) 
+bool ABlasterBaseWeapon::TryAddAmmoToClip(int32 AmmoCount)
 {
+    if (AmmoCount <= 0) return false;
+
     AmmoInClip = FMath::Min(AmmoInClip + AmmoCount, GetWeaponProps().ClipCapacity);
+    return true;
 }

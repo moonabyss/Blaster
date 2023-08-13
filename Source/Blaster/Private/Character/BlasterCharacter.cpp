@@ -139,6 +139,7 @@ void ABlasterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Pressed, this, &ThisClass::FirePressed);
     PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Released, this, &ThisClass::FireReleased);
     PlayerInputComponent->BindAction("Reload", EInputEvent::IE_Pressed, this, &ThisClass::ReloadPressed);
+    PlayerInputComponent->BindAction("Drop", EInputEvent::IE_Pressed, this, &ThisClass::Drop);
 
     PlayerInputComponent->BindAxis("MoveForward", this, &ThisClass::MoveForward);
     PlayerInputComponent->BindAxis("MoveRight", this, &ThisClass::MoveRight);
@@ -617,4 +618,17 @@ ECombatState ABlasterCharacter::GetCombatState() const
 {
     if (!WeaponComponent) return ECombatState::MAX;
     return WeaponComponent->GetCombatState();
+}
+
+void ABlasterCharacter::Drop()
+{
+    ServerDrop();
+}
+
+void ABlasterCharacter::ServerDrop_Implementation()
+{
+    if (WeaponComponent)
+    {
+        WeaponComponent->DropWeapon();
+    }
 }

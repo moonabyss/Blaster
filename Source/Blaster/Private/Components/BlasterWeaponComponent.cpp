@@ -499,13 +499,17 @@ void UBlasterWeaponComponent::ChargeClip()
     const int32 NeededAmmo = CurrentWeapon->GetWeaponProps().ClipCapacity - CurrentWeapon->GetAmmoInCLip();
     if (NeededAmmo <= CarriedAmmo)
     {
-        CurrentWeapon->AddAmmoToClip(NeededAmmo);
-        CarriedAmmo = FMath::Max(CarriedAmmo - NeededAmmo, 0);
+        if (CurrentWeapon->TryAddAmmoToClip(NeededAmmo))
+        {
+            CarriedAmmo = FMath::Max(CarriedAmmo - NeededAmmo, 0);
+        }
     }
     else
     {
-        CurrentWeapon->AddAmmoToClip(CarriedAmmo);
-        CarriedAmmo = 0;
+        if (CurrentWeapon->TryAddAmmoToClip(CarriedAmmo))
+        {
+            CarriedAmmo = 0;
+        }
     }
     CarriedAmmoMap.FindOrAdd(CurrentWeapon->GetWeaponProps().WeaponType) = CarriedAmmo;
 }

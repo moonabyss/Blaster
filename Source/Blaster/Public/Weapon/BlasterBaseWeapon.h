@@ -31,7 +31,7 @@ public:
     void SetWeaponState(EWeaponState State);
     virtual void Fire(const FVector& HitTarget);
     void DecrementAmmo();
-    void AddAmmoToClip(int32 AmmoCount);
+    bool TryAddAmmoToClip(int32 AmmoCount);
 
     // Getters
     FWeaponProps GetWeaponProps() const { return WeaponProperies; };
