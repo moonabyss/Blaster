@@ -129,6 +129,9 @@ struct FWeaponProps
     UPROPERTY(EditAnywhere)
     float ReloadTime;
 
+    UPROPERTY(EditAnywhere)
+    USoundBase* EquipSound;
+
     FWeaponProps()
     {
         WeaponType = EWeaponType::None;
@@ -148,6 +151,7 @@ struct FWeaponProps
         ClipCapacity = 0;
         BlasterReloadMontage = nullptr;
         ReloadTime = 0.0f;
+        EquipSound = nullptr;
     }
 };
 

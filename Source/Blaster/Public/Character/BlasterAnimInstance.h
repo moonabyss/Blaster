@@ -93,4 +93,10 @@ protected:
 
     UPROPERTY(Category = "Character", BlueprintReadOnly)
     bool bUseFABRIKForLeftHand;
+
+    UPROPERTY(Category = "Aim", BlueprintReadOnly)
+    bool bUseAimOffset;
+
+    UPROPERTY(Category = "Aim", BlueprintReadOnly)
+    bool bTransformRightHand;
 };

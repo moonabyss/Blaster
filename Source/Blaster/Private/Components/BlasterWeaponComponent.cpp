@@ -84,6 +84,11 @@ bool UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
     AttachWeaponToSocket(CurrentWeapon, Character->GetMesh(), WeaponRightHandSocket);
     CarriedAmmo = CarriedAmmoMap.FindOrAdd(CurrentWeapon->GetWeaponProps().WeaponType);
 
+    if (CurrentWeapon->GetWeaponProps().EquipSound)
+    {
+        UGameplayStatics::PlaySoundAtLocation(CurrentWeapon, CurrentWeapon->GetWeaponProps().EquipSound, CurrentWeapon->GetActorLocation());
+    }
+
     WeaponEquipped.Broadcast();
     return true;
 }
@@ -104,6 +109,11 @@ void UBlasterWeaponComponent::OnRep_CurrentWeapon(ABlasterBaseWeapon* LastWeapon
 {
     if (IsValid(CurrentWeapon) && !LastWeapon)
     {
+        if (CurrentWeapon->GetWeaponProps().EquipSound)
+        {
+            UGameplayStatics::PlaySoundAtLocation(CurrentWeapon, CurrentWeapon->GetWeaponProps().EquipSound, CurrentWeapon->GetActorLocation());
+        }
+
         WeaponEquipped.Broadcast();
     }
     if (!IsValid(CurrentWeapon) && IsValid(LastWeapon))
