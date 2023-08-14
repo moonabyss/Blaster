@@ -126,5 +126,5 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
     bUseFABRIKForLeftHand = BlasterCharacter->GetCombatState() != ECombatState::ECS_Reloading;
     bUseAimOffset = BlasterCharacter->GetCombatState() != ECombatState::ECS_Reloading;
-    bTransformRightHand = BlasterCharacter->GetCombatState() != ECombatState::ECS_Reloading;
+    bTransformRightHand = BlasterCharacter->GetCombatState() != ECombatState::ECS_Reloading && BlasterCharacter->IsLocallyControlled();
 }
