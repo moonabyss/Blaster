@@ -89,6 +89,11 @@ bool UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
         UGameplayStatics::PlaySoundAtLocation(CurrentWeapon, CurrentWeapon->GetWeaponProps().EquipSound, CurrentWeapon->GetActorLocation());
     }
 
+    if (CurrentWeapon->IsClipEmpty())
+    {
+        Reload();
+    }
+
     WeaponEquipped.Broadcast();
     return true;
 }
@@ -264,6 +269,10 @@ void UBlasterWeaponComponent::FireTimerFinished()
     if (bWantsFire && CurrentWeapon->GetWeaponProps().bIsAutomatic)
     {
         Fire();
+    }
+    if (bWantsFire && CurrentWeapon->IsClipEmpty())
+    {
+        Reload();
     }
 }
 
@@ -441,22 +450,11 @@ void UBlasterWeaponComponent::Reload()
 {
     if (!IsValid(CurrentWeapon)) return;
 
-    if (!CurrentWeapon->bClipIsFull() &&              //
+    if (!CurrentWeapon->IsClipFull() &&               //
         CarriedAmmo > 0 &&                            //
         CombatState == ECombatState::ECS_Unoccupied)  //
     {
         ServerReload();
-    }
-}
-
-void UBlasterWeaponComponent::PlayReloadMontage()
-{
-
-    if (!IsValid(Character) || !IsValid(Character->GetMesh())) return;
-
-    if (UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance())
-    {
-        AnimInstance->Montage_Play(GetCurrentWeapon()->GetWeaponProps().BlasterReloadMontage);
     }
 }
 
@@ -477,6 +475,17 @@ void UBlasterWeaponComponent::ServerReload_Implementation()
 void UBlasterWeaponComponent::HandleReload()
 {
     PlayReloadMontage();
+}
+
+void UBlasterWeaponComponent::PlayReloadMontage()
+{
+
+    if (!IsValid(Character) || !IsValid(Character->GetMesh())) return;
+
+    if (UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance())
+    {
+        AnimInstance->Montage_Play(GetCurrentWeapon()->GetWeaponProps().BlasterReloadMontage);
+    }
 }
 
 void UBlasterWeaponComponent::OnRep_CombatState()

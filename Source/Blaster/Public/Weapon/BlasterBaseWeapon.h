@@ -38,7 +38,8 @@ public:
     USkeletalMeshComponent* GetMesh() const { return WeaponMesh; };
     int32 GetAmmoInCLip() const { return AmmoInClip; }
     int32 GetClipCapacity() const { return WeaponProperies.ClipCapacity; }
-    bool bClipIsFull() const { return AmmoInClip == WeaponProperies.ClipCapacity; }
+    bool IsClipFull() const { return AmmoInClip == WeaponProperies.ClipCapacity; }
+    bool IsClipEmpty() const { return AmmoInClip == 0; }
 
 protected:
     UFUNCTION()
