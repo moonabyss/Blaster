@@ -15,9 +15,6 @@ class BLASTER_API UCharacterOverlay : public UUserWidget
 {
     GENERATED_BODY()
 
-public:
-    virtual bool Initialize() override;
-
 protected:
     UFUNCTION(Category = "UI", BlueprintPure)
     float GetHealth();
@@ -50,11 +47,9 @@ protected:
     bool ShowAmmoWidget() const;
 
     UFUNCTION(Category = "UI", BlueprintPure)
-    int32 GetMatchCountdown();
+    FText GetMatchCountdown();
 
 private:
     UBlasterHealthComponent* HealthComponent{nullptr};
     UBlasterWeaponComponent* WeaponComponent{nullptr};
-
-    int32 MatchDuration{0};
 };

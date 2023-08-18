@@ -5,26 +5,12 @@
 #include "GameFramework/PlayerState.h"
 
 #include "BlasterUtils.h"
+#include "Character/BlasterPlayerController.h"
 #include "Character/BlasterPlayerState.h"
 #include "Components/BlasterHealthComponent.h"
 #include "Components/BlasterWeaponComponent.h"
 #include "GameMode/BlasterGameMode.h"
 #include "Weapon/BlasterBaseWeapon.h"
-
-bool UCharacterOverlay::Initialize()
-{
-    const bool Result = Super::Initialize();
-
-    if (GetWorld())
-    {
-        if (auto BlasterGameMode = Cast<ABlasterGameMode>(GetWorld()->GetAuthGameMode()))
-        {
-            MatchDuration = BlasterGameMode->GetMatchTime();
-        }
-    }
-
-    return Result;
-}
 
 float UCharacterOverlay::GetHealth()
 {
@@ -130,7 +116,16 @@ bool UCharacterOverlay::ShowAmmoWidget() const
     return IsValid(WeaponComponent) && WeaponComponent->GetCurrentWeapon() && WeaponComponent->GetCurrentWeapon()->GetWeaponProps().WeaponType != EWeaponType::None;
 }
 
-int32 UCharacterOverlay::GetMatchCountdown()
+FText UCharacterOverlay::GetMatchCountdown()
 {
-    return MatchDuration - GetWorld()->GetTimeSeconds();
+    int32 CountdownTime = 0;
+    if (const auto PC = GetOwningPlayer<ABlasterPlayerController>())
+    {
+        CountdownTime = PC->GetLeftMatchTime();
+    }
+    
+    const int32 Minutes = CountdownTime / 60;
+    const int32 Seconds = CountdownTime % 60;
+
+    return FText::FromString(FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds));
 }
