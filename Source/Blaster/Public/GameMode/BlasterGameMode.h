@@ -18,4 +18,12 @@ class BLASTER_API ABlasterGameMode : public AGameMode
 public:
     virtual void PlayerEliminated(ABlasterCharacter* ElimmedCharacter, ABlasterPlayerController* VictimController, ABlasterPlayerController* AttackerController);
     virtual void RequestRespawn(ACharacter* ElimmedCharacter, AController* ElimmedController);
+
+public:
+    /** Duration of match for this game mode */
+    int32 GetMatchTime() const { return MatchTime; }
+
+private:
+    UPROPERTY(Category = "Game Rules", EditDefaultsOnly, meta = (Units = "s"))
+    int32 MatchTime;
 };

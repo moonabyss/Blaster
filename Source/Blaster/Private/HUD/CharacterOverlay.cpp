@@ -8,7 +8,23 @@
 #include "Character/BlasterPlayerState.h"
 #include "Components/BlasterHealthComponent.h"
 #include "Components/BlasterWeaponComponent.h"
+#include "GameMode/BlasterGameMode.h"
 #include "Weapon/BlasterBaseWeapon.h"
+
+bool UCharacterOverlay::Initialize()
+{
+    const bool Result = Super::Initialize();
+
+    if (GetWorld())
+    {
+        if (auto BlasterGameMode = Cast<ABlasterGameMode>(GetWorld()->GetAuthGameMode()))
+        {
+            MatchDuration = BlasterGameMode->GetMatchTime();
+        }
+    }
+
+    return Result;
+}
 
 float UCharacterOverlay::GetHealth()
 {
@@ -98,7 +114,7 @@ int32 UCharacterOverlay::GetClipCapacity()
     return WeaponComponent->GetCurrentWeapon()->GetClipCapacity();
 }
 
-int32 UCharacterOverlay::GetCarriedAmmo() 
+int32 UCharacterOverlay::GetCarriedAmmo()
 {
     if (!IsValid(WeaponComponent))
     {
@@ -109,7 +125,12 @@ int32 UCharacterOverlay::GetCarriedAmmo()
     return WeaponComponent->GetCarriedAmmo();
 }
 
-bool UCharacterOverlay::ShowAmmoWidget() const 
+bool UCharacterOverlay::ShowAmmoWidget() const
 {
     return IsValid(WeaponComponent) && WeaponComponent->GetCurrentWeapon() && WeaponComponent->GetCurrentWeapon()->GetWeaponProps().WeaponType != EWeaponType::None;
+}
+
+int32 UCharacterOverlay::GetMatchCountdown()
+{
+    return MatchDuration - GetWorld()->GetTimeSeconds();
 }
