@@ -12,6 +12,14 @@
 #include "GameMode/BlasterGameMode.h"
 #include "Weapon/BlasterBaseWeapon.h"
 
+void UCharacterOverlay::NativeOnInitialized()
+{
+    Super::NativeOnInitialized();
+
+    BlasterPlayerController = Cast<ABlasterPlayerController>(GetOwningPlayer());
+    BlasterPlayerState = Cast<ABlasterPlayerState>(GetOwningPlayerState());
+}
+
 float UCharacterOverlay::GetHealth()
 {
     if (!IsValid(HealthComponent))
@@ -59,9 +67,9 @@ float UCharacterOverlay::GetScore() const
 int32 UCharacterOverlay::GetKilled() const
 {
     int32 Killed = 0;
-    if (auto PlayerState = Cast<ABlasterPlayerState>(GetOwningPlayerState()))
+    if (IsValid(BlasterPlayerState))
     {
-        Killed = PlayerState->GetKilled();
+        Killed = BlasterPlayerState->GetKilled();
     }
 
     return Killed;
@@ -70,9 +78,9 @@ int32 UCharacterOverlay::GetKilled() const
 int32 UCharacterOverlay::GetDefeats() const
 {
     int32 Defeats = 0;
-    if (auto PlayerState = Cast<ABlasterPlayerState>(GetOwningPlayerState()))
+    if (IsValid(BlasterPlayerState))
     {
-        Defeats = PlayerState->GetDefeats();
+        Defeats = BlasterPlayerState->GetDefeats();
     }
 
     return Defeats;
@@ -119,9 +127,9 @@ bool UCharacterOverlay::ShowAmmoWidget() const
 FText UCharacterOverlay::GetMatchCountdown()
 {
     int32 CountdownTime = 0;
-    if (const auto PC = GetOwningPlayer<ABlasterPlayerController>())
+    if (IsValid(BlasterPlayerController))
     {
-        CountdownTime = PC->GetLeftMatchTime();
+        CountdownTime = BlasterPlayerController->GetLeftMatchTime();
     }
 
     const int32 Minutes = CountdownTime / 60;

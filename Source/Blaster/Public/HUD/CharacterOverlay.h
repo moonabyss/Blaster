@@ -7,6 +7,8 @@
 
 #include "CharacterOverlay.generated.h"
 
+class ABlasterPlayerController;
+class ABlasterPlayerState;
 class UBlasterHealthComponent;
 class UBlasterWeaponComponent;
 
@@ -14,6 +16,9 @@ UCLASS()
 class BLASTER_API UCharacterOverlay : public UUserWidget
 {
     GENERATED_BODY()
+
+protected:
+    virtual void NativeOnInitialized() override;
 
 protected:
     UFUNCTION(Category = "UI", BlueprintPure)
@@ -52,4 +57,6 @@ protected:
 private:
     UBlasterHealthComponent* HealthComponent{nullptr};
     UBlasterWeaponComponent* WeaponComponent{nullptr};
+    ABlasterPlayerState* BlasterPlayerState{nullptr};
+    ABlasterPlayerController* BlasterPlayerController{nullptr};
 };
