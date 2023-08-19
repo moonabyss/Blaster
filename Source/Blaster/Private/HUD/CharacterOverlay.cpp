@@ -123,7 +123,7 @@ FText UCharacterOverlay::GetMatchCountdown()
     {
         CountdownTime = PC->GetLeftMatchTime();
     }
-    
+
     const int32 Minutes = CountdownTime / 60;
     const int32 Seconds = CountdownTime % 60;
 

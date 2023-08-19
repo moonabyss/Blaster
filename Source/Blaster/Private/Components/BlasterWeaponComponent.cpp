@@ -112,7 +112,7 @@ void UBlasterWeaponComponent::DropWeapon()
 
 void UBlasterWeaponComponent::OnRep_CurrentWeapon(ABlasterBaseWeapon* LastWeapon)
 {
-    if (IsValid(CurrentWeapon) && !LastWeapon) // new weapon equipped
+    if (IsValid(CurrentWeapon) && !LastWeapon)  // new weapon equipped
     {
         if (CurrentWeapon->GetWeaponProps().EquipSound)
         {
@@ -121,7 +121,7 @@ void UBlasterWeaponComponent::OnRep_CurrentWeapon(ABlasterBaseWeapon* LastWeapon
 
         WeaponEquipped.Broadcast();
     }
-    else if (IsValid(CurrentWeapon)) // Weapon changed
+    else if (IsValid(CurrentWeapon))  // Weapon changed
     {
         if (CurrentWeapon->GetWeaponProps().EquipSound)
         {
@@ -130,7 +130,7 @@ void UBlasterWeaponComponent::OnRep_CurrentWeapon(ABlasterBaseWeapon* LastWeapon
 
         WeaponEquipped.Broadcast();
     }
-    else if (!IsValid(CurrentWeapon) && IsValid(LastWeapon)) // weapon unequipped
+    else if (!IsValid(CurrentWeapon) && IsValid(LastWeapon))  // weapon unequipped
     {
         WeaponUnequipped.Broadcast();
     }
