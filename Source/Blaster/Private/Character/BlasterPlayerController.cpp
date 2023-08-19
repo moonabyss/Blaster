@@ -13,6 +13,7 @@ void ABlasterPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProper
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
     DOREPLIFETIME(ABlasterPlayerController, MatchDuration);
+    DOREPLIFETIME(ABlasterPlayerController, MatchState);
 }
 
 void ABlasterPlayerController::Tick(float DeltaTime)
@@ -88,5 +89,28 @@ void ABlasterPlayerController::CheckTimeSync(float DeltaTime)
     {
         ServerRequestServerTime(GetWorld()->GetTimeSeconds());
         TimeSyncRunningTime = 0.0f;
+    }
+}
+
+void ABlasterPlayerController::MatchStateSet(FName State)
+{
+    MatchState = State;
+
+    HandleMatchState();
+}
+
+void ABlasterPlayerController::OnRep_MatchState()
+{
+    HandleMatchState();
+}
+
+void ABlasterPlayerController::HandleMatchState()
+{
+    if (MatchState == MatchState::InProgress)
+    {
+        if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
+        {
+            BlasterHUD->AddCharacterOverlay();
+        }
     }
 }

@@ -35,6 +35,19 @@ void ABlasterGameMode::Tick(float DeltaSeconds)
     }
 }
 
+void ABlasterGameMode::OnMatchStateSet() {
+    Super::OnMatchStateSet();
+
+    for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+    {
+        auto BlasterPlayer = Cast<ABlasterPlayerController>(*It);
+        if (IsValid(BlasterPlayer))
+        {
+            BlasterPlayer->MatchStateSet(MatchState);
+        }
+    }
+}
+
 void ABlasterGameMode::PlayerEliminated(ABlasterCharacter* ElimmedCharacter, ABlasterPlayerController* VictimController, ABlasterPlayerController* AttackerController)
 {
     if (IsValid(ElimmedCharacter))

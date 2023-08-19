@@ -23,6 +23,7 @@ protected:
     virtual void BeginPlay() override;
 
 public:
+    void AddCharacterOverlay();
     void SetCrosshairs(const FCrosshairs& InCrosshairs) { Crosshairs = InCrosshairs; }
 
 private:
@@ -34,7 +35,6 @@ private:
     UPROPERTY(EditDefaultsOnly)
     TSubclassOf<UUserWidget> CharacterOverlayClass;
 
+    UPROPERTY()
     UCharacterOverlay* CharacterOverlay;
-
-    void AddCharacterOverlay();
 };

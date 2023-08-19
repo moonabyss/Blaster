@@ -23,6 +23,7 @@ protected:
 
 public:
     int32 GetLeftMatchTime();
+    void MatchStateSet(FName State);
 
 protected:
     // Request the current server time
@@ -50,4 +51,12 @@ private:
     float TimeSyncRunningTime{0.0f};
 
     void CheckTimeSync(float DeltaTime);
+
+    UPROPERTY(ReplicatedUsing = OnRep_MatchState)
+    FName MatchState;
+
+    UFUNCTION()
+    void OnRep_MatchState();
+
+    void HandleMatchState();
 };

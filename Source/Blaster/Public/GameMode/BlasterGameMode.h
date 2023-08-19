@@ -23,6 +23,7 @@ public:
 
 protected:
     virtual void BeginPlay() override;
+    virtual void OnMatchStateSet() override;
 
 public:
     /** Duration of match for this game mode */
