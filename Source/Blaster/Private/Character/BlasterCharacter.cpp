@@ -194,11 +194,6 @@ void ABlasterCharacter::Jump()
 void ABlasterCharacter::Destroyed()
 {
     Super::Destroyed();
-
-    if (IsValid(ElimBotComponent))
-    {
-        ElimBotComponent->DestroyComponent();
-    }
 }
 
 void ABlasterCharacter::EquipPressed()

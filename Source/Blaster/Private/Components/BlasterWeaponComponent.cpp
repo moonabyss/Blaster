@@ -74,7 +74,6 @@ bool UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
 
     if (IsValid(CurrentWeapon))
     {
-        if (CombatState != ECombatState::ECS_Unoccupied) return false;
         DropWeapon();
     }
 
@@ -101,6 +100,7 @@ bool UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
 void UBlasterWeaponComponent::DropWeapon()
 {
     if (!IsValid(CurrentWeapon)) return;
+    if (CombatState != ECombatState::ECS_Unoccupied) return;
 
     CurrentWeapon->SetWeaponState(EWeaponState::EWS_Dropped);
     DetachWeapon(CurrentWeapon);
