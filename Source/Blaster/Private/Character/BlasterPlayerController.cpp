@@ -13,6 +13,7 @@ void ABlasterPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProper
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
     DOREPLIFETIME(ABlasterPlayerController, MatchDuration);
+    DOREPLIFETIME(ABlasterPlayerController, WarmupDuration);
     DOREPLIFETIME(ABlasterPlayerController, MatchState);
 }
 
@@ -37,7 +38,7 @@ void ABlasterPlayerController::BeginPlay()
 {
     Super::BeginPlay();
 
-    SetMatchTime();
+    SetTimers();
     if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
     {
         BlasterHUD->AddAnnouncement();
@@ -51,17 +52,18 @@ void ABlasterPlayerController::OnPossess(APawn* aPawn)
     OnNewPawn.Broadcast(aPawn);
 }
 
-void ABlasterPlayerController::SetMatchTime_Implementation()
+void ABlasterPlayerController::SetTimers_Implementation()
 {
     if (auto GameMode = Cast<ABlasterGameMode>(GetWorld()->GetAuthGameMode()))
     {
         MatchDuration = GameMode->GetMatchTime();
+        WarmupDuration = GameMode->GetWarmupTime();
     }
 }
 
-int32 ABlasterPlayerController::GetLeftMatchTime()
+float ABlasterPlayerController::GetLeftMatchTime()
 {
-    return FMath::Max(0, MatchDuration - GetServerTime());
+    return FMath::Max(0, MatchDuration + WarmupDuration - GetServerTime());
 }
 
 void ABlasterPlayerController::ServerRequestServerTime_Implementation(float TimeOfClientRequest)

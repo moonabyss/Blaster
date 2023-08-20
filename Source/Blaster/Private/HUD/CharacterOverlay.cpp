@@ -126,14 +126,14 @@ bool UCharacterOverlay::ShowAmmoWidget() const
 
 FText UCharacterOverlay::GetMatchCountdown()
 {
-    int32 CountdownTime = 0;
+    float CountdownTime = 0.0f;
     if (IsValid(BlasterPlayerController))
     {
         CountdownTime = BlasterPlayerController->GetLeftMatchTime();
     }
 
-    const int32 Minutes = CountdownTime / 60;
-    const int32 Seconds = CountdownTime % 60;
+    const int32 Minutes = FMath::FloorToInt(CountdownTime / 60.0f);
+    const int32 Seconds = FMath::FloorToInt(CountdownTime - Minutes * 60);
 
     return FText::FromString(FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds));
 }

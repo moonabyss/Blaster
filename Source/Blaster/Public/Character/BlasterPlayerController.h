@@ -22,7 +22,7 @@ protected:
     virtual void OnPossess(APawn* aPawn) override;
 
 public:
-    int32 GetLeftMatchTime();
+    float GetLeftMatchTime();
     void MatchStateSet(FName State);
 
 protected:
@@ -37,8 +37,11 @@ protected:
     float GetServerTime() const;
 
 private:
+    UPROPERTY(Replicated)
+    int32 WarmupDuration{0};
+
     UFUNCTION(Server, Reliable)
-    void SetMatchTime();
+    void SetTimers();
 
     UPROPERTY(Replicated)
     int32 MatchDuration{0};

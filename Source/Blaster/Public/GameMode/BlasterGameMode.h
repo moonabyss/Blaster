@@ -27,16 +27,16 @@ protected:
 
 public:
     /** Duration of match for this game mode */
-    int32 GetMatchTime() const { return MatchTime; }
+    float GetMatchTime() const { return MatchTime; }
+    float GetWarmupTime() const { return WarmupTime; }
 
 private:
-    UPROPERTY(Category = "Game Rules", EditDefaultsOnly, meta = (Units = "s"))
-    int32 MatchTime;
+    UPROPERTY(Category = "Game Rules", EditDefaultsOnly)
+    float MatchTime{120.0f};
 
-    UPROPERTY(Category = "Timers", EditDefaultsOnly)
+    UPROPERTY(Category = "Game Rules", EditDefaultsOnly)
     float WarmupTime{10.0f};
 
-    UPROPERTY(Category = "Timers", EditDefaultsOnly)
     float CountdownTime{0.0f};
 
     float LevelStartingTime{0.0f};
