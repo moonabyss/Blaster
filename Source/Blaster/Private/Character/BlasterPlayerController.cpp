@@ -38,6 +38,10 @@ void ABlasterPlayerController::BeginPlay()
     Super::BeginPlay();
 
     SetMatchTime();
+    if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
+    {
+        BlasterHUD->AddAnnouncement();
+    }
 }
 
 void ABlasterPlayerController::OnPossess(APawn* aPawn)
@@ -106,11 +110,16 @@ void ABlasterPlayerController::OnRep_MatchState()
 
 void ABlasterPlayerController::HandleMatchState()
 {
+    if (MatchState == MatchState::WaitingToStart)
+    {
+        
+    }
     if (MatchState == MatchState::InProgress)
     {
         if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
         {
             BlasterHUD->AddCharacterOverlay();
+            BlasterHUD->RemoveAnnouncement();
         }
     }
 }

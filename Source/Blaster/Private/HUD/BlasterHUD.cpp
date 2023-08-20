@@ -72,3 +72,21 @@ void ABlasterHUD::AddCharacterOverlay()
         CharacterOverlay->AddToViewport();
     }
 }
+
+void ABlasterHUD::AddAnnouncement() {
+    if (!AnnouncementClass) return;
+
+    if (auto PC = GetOwningPlayerController())
+    {
+        Announcement = CreateWidget<UUserWidget>(PC, AnnouncementClass);
+        Announcement->AddToViewport();
+    }
+}
+
+void ABlasterHUD::RemoveAnnouncement() 
+{
+    if (IsValid(Announcement))
+    {
+        Announcement->RemoveFromViewport();
+    }
+}
