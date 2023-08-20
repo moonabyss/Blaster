@@ -4,6 +4,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Net/UnrealNetwork.h"
 
+#include "HUD/Announcement.h"
 #include "HUD/CharacterOverlay.h"
 
 void ABlasterHUD::BeginPlay()
@@ -78,7 +79,7 @@ void ABlasterHUD::AddAnnouncement() {
 
     if (auto PC = GetOwningPlayerController())
     {
-        Announcement = CreateWidget<UUserWidget>(PC, AnnouncementClass);
+        Announcement = CreateWidget<UAnnouncement>(PC, AnnouncementClass);
         Announcement->AddToViewport();
     }
 }

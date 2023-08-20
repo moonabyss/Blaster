@@ -23,6 +23,7 @@ protected:
 
 public:
     float GetLeftMatchTime();
+    float GetLeftWarmupTime();
     void MatchStateSet(FName State);
 
 protected:
@@ -32,7 +33,7 @@ protected:
 
     // Reports the current server time to the client
     UFUNCTION(Client, Reliable)
-    void ClientReportServerTime(float TimeOfClientRequest, float TimeOfServerReceivdClient);
+    void ClientReportServerTime(float TimeOfClientRequest, float TimeOfServerReceivedClient);
 
     float GetServerTime() const;
 
@@ -42,6 +43,8 @@ private:
 
     UFUNCTION(Server, Reliable)
     void SetTimers();
+
+    float LevelStartTime{0.0f};
 
     UPROPERTY(Replicated)
     int32 MatchDuration{0};
@@ -62,4 +65,6 @@ private:
     void OnRep_MatchState();
 
     void HandleMatchState();
+
+    void ShowAnnouncement();
 };

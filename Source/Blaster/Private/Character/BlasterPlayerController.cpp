@@ -17,6 +17,18 @@ void ABlasterPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProper
     DOREPLIFETIME(ABlasterPlayerController, MatchState);
 }
 
+void ABlasterPlayerController::BeginPlay()
+{
+    Super::BeginPlay();
+
+    if (HasAuthority())
+    {
+        LevelStartTime = GetWorld()->GetTimeSeconds();
+    }
+    SetTimers();
+    ShowAnnouncement();
+}
+
 void ABlasterPlayerController::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
@@ -31,17 +43,6 @@ void ABlasterPlayerController::ReceivedPlayer()
     if (IsLocalController())
     {
         ServerRequestServerTime(GetWorld()->GetTimeSeconds());
-    }
-}
-
-void ABlasterPlayerController::BeginPlay()
-{
-    Super::BeginPlay();
-
-    SetTimers();
-    if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
-    {
-        BlasterHUD->AddAnnouncement();
     }
 }
 
@@ -66,15 +67,20 @@ float ABlasterPlayerController::GetLeftMatchTime()
     return FMath::Max(0, MatchDuration + WarmupDuration - GetServerTime());
 }
 
-void ABlasterPlayerController::ServerRequestServerTime_Implementation(float TimeOfClientRequest)
+float ABlasterPlayerController::GetLeftWarmupTime()
 {
-    ClientReportServerTime(TimeOfClientRequest, GetWorld()->GetTimeSeconds());
+    return FMath::Max(0, WarmupDuration - GetServerTime());
 }
 
-void ABlasterPlayerController::ClientReportServerTime_Implementation(float TimeOfClientRequest, float TimeOfServerReceivdClient)
+void ABlasterPlayerController::ServerRequestServerTime_Implementation(float TimeOfClientRequest)
+{
+    ClientReportServerTime(TimeOfClientRequest, GetWorld()->GetTimeSeconds() - LevelStartTime);
+}
+
+void ABlasterPlayerController::ClientReportServerTime_Implementation(float TimeOfClientRequest, float TimeOfServerReceivedClient)
 {
     const float RoundTripTime = GetWorld()->GetTimeSeconds() - TimeOfClientRequest;
-    const float CurrentServerTime = TimeOfServerReceivdClient + RoundTripTime * 0.5f;
+    const float CurrentServerTime = TimeOfServerReceivedClient + RoundTripTime * 0.5f;
     ClientServerDelta = CurrentServerTime - GetWorld()->GetTimeSeconds();
 }
 
@@ -82,7 +88,7 @@ float ABlasterPlayerController::GetServerTime() const
 {
     if (HasAuthority())
     {
-        return GetWorld()->GetTimeSeconds();
+        return GetWorld()->GetTimeSeconds() - LevelStartTime;
     }
 
     return GetWorld()->GetTimeSeconds() + ClientServerDelta;
@@ -114,7 +120,6 @@ void ABlasterPlayerController::HandleMatchState()
 {
     if (MatchState == MatchState::WaitingToStart)
     {
-        
     }
     if (MatchState == MatchState::InProgress)
     {
@@ -123,5 +128,13 @@ void ABlasterPlayerController::HandleMatchState()
             BlasterHUD->AddCharacterOverlay();
             BlasterHUD->RemoveAnnouncement();
         }
+    }
+}
+
+void ABlasterPlayerController::ShowAnnouncement()
+{
+    if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
+    {
+        BlasterHUD->AddAnnouncement();
     }
 }

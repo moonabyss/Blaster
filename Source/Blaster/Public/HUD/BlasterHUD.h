@@ -9,6 +9,7 @@
 
 #include "BlasterHUD.generated.h"
 
+class UAnnouncement;
 class UCharacterOverlay;
 
 UCLASS()
@@ -44,5 +45,5 @@ private:
     TSubclassOf<UUserWidget> AnnouncementClass;
 
     UPROPERTY()
-    UUserWidget* Announcement;
+    UAnnouncement* Announcement;
 };
