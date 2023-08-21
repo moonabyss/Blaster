@@ -81,12 +81,13 @@ void ABlasterHUD::RemoveCharacterOverlay() {
     }
 }
 
-void ABlasterHUD::AddAnnouncement() {
+void ABlasterHUD::AddAnnouncement(FText Text) {
     if (!AnnouncementClass) return;
 
     if (auto PC = GetOwningPlayerController())
     {
         Announcement = CreateWidget<UAnnouncement>(PC, AnnouncementClass);
+        Announcement->SetInfoText(Text);
         Announcement->AddToViewport();
     }
 }

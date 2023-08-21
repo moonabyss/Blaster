@@ -22,8 +22,7 @@ protected:
     virtual void OnPossess(APawn* aPawn) override;
 
 public:
-    float GetLeftMatchTime();
-    float GetLeftWarmupTime();
+    float GetTimerTime();
     void MatchStateSet(FName State);
 
 protected:
@@ -49,6 +48,9 @@ private:
     UPROPERTY(Replicated)
     int32 MatchDuration{0};
 
+    UPROPERTY(Replicated)
+    int32 CooldownDuration{0};
+
     float ClientServerDelta{0.0f};
 
     UPROPERTY(Category = "Time", EditDefaultsOnly)
@@ -68,5 +70,9 @@ private:
     void HandleMatchHasStarted();
     void HandleCooldown();
 
-    void ShowAnnouncement();
+    void ShowAnnouncement(FText Text);
+
+    float GetLeftMatchTime();
+    float GetLeftWarmupTime();
+    float GetLeftCooldownTime();
 };

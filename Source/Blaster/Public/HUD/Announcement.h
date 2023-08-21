@@ -8,6 +8,7 @@
 #include "Announcement.generated.h"
 
 class ABlasterPlayerController;
+class UTextBlock;
 
 UCLASS()
 class BLASTER_API UAnnouncement : public UUserWidget
@@ -17,10 +18,16 @@ class BLASTER_API UAnnouncement : public UUserWidget
 public:
     void NativeOnInitialized() override;
 
+public:
+    void SetInfoText(FText Text);
+
 protected:
     UFUNCTION(Category = "UI", BlueprintPure)
     FText GetCountdown();
 
 private:
+    UPROPERTY(meta = (BindWidget))
+    UTextBlock* InfoText;
+
     ABlasterPlayerController* BlasterPlayerController{nullptr};
 };

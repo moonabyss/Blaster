@@ -129,7 +129,7 @@ FText UCharacterOverlay::GetMatchCountdown()
     float CountdownTime = 0.0f;
     if (IsValid(BlasterPlayerController))
     {
-        CountdownTime = BlasterPlayerController->GetLeftMatchTime();
+        CountdownTime = BlasterPlayerController->GetTimerTime();
     }
 
     const int32 Minutes = FMath::FloorToInt(CountdownTime / 60.0f);

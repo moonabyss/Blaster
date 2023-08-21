@@ -34,6 +34,7 @@ public:
     /** Duration of match for this game mode */
     float GetMatchTime() const { return MatchTime; }
     float GetWarmupTime() const { return WarmupTime; }
+    float GetCooldownTime() const { return CooldownTime; }
 
 private:
     UPROPERTY(Category = "Game Rules", EditDefaultsOnly)

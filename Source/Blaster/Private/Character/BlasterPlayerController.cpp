@@ -8,12 +8,15 @@
 #include "GameMode/BlasterGameMode.h"
 #include "HUD/BlasterHUD.h"
 
+const FText AnnouncementText = FText::FromString("Fly around: W A S D");
+
 void ABlasterPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
     DOREPLIFETIME(ABlasterPlayerController, MatchDuration);
     DOREPLIFETIME(ABlasterPlayerController, WarmupDuration);
+    DOREPLIFETIME(ABlasterPlayerController, CooldownDuration);
     DOREPLIFETIME(ABlasterPlayerController, MatchState);
 }
 
@@ -24,9 +27,13 @@ void ABlasterPlayerController::BeginPlay()
     if (HasAuthority())
     {
         LevelStartTime = GetWorld()->GetTimeSeconds();
+        if (auto GameMode = Cast<ABlasterGameMode>(GetWorld()->GetAuthGameMode()))
+        {
+            MatchState = GameMode->GetMatchState();
+        }
     }
     SetTimers();
-    ShowAnnouncement();
+    ShowAnnouncement(AnnouncementText);
 }
 
 void ABlasterPlayerController::Tick(float DeltaTime)
@@ -59,6 +66,7 @@ void ABlasterPlayerController::SetTimers_Implementation()
     {
         MatchDuration = GameMode->GetMatchTime();
         WarmupDuration = GameMode->GetWarmupTime();
+        CooldownDuration = GameMode->GetCooldownTime();
     }
 }
 
@@ -70,6 +78,28 @@ float ABlasterPlayerController::GetLeftMatchTime()
 float ABlasterPlayerController::GetLeftWarmupTime()
 {
     return FMath::Max(0, WarmupDuration - GetServerTime());
+}
+
+float ABlasterPlayerController::GetLeftCooldownTime()
+{
+    return FMath::Max(0, MatchDuration + WarmupDuration + CooldownDuration - GetServerTime());
+}
+
+float ABlasterPlayerController::GetTimerTime()
+{
+    if (MatchState == MatchState::WaitingToStart)
+    {
+        return GetLeftWarmupTime();
+    }
+    else if (MatchState == MatchState::InProgress)
+    {
+        return GetLeftMatchTime();
+    }
+    else if (MatchState == MatchState::Cooldown)
+    {
+        return GetLeftCooldownTime();
+    }
+    return 0.0f;
 }
 
 void ABlasterPlayerController::ServerRequestServerTime_Implementation(float TimeOfClientRequest)
@@ -140,18 +170,19 @@ void ABlasterPlayerController::HandleMatchHasStarted()
     }
 }
 
-void ABlasterPlayerController::HandleCooldown() 
+void ABlasterPlayerController::HandleCooldown()
 {
     if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
     {
         BlasterHUD->RemoveCharacterOverlay();
+        ShowAnnouncement(FText());
     }
 }
 
-void ABlasterPlayerController::ShowAnnouncement()
+void ABlasterPlayerController::ShowAnnouncement(FText Text)
 {
     if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
     {
-        BlasterHUD->AddAnnouncement();
+        BlasterHUD->AddAnnouncement(Text);
     }
 }
