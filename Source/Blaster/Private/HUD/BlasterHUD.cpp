@@ -74,6 +74,13 @@ void ABlasterHUD::AddCharacterOverlay()
     }
 }
 
+void ABlasterHUD::RemoveCharacterOverlay() {
+    if (IsValid(CharacterOverlay))
+    {
+        CharacterOverlay->RemoveFromViewport();
+    }
+}
+
 void ABlasterHUD::AddAnnouncement() {
     if (!AnnouncementClass) return;
 

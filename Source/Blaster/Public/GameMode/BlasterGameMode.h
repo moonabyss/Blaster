@@ -10,6 +10,11 @@
 class ABlasterCharacter;
 class ABlasterPlayerController;
 
+namespace MatchState
+{
+    extern BLASTER_API const FName Cooldown;  // Match duration has been reached. Display winner and begin cooldown timer.
+}
+
 UCLASS()
 class BLASTER_API ABlasterGameMode : public AGameMode
 {
@@ -32,10 +37,13 @@ public:
 
 private:
     UPROPERTY(Category = "Game Rules", EditDefaultsOnly)
+    float WarmupTime{10.0f};
+
+    UPROPERTY(Category = "Game Rules", EditDefaultsOnly)
     float MatchTime{120.0f};
 
     UPROPERTY(Category = "Game Rules", EditDefaultsOnly)
-    float WarmupTime{10.0f};
+    float CooldownTime{10.0f};
 
     float CountdownTime{0.0f};
 

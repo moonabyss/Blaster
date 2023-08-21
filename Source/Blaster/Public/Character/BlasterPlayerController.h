@@ -65,6 +65,8 @@ private:
     void OnRep_MatchState();
 
     void HandleMatchState();
+    void HandleMatchHasStarted();
+    void HandleCooldown();
 
     void ShowAnnouncement();
 };

@@ -121,13 +121,30 @@ void ABlasterPlayerController::HandleMatchState()
     if (MatchState == MatchState::WaitingToStart)
     {
     }
-    if (MatchState == MatchState::InProgress)
+    else if (MatchState == MatchState::InProgress)
     {
-        if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
-        {
-            BlasterHUD->AddCharacterOverlay();
-            BlasterHUD->RemoveAnnouncement();
-        }
+        HandleMatchHasStarted();
+    }
+    else if (MatchState == MatchState::Cooldown)
+    {
+        HandleCooldown();
+    }
+}
+
+void ABlasterPlayerController::HandleMatchHasStarted()
+{
+    if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
+    {
+        BlasterHUD->AddCharacterOverlay();
+        BlasterHUD->RemoveAnnouncement();
+    }
+}
+
+void ABlasterPlayerController::HandleCooldown() 
+{
+    if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
+    {
+        BlasterHUD->RemoveCharacterOverlay();
     }
 }
 
