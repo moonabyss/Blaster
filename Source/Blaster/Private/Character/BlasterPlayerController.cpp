@@ -3,12 +3,17 @@
 #include "Character/BlasterPlayerController.h"
 
 #include "Engine/World.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 
+#include "Character/BlasterCharacter.h"
 #include "GameMode/BlasterGameMode.h"
 #include "HUD/BlasterHUD.h"
 
-const FText AnnouncementText = FText::FromString("Fly around: W A S D");
+const FText AnnouncementTitleText = FText::FromString("Match starts in:");
+const FText AnnouncementInfoText = FText::FromString("Fly around: W A S D");
+const FText CooldownTitleText = FText::FromString("Next match starts in:");
+const FText CooldownInfoText = FText();
 
 void ABlasterPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -31,9 +36,9 @@ void ABlasterPlayerController::BeginPlay()
         {
             MatchState = GameMode->GetMatchState();
         }
+        SetTimers();
     }
-    SetTimers();
-    ShowAnnouncement(AnnouncementText);
+    ShowAnnouncement();
 }
 
 void ABlasterPlayerController::Tick(float DeltaTime)
@@ -60,7 +65,7 @@ void ABlasterPlayerController::OnPossess(APawn* aPawn)
     OnNewPawn.Broadcast(aPawn);
 }
 
-void ABlasterPlayerController::SetTimers_Implementation()
+void ABlasterPlayerController::SetTimers()
 {
     if (auto GameMode = Cast<ABlasterGameMode>(GetWorld()->GetAuthGameMode()))
     {
@@ -70,19 +75,19 @@ void ABlasterPlayerController::SetTimers_Implementation()
     }
 }
 
-float ABlasterPlayerController::GetLeftMatchTime()
-{
-    return FMath::Max(0, MatchDuration + WarmupDuration - GetServerTime());
-}
-
 float ABlasterPlayerController::GetLeftWarmupTime()
 {
-    return FMath::Max(0, WarmupDuration - GetServerTime());
+    return FMath::Max(0, WarmupDuration + WarmupStartTime - GetServerTime());
+}
+
+float ABlasterPlayerController::GetLeftMatchTime()
+{
+    return FMath::Max(0, MatchDuration + MatchStartTime - GetServerTime());
 }
 
 float ABlasterPlayerController::GetLeftCooldownTime()
 {
-    return FMath::Max(0, MatchDuration + WarmupDuration + CooldownDuration - GetServerTime());
+    return FMath::Max(0, CooldownDuration + CooldownStartTime - GetServerTime());
 }
 
 float ABlasterPlayerController::GetTimerTime()
@@ -150,6 +155,7 @@ void ABlasterPlayerController::HandleMatchState()
 {
     if (MatchState == MatchState::WaitingToStart)
     {
+        HandleWaitingToStart();
     }
     else if (MatchState == MatchState::InProgress)
     {
@@ -161,8 +167,18 @@ void ABlasterPlayerController::HandleMatchState()
     }
 }
 
+void ABlasterPlayerController::HandleWaitingToStart() 
+{
+    CountdownTime = WarmupDuration;
+    WarmupStartTime = GetWorld()->GetTimeSeconds();
+    SetInputMode(FInputModeGameOnly());
+    bShowMouseCursor = false;
+}
+
 void ABlasterPlayerController::HandleMatchHasStarted()
 {
+    CountdownTime = MatchDuration;
+    MatchStartTime = GetWorld()->GetTimeSeconds();
     if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
     {
         BlasterHUD->AddCharacterOverlay();
@@ -172,17 +188,38 @@ void ABlasterPlayerController::HandleMatchHasStarted()
 
 void ABlasterPlayerController::HandleCooldown()
 {
+    CountdownTime = CooldownDuration;
+    CooldownStartTime = GetWorld()->GetTimeSeconds();
     if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
     {
+        if (auto BlasterCharacter = Cast<ABlasterCharacter>(GetCharacter()))
+        {
+            BlasterCharacter->DisableInput(this);
+            BlasterCharacter->GetCharacterMovement()->DisableMovement();
+            BlasterCharacter->GetCharacterMovement()->StopMovementImmediately();
+            BlasterCharacter->StopFire();
+        }
+
         BlasterHUD->RemoveCharacterOverlay();
-        ShowAnnouncement(FText());
+        ShowCooldown();
+
+        SetInputMode(FInputModeUIOnly());
+        bShowMouseCursor = true;
     }
 }
 
-void ABlasterPlayerController::ShowAnnouncement(FText Text)
+void ABlasterPlayerController::ShowAnnouncement()
 {
     if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
     {
-        BlasterHUD->AddAnnouncement(Text);
+        BlasterHUD->AddAnnouncement(AnnouncementTitleText, AnnouncementInfoText);
+    }
+}
+
+void ABlasterPlayerController::ShowCooldown()
+{
+    if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
+    {
+        BlasterHUD->AddAnnouncement(CooldownTitleText, CooldownInfoText);
     }
 }

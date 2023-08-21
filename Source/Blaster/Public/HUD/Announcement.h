@@ -19,6 +19,7 @@ public:
     void NativeOnInitialized() override;
 
 public:
+    void SetTitleText(FText Text);
     void SetInfoText(FText Text);
 
 protected:
@@ -26,6 +27,9 @@ protected:
     FText GetCountdown();
 
 private:
+    UPROPERTY(meta = (BindWidget))
+    UTextBlock* TitleText;
+    
     UPROPERTY(meta = (BindWidget))
     UTextBlock* InfoText;
 

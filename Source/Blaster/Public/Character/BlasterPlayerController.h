@@ -40,7 +40,6 @@ private:
     UPROPERTY(Replicated)
     int32 WarmupDuration{0};
 
-    UFUNCTION(Server, Reliable)
     void SetTimers();
 
     float LevelStartTime{0.0f};
@@ -60,6 +59,11 @@ private:
 
     void CheckTimeSync(float DeltaTime);
 
+    float CountdownTime{0.0f};
+    float WarmupStartTime{0.0f};
+    float MatchStartTime{0.0f};
+    float CooldownStartTime{0.0f};
+
     UPROPERTY(ReplicatedUsing = OnRep_MatchState)
     FName MatchState;
 
@@ -67,10 +71,12 @@ private:
     void OnRep_MatchState();
 
     void HandleMatchState();
+    void HandleWaitingToStart();
     void HandleMatchHasStarted();
     void HandleCooldown();
 
-    void ShowAnnouncement(FText Text);
+    void ShowAnnouncement();
+    void ShowCooldown();
 
     float GetLeftMatchTime();
     float GetLeftWarmupTime();

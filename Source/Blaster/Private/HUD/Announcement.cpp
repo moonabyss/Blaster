@@ -12,6 +12,13 @@ void UAnnouncement::NativeOnInitialized()
     BlasterPlayerController = Cast<ABlasterPlayerController>(GetOwningPlayer());
 }
 
+void UAnnouncement::SetTitleText(FText Text) 
+{
+    if (!TitleText) return;
+
+    TitleText->SetText(Text);
+}
+
 void UAnnouncement::SetInfoText(FText Text) {
     if (!InfoText) return;
 

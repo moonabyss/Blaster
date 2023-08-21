@@ -26,7 +26,7 @@ protected:
 public:
     void AddCharacterOverlay();
     void RemoveCharacterOverlay();
-    void AddAnnouncement(FText Text);
+    void AddAnnouncement(FText TitleText, FText InfoText);
     void RemoveAnnouncement();
     void SetCrosshairs(const FCrosshairs& InCrosshairs) { Crosshairs = InCrosshairs; }
 

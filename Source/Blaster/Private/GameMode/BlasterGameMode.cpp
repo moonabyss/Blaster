@@ -46,6 +46,14 @@ void ABlasterGameMode::Tick(float DeltaSeconds)
             SetMatchState(MatchState::Cooldown);
         }
     }
+    else if (MatchState == MatchState::Cooldown)
+    {
+        CountdownTime = WarmupTime + MatchTime + CooldownTime + LevelStartingTime - GetWorld()->GetTimeSeconds();
+        if (CountdownTime <= 0.0f)
+        {
+            RestartGame();
+        }
+    }
 }
 
 void ABlasterGameMode::OnMatchStateSet() {
@@ -70,11 +78,11 @@ void ABlasterGameMode::PlayerEliminated(ABlasterCharacter* ElimmedCharacter, ABl
 
     auto AttackerPlayerState = AttackerController ? Cast<ABlasterPlayerState>(AttackerController->PlayerState) : nullptr;
     auto VictimPlayerState = VictimController ? Cast<ABlasterPlayerState>(VictimController->PlayerState) : nullptr;
-    if (AttackerPlayerState && AttackerController != VictimController)
+    if (AttackerPlayerState && AttackerController != VictimController && MatchState == MatchState::InProgress)
     {
         AttackerPlayerState->AddToKilled(1);
     }
-    if (VictimPlayerState)
+    if (VictimPlayerState && MatchState == MatchState::InProgress)
     {
         VictimPlayerState->IncrementDefeats();
     }
@@ -88,7 +96,7 @@ void ABlasterGameMode::RequestRespawn(ACharacter* ElimmedCharacter, AController*
         ElimmedCharacter->Destroy();
     }
 
-    if (ElimmedController)
+    if (ElimmedController && MatchState == MatchState::InProgress && CountdownTime > 5.0f)
     {
         TArray<AActor*> PlayerStarts;
         UGameplayStatics::GetAllActorsOfClass(this, APlayerStart::StaticClass(), PlayerStarts);
