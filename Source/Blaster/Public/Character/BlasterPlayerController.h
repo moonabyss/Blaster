@@ -32,7 +32,7 @@ protected:
 
     // Reports the current server time to the client
     UFUNCTION(Client, Reliable)
-    void ClientReportServerTime(float TimeOfClientRequest, float TimeOfServerReceivedClient);
+    void ClientReportServerTime(float TimeOfClientRequest, float TimeOfServerReceivedClient, float CurrentCountdown);
 
     float GetServerTime() const;
 

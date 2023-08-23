@@ -46,6 +46,7 @@ void ABlasterPlayerController::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 
     CheckTimeSync(DeltaTime);
+    CountdownTime -= DeltaTime;
 }
 
 void ABlasterPlayerController::ReceivedPlayer()
@@ -78,10 +79,11 @@ void ABlasterPlayerController::SetTimers()
 
 float ABlasterPlayerController::GetLeftWarmupTime()
 {
-    GEngine->AddOnScreenDebugMessage(0, 0, FColor::Yellow, FString::Printf(TEXT("WarmupDuration: %f"), WarmupDuration));
-    GEngine->AddOnScreenDebugMessage(1, 0, FColor::Yellow, FString::Printf(TEXT("WarmupStartTime: %f"), WarmupStartTime));
-    GEngine->AddOnScreenDebugMessage(2, 0, FColor::Yellow, FString::Printf(TEXT("GetServerTime(): %f"), GetServerTime()));
-    float result = FMath::Max(0, WarmupDuration + WarmupStartTime - GetServerTime());
+    if (HasAuthority())
+    {
+        GEngine->AddOnScreenDebugMessage(0, 0, FColor::Yellow, FString::Printf(TEXT("WarmupDuration: %f"), WarmupDuration));
+    }
+    float result = FMath::Max(0, CountdownTime);
     GEngine->AddOnScreenDebugMessage(3, 0, FColor::Yellow, FString::Printf(TEXT("result: %f"), result));
     return result;
     
@@ -90,7 +92,12 @@ float ABlasterPlayerController::GetLeftWarmupTime()
 
 float ABlasterPlayerController::GetLeftMatchTime()
 {
-    return FMath::Max(0, MatchDuration + MatchStartTime - GetServerTime());
+    GEngine->AddOnScreenDebugMessage(0, 0, FColor::Yellow, FString::Printf(TEXT("MatchDuration: %f"), MatchDuration));
+    float result = FMath::Max(0, CountdownTime);
+    GEngine->AddOnScreenDebugMessage(3, 0, FColor::Yellow, FString::Printf(TEXT("result: %f"), result));
+    return result;
+
+    // return FMath::Max(0, MatchDuration + MatchStartTime - GetServerTime());
 }
 
 float ABlasterPlayerController::GetLeftCooldownTime()
@@ -117,14 +124,15 @@ float ABlasterPlayerController::GetTimerTime()
 
 void ABlasterPlayerController::ServerRequestServerTime_Implementation(float TimeOfClientRequest)
 {
-    ClientReportServerTime(TimeOfClientRequest, GetWorld()->GetTimeSeconds() - LevelStartTime);
+    ClientReportServerTime(TimeOfClientRequest, GetWorld()->GetTimeSeconds() - LevelStartTime, CountdownTime);
 }
 
-void ABlasterPlayerController::ClientReportServerTime_Implementation(float TimeOfClientRequest, float TimeOfServerReceivedClient)
+void ABlasterPlayerController::ClientReportServerTime_Implementation(float TimeOfClientRequest, float TimeOfServerReceivedClient, float CurrentCountdown)
 {
     const float RoundTripTime = GetWorld()->GetTimeSeconds() - TimeOfClientRequest;
     const float CurrentServerTime = TimeOfServerReceivedClient + RoundTripTime * 0.5f;
     ClientServerDelta = CurrentServerTime - GetWorld()->GetTimeSeconds();
+    CountdownTime = CurrentCountdown;
 }
 
 float ABlasterPlayerController::GetServerTime() const
