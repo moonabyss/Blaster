@@ -52,6 +52,7 @@ void ABlasterPlayerController::ReceivedPlayer()
 {
     Super::ReceivedPlayer();
 
+    WarmupStartTime = GetWorld()->GetTimeSeconds();
     if (IsLocalController())
     {
         ServerRequestServerTime(GetWorld()->GetTimeSeconds());
@@ -77,7 +78,14 @@ void ABlasterPlayerController::SetTimers()
 
 float ABlasterPlayerController::GetLeftWarmupTime()
 {
-    return FMath::Max(0, WarmupDuration + WarmupStartTime - GetServerTime());
+    GEngine->AddOnScreenDebugMessage(0, 0, FColor::Yellow, FString::Printf(TEXT("WarmupDuration: %f"), WarmupDuration));
+    GEngine->AddOnScreenDebugMessage(1, 0, FColor::Yellow, FString::Printf(TEXT("WarmupStartTime: %f"), WarmupStartTime));
+    GEngine->AddOnScreenDebugMessage(2, 0, FColor::Yellow, FString::Printf(TEXT("GetServerTime(): %f"), GetServerTime()));
+    float result = FMath::Max(0, WarmupDuration + WarmupStartTime - GetServerTime());
+    GEngine->AddOnScreenDebugMessage(3, 0, FColor::Yellow, FString::Printf(TEXT("result: %f"), result));
+    return result;
+    
+    //return FMath::Max(0, WarmupDuration + WarmupStartTime - GetServerTime());
 }
 
 float ABlasterPlayerController::GetLeftMatchTime()
