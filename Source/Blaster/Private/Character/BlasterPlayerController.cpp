@@ -79,30 +79,18 @@ void ABlasterPlayerController::SetTimers()
 
 float ABlasterPlayerController::GetLeftWarmupTime()
 {
-    if (HasAuthority())
-    {
-        GEngine->AddOnScreenDebugMessage(0, 0, FColor::Yellow, FString::Printf(TEXT("WarmupDuration: %f"), WarmupDuration));
-    }
-    float result = FMath::Max(0, CountdownTime);
-    GEngine->AddOnScreenDebugMessage(3, 0, FColor::Yellow, FString::Printf(TEXT("result: %f"), result));
-    return result;
-    
-    //return FMath::Max(0, WarmupDuration + WarmupStartTime - GetServerTime());
+    //return FMath::Max(0, CountdownTime);
+    return CountdownTime;
 }
 
 float ABlasterPlayerController::GetLeftMatchTime()
 {
-    GEngine->AddOnScreenDebugMessage(0, 0, FColor::Yellow, FString::Printf(TEXT("MatchDuration: %f"), MatchDuration));
-    float result = FMath::Max(0, CountdownTime);
-    GEngine->AddOnScreenDebugMessage(3, 0, FColor::Yellow, FString::Printf(TEXT("result: %f"), result));
-    return result;
-
-    // return FMath::Max(0, MatchDuration + MatchStartTime - GetServerTime());
+    return FMath::Max(0, CountdownTime);
 }
 
 float ABlasterPlayerController::GetLeftCooldownTime()
 {
-    return FMath::Max(0, CooldownDuration + CooldownStartTime - GetServerTime());
+    return FMath::Max(0, CountdownTime);
 }
 
 float ABlasterPlayerController::GetTimerTime()
