@@ -23,7 +23,7 @@ protected:
 
 public:
     float GetTimerTime();
-    void MatchStateSet(FName State);
+    void SetMatchState(FName State);
 
 protected:
     // Request the current server time
@@ -32,7 +32,7 @@ protected:
 
     // Reports the current server time to the client
     UFUNCTION(Client, Reliable)
-    void ClientReportServerTime(float TimeOfClientRequest, float TimeOfServerReceivedClient, float CurrentCountdown);
+    void ClientReportServerTime(float TimeOfClientRequest, float TimeOfServerReceivedClient);
 
     float GetServerTime() const;
 

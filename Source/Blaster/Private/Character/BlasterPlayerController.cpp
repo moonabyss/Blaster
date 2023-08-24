@@ -46,7 +46,6 @@ void ABlasterPlayerController::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 
     CheckTimeSync(DeltaTime);
-    CountdownTime -= DeltaTime;
 }
 
 void ABlasterPlayerController::ReceivedPlayer()
@@ -80,17 +79,18 @@ void ABlasterPlayerController::SetTimers()
 float ABlasterPlayerController::GetLeftWarmupTime()
 {
     //return FMath::Max(0, CountdownTime);
-    return CountdownTime;
+    return CountdownTime - GetServerTime();
 }
 
 float ABlasterPlayerController::GetLeftMatchTime()
 {
-    return FMath::Max(0, CountdownTime);
+    //return MatchDuration + MatchStartTime - GetServerTime();
+    return FMath::Max(0, CountdownTime + MatchStartTime - GetServerTime());
 }
 
 float ABlasterPlayerController::GetLeftCooldownTime()
 {
-    return FMath::Max(0, CountdownTime);
+    return FMath::Max(0, CountdownTime + CooldownStartTime - GetServerTime());
 }
 
 float ABlasterPlayerController::GetTimerTime()
@@ -112,15 +112,14 @@ float ABlasterPlayerController::GetTimerTime()
 
 void ABlasterPlayerController::ServerRequestServerTime_Implementation(float TimeOfClientRequest)
 {
-    ClientReportServerTime(TimeOfClientRequest, GetWorld()->GetTimeSeconds() - LevelStartTime, CountdownTime);
+    ClientReportServerTime(TimeOfClientRequest, GetWorld()->GetTimeSeconds() - LevelStartTime);
 }
 
-void ABlasterPlayerController::ClientReportServerTime_Implementation(float TimeOfClientRequest, float TimeOfServerReceivedClient, float CurrentCountdown)
+void ABlasterPlayerController::ClientReportServerTime_Implementation(float TimeOfClientRequest, float TimeOfServerReceivedClient)
 {
     const float RoundTripTime = GetWorld()->GetTimeSeconds() - TimeOfClientRequest;
     const float CurrentServerTime = TimeOfServerReceivedClient + RoundTripTime * 0.5f;
     ClientServerDelta = CurrentServerTime - GetWorld()->GetTimeSeconds();
-    CountdownTime = CurrentCountdown;
 }
 
 float ABlasterPlayerController::GetServerTime() const
@@ -143,7 +142,7 @@ void ABlasterPlayerController::CheckTimeSync(float DeltaTime)
     }
 }
 
-void ABlasterPlayerController::MatchStateSet(FName State)
+void ABlasterPlayerController::SetMatchState(FName State)
 {
     MatchState = State;
 
@@ -174,7 +173,7 @@ void ABlasterPlayerController::HandleMatchState()
 void ABlasterPlayerController::HandleWaitingToStart() 
 {
     CountdownTime = WarmupDuration;
-    WarmupStartTime = GetWorld()->GetTimeSeconds();
+    WarmupStartTime = GetServerTime();
     SetInputMode(FInputModeGameOnly());
     bShowMouseCursor = false;
 }
@@ -182,7 +181,7 @@ void ABlasterPlayerController::HandleWaitingToStart()
 void ABlasterPlayerController::HandleMatchHasStarted()
 {
     CountdownTime = MatchDuration;
-    MatchStartTime = GetWorld()->GetTimeSeconds();
+    MatchStartTime = GetServerTime();
     if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
     {
         BlasterHUD->AddCharacterOverlay();
@@ -193,7 +192,7 @@ void ABlasterPlayerController::HandleMatchHasStarted()
 void ABlasterPlayerController::HandleCooldown()
 {
     CountdownTime = CooldownDuration;
-    CooldownStartTime = GetWorld()->GetTimeSeconds();
+    CooldownStartTime = GetServerTime();
     if (auto BlasterHUD = Cast<ABlasterHUD>(GetHUD()))
     {
         if (auto BlasterCharacter = Cast<ABlasterCharacter>(GetCharacter()))

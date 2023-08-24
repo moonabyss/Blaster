@@ -64,7 +64,7 @@ void ABlasterGameMode::OnMatchStateSet() {
         auto BlasterPlayer = Cast<ABlasterPlayerController>(*It);
         if (IsValid(BlasterPlayer))
         {
-            BlasterPlayer->MatchStateSet(MatchState);
+            BlasterPlayer->SetMatchState(MatchState);
         }
     }
 }
