@@ -7,6 +7,9 @@
 
 #include "BlasterPlayerController.generated.h"
 
+class ABlasterGameState;
+class ABlasterPlayerState;
+
 UCLASS()
 class BLASTER_API ABlasterPlayerController : public APlayerController
 {
@@ -81,4 +84,11 @@ private:
     float GetLeftMatchTime();
     float GetLeftWarmupTime();
     float GetLeftCooldownTime();
+
+    FText CooldownInfoText{FText()};
+
+    void UpdateTopScoreText();
+
+    UPROPERTY()
+    ABlasterGameState* BlasterGameState;
 };

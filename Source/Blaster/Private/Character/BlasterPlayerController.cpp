@@ -7,13 +7,14 @@
 #include "Net/UnrealNetwork.h"
 
 #include "Character/BlasterCharacter.h"
+#include "Character/BlasterPlayerState.h"
 #include "GameMode/BlasterGameMode.h"
+#include "GameState/BlasterGameState.h"
 #include "HUD/BlasterHUD.h"
 
 const FText AnnouncementTitleText = FText::FromString("Match starts in:");
 const FText AnnouncementInfoText = FText::FromString("Fly around: W A S D");
 const FText CooldownTitleText = FText::FromString("Next match starts in:");
-const FText CooldownInfoText = FText();
 
 void ABlasterPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -38,6 +39,9 @@ void ABlasterPlayerController::BeginPlay()
         }
         SetTimers();
     }
+
+    BlasterGameState = Cast<ABlasterGameState>(GetWorld()->GetGameState());
+
     ShowAnnouncement();
 }
 
@@ -78,8 +82,11 @@ void ABlasterPlayerController::SetTimers()
 
 float ABlasterPlayerController::GetLeftWarmupTime()
 {
-    //return FMath::Max(0, CountdownTime);
-    return CountdownTime - GetServerTime();
+    if (BlasterGameState)
+    {
+        return FMath::Max(0, CountdownTime - BlasterGameState->GetServerWorldTimeSeconds());
+    }
+    return FMath::Max(0, CountdownTime - GetServerTime());
 }
 
 float ABlasterPlayerController::GetLeftMatchTime()
@@ -203,11 +210,45 @@ void ABlasterPlayerController::HandleCooldown()
             BlasterCharacter->StopFire();
         }
 
+        UpdateTopScoreText();
+
         BlasterHUD->RemoveCharacterOverlay();
         ShowCooldown();
 
         SetInputMode(FInputModeUIOnly());
         bShowMouseCursor = true;
+
+    }
+}
+
+void ABlasterPlayerController::UpdateTopScoreText() 
+{
+    auto BlasterPlayerState = GetPlayerState<ABlasterPlayerState>();
+
+    if (BlasterGameState && BlasterPlayerState)
+    {
+        FString InfoText;
+        if (BlasterGameState->TopScoringPlayers.Num() == 0)
+        {
+            InfoText = FString("There is no winner.");
+        }
+        else if (BlasterGameState->TopScoringPlayers.Num() == 1 && BlasterGameState->TopScoringPlayers[0] == BlasterPlayerState)
+        {
+            InfoText = FString("You are the winner!");
+        }
+        else if (BlasterGameState->TopScoringPlayers.Num() == 1)
+        {
+            InfoText = FString::Printf(TEXT("Winner:\n%s"), *BlasterGameState->TopScoringPlayers[0]->GetPlayerName());
+        }
+        else if (BlasterGameState->TopScoringPlayers.Num() > 1)
+        {
+            InfoText = FString("Players tied for the win:\n");
+            for (auto TiedPlayer : BlasterGameState->TopScoringPlayers)
+            {
+                InfoText.Append(FString::Printf(TEXT("%s\n"), *TiedPlayer->GetPlayerName()));
+            }
+        }
+        CooldownInfoText = FText::FromString(InfoText);
     }
 }
 

@@ -8,6 +8,7 @@
 #include "Character/BlasterCharacter.h"
 #include "Character/BlasterPlayerController.h"
 #include "Character/BlasterPlayerState.h"
+#include "GameState/BlasterGameState.h"
 
 namespace MatchState
 {
@@ -78,9 +79,12 @@ void ABlasterGameMode::PlayerEliminated(ABlasterCharacter* ElimmedCharacter, ABl
 
     auto AttackerPlayerState = AttackerController ? Cast<ABlasterPlayerState>(AttackerController->PlayerState) : nullptr;
     auto VictimPlayerState = VictimController ? Cast<ABlasterPlayerState>(VictimController->PlayerState) : nullptr;
-    if (AttackerPlayerState && AttackerController != VictimController && MatchState == MatchState::InProgress)
+    auto BlasterGameState = GetGameState<ABlasterGameState>();
+
+    if (AttackerPlayerState && AttackerController != VictimController && BlasterGameState && MatchState == MatchState::InProgress)
     {
         AttackerPlayerState->AddToKilled(1);
+        BlasterGameState->UpdateTopScore(AttackerPlayerState);
     }
     if (VictimPlayerState && MatchState == MatchState::InProgress)
     {
