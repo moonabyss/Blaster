@@ -40,8 +40,6 @@ void ABlasterPlayerController::BeginPlay()
         SetTimers();
     }
 
-    BlasterGameState = Cast<ABlasterGameState>(GetWorld()->GetGameState());
-
     ShowAnnouncement();
 }
 
@@ -82,16 +80,11 @@ void ABlasterPlayerController::SetTimers()
 
 float ABlasterPlayerController::GetLeftWarmupTime()
 {
-    if (BlasterGameState)
-    {
-        return FMath::Max(0, CountdownTime - BlasterGameState->GetServerWorldTimeSeconds());
-    }
     return FMath::Max(0, CountdownTime - GetServerTime());
 }
 
 float ABlasterPlayerController::GetLeftMatchTime()
 {
-    //return MatchDuration + MatchStartTime - GetServerTime();
     return FMath::Max(0, CountdownTime + MatchStartTime - GetServerTime());
 }
 
@@ -224,6 +217,7 @@ void ABlasterPlayerController::HandleCooldown()
 void ABlasterPlayerController::UpdateTopScoreText() 
 {
     auto BlasterPlayerState = GetPlayerState<ABlasterPlayerState>();
+    auto BlasterGameState = Cast<ABlasterGameState>(GetWorld()->GetGameState());
 
     if (BlasterGameState && BlasterPlayerState)
     {

@@ -88,7 +88,4 @@ private:
     FText CooldownInfoText{FText()};
 
     void UpdateTopScoreText();
-
-    UPROPERTY()
-    ABlasterGameState* BlasterGameState;
 };
