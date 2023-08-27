@@ -25,7 +25,9 @@ void UBlasterAnimInstance::NativeInitializeAnimation()
     BlasterCharacter = Cast<ABlasterCharacter>(Pawn);
     if (!IsValid(BlasterCharacter))
     {
+#if !UE_BUILD_SHIPPING
         BLASTER_LOG_ERROR(LogBlasterAnimInstance, TEXT("UBlasterAnimInstance::NativeInitializeAnimation() UBlasterAnimInstance can only be used with ABlasterCharacter"));
+#endif  // !UE_BUILD_SHIPPING
         return;
     }
 }
@@ -38,7 +40,9 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
     if (!IsValid(BlasterCharacter->GetCharacterMovement()))
     {
+#if !UE_BUILD_SHIPPING
         BLASTER_LOG_ERROR(LogBlasterAnimInstance, TEXT("UBlasterAnimInstance::NativeUpdateAnimation() Invalid MovementComponent"));
+#endif  // !UE_BUILD_SHIPPING
         return;
     }
 
