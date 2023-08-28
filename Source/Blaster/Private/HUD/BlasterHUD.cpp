@@ -27,35 +27,31 @@ void ABlasterHUD::DrawHUD()
     const float Spread = ViewportSize.X / FOVAngle * Crosshairs.SpreadAngle / 2.0f;
     CurrentSpread = FMath::FInterpTo(CurrentSpread, Spread, GetWorld()->DeltaTimeSeconds, 10.0f);
 
-    if (Crosshairs.Center)
     {
-        FVector2D Spreads(0.0f);
-        DrawCrosshair(Crosshairs.Center, ViewportCenter, Spreads, Crosshairs.Color);
+        const FVector2D Spreads(0.0f);
+        DrawCrosshair(Crosshairs.CrosshairsData.Center, ViewportCenter, Spreads, Crosshairs.Color);
     }
-    if (Crosshairs.Left)
     {
-        FVector2D Spreads(-CurrentSpread, 0.0f);
-        DrawCrosshair(Crosshairs.Left, ViewportCenter, Spreads, Crosshairs.Color);
+        const FVector2D Spreads(-CurrentSpread, 0.0f);
+        DrawCrosshair(Crosshairs.CrosshairsData.Left, ViewportCenter, Spreads, Crosshairs.Color);
     }
-    if (Crosshairs.Right)
     {
-        FVector2D Spreads(CurrentSpread, 0.0f);
-        DrawCrosshair(Crosshairs.Right, ViewportCenter, Spreads, Crosshairs.Color);
+        const FVector2D Spreads(CurrentSpread, 0.0f);
+        DrawCrosshair(Crosshairs.CrosshairsData.Right, ViewportCenter, Spreads, Crosshairs.Color);
     }
-    if (Crosshairs.Top)
     {
-        FVector2D Spreads(0.0f, -CurrentSpread);
-        DrawCrosshair(Crosshairs.Top, ViewportCenter, Spreads, Crosshairs.Color);
+        const FVector2D Spreads(0.0f, -CurrentSpread);
+        DrawCrosshair(Crosshairs.CrosshairsData.Top, ViewportCenter, Spreads, Crosshairs.Color);
     }
-    if (Crosshairs.Bottom)
     {
-        FVector2D Spreads(0.0f, CurrentSpread);
-        DrawCrosshair(Crosshairs.Bottom, ViewportCenter, Spreads, Crosshairs.Color);
+        const FVector2D Spreads(0.0f, CurrentSpread);
+        DrawCrosshair(Crosshairs.CrosshairsData.Bottom, ViewportCenter, Spreads, Crosshairs.Color);
     }
 }
 
 void ABlasterHUD::DrawCrosshair(UTexture2D* Texture, const FVector2D& ViewportCenter, const FVector2D& Spreads, const FColor& SpreadColor)
 {
+    if (!Texture) return;
     const float TextureWidth = Texture->GetSizeX();
     const float TextureHeight = Texture->GetSizeY();
     const FVector2D TextuteDrawPoint(ViewportCenter.X - TextureWidth / 2.0f + Spreads.X, ViewportCenter.Y - TextureHeight / 2.0f + Spreads.Y);

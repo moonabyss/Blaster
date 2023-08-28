@@ -30,7 +30,6 @@ protected:
 public:
     FOnWeaponEquippedDelegate WeaponEquipped;
     FOnWeaponUnequippedDelegate WeaponUnequipped;
-    void SetCharacter(ABlasterCharacter* BlasterCharacter);
     bool EquipWeapon(ABlasterBaseWeapon* WeaponToEquip);
     void DropWeapon();
     bool IsWeaponEquipped() const;
@@ -91,7 +90,7 @@ private:
 
     void SetHUDCrosshairs(float DeltaTime);
 
-    FCrosshairs Crosshairs{FCrosshairs()};
+    FCrosshairs Crosshairs;
     float CalculateCurrentSpreadModifier(float DeltaTime);
     float CurrentSpreadAngle{0.0f};
     float CrosshairsVelocityFactor{0.0f};

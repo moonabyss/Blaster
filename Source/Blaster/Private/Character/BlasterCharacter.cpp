@@ -60,11 +60,9 @@ ABlasterCharacter::ABlasterCharacter(const FObjectInitializer& ObjInit)
     GetCharacterMovement()->RotationRate = FRotator(0.0f, 0.0f, 720.0f);
 
     WeaponComponent = CreateDefaultSubobject<UBlasterWeaponComponent>("WeaponComponent");
-    WeaponComponent->SetCharacter(this);
     WeaponComponent->SetIsReplicated(true);
 
     HealthComponent = CreateDefaultSubobject<UBlasterHealthComponent>("HealthComponent");
-    HealthComponent->SetCharacter(this);
     HealthComponent->SetIsReplicated(true);
 
     if (auto PC = GetController<APlayerController>())
@@ -181,19 +179,7 @@ void ABlasterCharacter::LookUp(float Value)
 
 void ABlasterCharacter::Jump()
 {
-    if (bIsCrouched)
-    {
-        UnCrouch();
-    }
-    else
-    {
-        Super::Jump();
-    }
-}
-
-void ABlasterCharacter::Destroyed()
-{
-    Super::Destroyed();
+    bIsCrouched ? UnCrouch() : Super::Jump();
 }
 
 void ABlasterCharacter::EquipPressed()
@@ -229,14 +215,7 @@ void ABlasterCharacter::CrouchPressed()
 {
     if (GetCharacterMovement()->IsFalling()) return;
 
-    if (bIsCrouched)
-    {
-        UnCrouch();
-    }
-    else
-    {
-        Crouch();
-    }
+    bIsCrouched ? UnCrouch() : Crouch();
 }
 
 void ABlasterCharacter::DisplayNetRole()
@@ -491,11 +470,7 @@ void ABlasterCharacter::PlayHitReactMontage()
     if (!IsValid(GetMesh()) || !HitReactMontage) return;
     if (!WeaponComponent || !WeaponComponent->GetCurrentWeapon()) return;
 
-    if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
-    {
-        AnimInstance->Montage_Play(HitReactMontage);
-        AnimInstance->Montage_JumpToSection("FromFront");
-    }
+    PlayAnimMontage(HitReactMontage, 1.0f, "FromFront");
 }
 
 void ABlasterCharacter::SimProxiesTurn()
@@ -545,10 +520,7 @@ void ABlasterCharacter::PlayElimMontage()
 {
     if (!IsValid(GetMesh()) || !ElimMontage) return;
 
-    if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
-    {
-        AnimInstance->Montage_Play(ElimMontage);
-    }
+    PlayAnimMontage(ElimMontage);
 }
 
 void ABlasterCharacter::ElimTimerFinished()

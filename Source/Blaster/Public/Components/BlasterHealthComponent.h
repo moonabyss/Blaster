@@ -32,8 +32,6 @@ public:
     float GetMaxHealth() const { return MaxHealth; }
     float GetHealthPercent() const { return Health / MaxHealth; }
 
-    void SetCharacter(ABlasterCharacter* BlasterCharacter);
-
 private:
     UPROPERTY(Category = "Player Stats", EditAnywhere)
     float MaxHealth = 100.0f;

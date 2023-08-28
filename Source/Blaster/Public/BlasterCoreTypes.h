@@ -36,7 +36,7 @@ enum class EWeaponType : uint8
 };
 
 USTRUCT(BlueprintType)
-struct FCrosshairs
+struct FCrosshairsData
 {
     GENERATED_BODY()
 
@@ -55,6 +55,24 @@ struct FCrosshairs
     UPROPERTY(EditAnywhere)
     UTexture2D* Bottom;
 
+    void Reset() 
+    { 
+        Center = nullptr; 
+        Left = nullptr; 
+        Right = nullptr; 
+        Top = nullptr; 
+        Bottom = nullptr; 
+    }
+};
+
+USTRUCT(BlueprintType)
+struct FCrosshairs
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere)
+    FCrosshairsData CrosshairsData;
+
     UPROPERTY(EditAnywhere)
     float SpreadAngle;
 
@@ -63,11 +81,7 @@ struct FCrosshairs
 
     FCrosshairs()
     {
-        Center = nullptr;
-        Left = nullptr;
-        Right = nullptr;
-        Top = nullptr;
-        Bottom = nullptr;
+        CrosshairsData.Reset();
         SpreadAngle = 0.0f;
         Color = FColor::White;
     }

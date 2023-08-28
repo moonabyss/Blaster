@@ -39,6 +39,9 @@ void UBlasterWeaponComponent::BeginPlay()
 {
     Super::BeginPlay();
 
+    Character = Cast<ABlasterCharacter>(GetOwner());
+    check(Character);
+
     if (auto PC = Character->GetController<APlayerController>())
     {
         DefaultFOV = PC->PlayerCameraManager->DefaultFOV;
@@ -61,11 +64,6 @@ void UBlasterWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType
         InterpFOV(DeltaTime);
         SetHUDCrosshairs(DeltaTime);
     }
-}
-
-void UBlasterWeaponComponent::SetCharacter(ABlasterCharacter* BlasterCharacter)
-{
-    Character = BlasterCharacter;
 }
 
 bool UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
@@ -114,19 +112,13 @@ void UBlasterWeaponComponent::OnRep_CurrentWeapon(ABlasterBaseWeapon* LastWeapon
 {
     if (IsValid(CurrentWeapon) && !LastWeapon)  // new weapon equipped
     {
-        if (CurrentWeapon->GetWeaponProps().EquipSound)
-        {
-            UGameplayStatics::PlaySoundAtLocation(CurrentWeapon, CurrentWeapon->GetWeaponProps().EquipSound, CurrentWeapon->GetActorLocation());
-        }
+        UGameplayStatics::PlaySoundAtLocation(CurrentWeapon, CurrentWeapon->GetWeaponProps().EquipSound, CurrentWeapon->GetActorLocation());
 
         WeaponEquipped.Broadcast();
     }
     else if (IsValid(CurrentWeapon))  // Weapon changed
     {
-        if (CurrentWeapon->GetWeaponProps().EquipSound)
-        {
-            UGameplayStatics::PlaySoundAtLocation(CurrentWeapon, CurrentWeapon->GetWeaponProps().EquipSound, CurrentWeapon->GetActorLocation());
-        }
+        UGameplayStatics::PlaySoundAtLocation(CurrentWeapon, CurrentWeapon->GetWeaponProps().EquipSound, CurrentWeapon->GetActorLocation());
 
         WeaponEquipped.Broadcast();
     }
@@ -255,12 +247,8 @@ void UBlasterWeaponComponent::PlayFireMontage()
 {
     if (!IsValid(Character) || !IsValid(Character->GetMesh())) return;
 
-    if (UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance())
-    {
-        AnimInstance->Montage_Play(GetCurrentWeapon()->GetWeaponProps().BlasterFireMontage);
-        const FName SectionName = IsAiming() ? WeaponAimMontageSectionName : WeaponHipMontageSectionName;
-        AnimInstance->Montage_JumpToSection(SectionName);
-    }
+    const FName SectionName = IsAiming() ? WeaponAimMontageSectionName : WeaponHipMontageSectionName;
+    Character->PlayAnimMontage(GetCurrentWeapon()->GetWeaponProps().BlasterFireMontage, 1.0f, SectionName);
 }
 
 void UBlasterWeaponComponent::StartFireTimer()
@@ -350,28 +338,24 @@ void UBlasterWeaponComponent::SetHUDCrosshairs(float DeltaTime)
     if (!Controller)
     {
         Controller = Cast<ABlasterPlayerController>(Character->GetController());
+        if (!Controller) return;
     }
-    if (!Controller) return;
 
     if (!HUD)
     {
         HUD = Cast<ABlasterHUD>(Controller->GetHUD());
+        if (!HUD) return;
     }
-    if (!HUD) return;
 
     if (CurrentWeapon)
     {
-        Crosshairs.Center = CurrentWeapon->GetWeaponProps().Crosshairs.Center;
-        Crosshairs.Left = CurrentWeapon->GetWeaponProps().Crosshairs.Left;
-        Crosshairs.Right = CurrentWeapon->GetWeaponProps().Crosshairs.Right;
-        Crosshairs.Top = CurrentWeapon->GetWeaponProps().Crosshairs.Top;
-        Crosshairs.Bottom = CurrentWeapon->GetWeaponProps().Crosshairs.Bottom;
+        Crosshairs.CrosshairsData = CurrentWeapon->GetWeaponProps().Crosshairs.CrosshairsData;
         Crosshairs.SpreadAngle = CurrentWeapon->GetWeaponProps().DefaultSpreadInDegrees * CalculateCurrentSpreadModifier(DeltaTime);
         CurrentSpreadAngle = Crosshairs.SpreadAngle;
     }
     else
     {
-        Crosshairs = FCrosshairs();
+        Crosshairs.CrosshairsData.Reset();
     }
     HUD->SetCrosshairs(Crosshairs);
 }
@@ -425,16 +409,8 @@ void UBlasterWeaponComponent::InterpFOV(float DeltaTime)
         return;
     }
 
-    if (IsAiming())
-    {
-        CurrentFOV = FMath::FInterpTo(CurrentFOV, CurrentWeapon->GetWeaponProps().ZoomedFOV, DeltaTime, CurrentWeapon->GetWeaponProps().ZoomInterpSpeed);
-        PC->PlayerCameraManager->SetFOV(CurrentFOV);
-    }
-    else
-    {
-        CurrentFOV = FMath::FInterpTo(CurrentFOV, DefaultFOV, DeltaTime, CurrentWeapon->GetWeaponProps().ZoomInterpSpeed);
-        PC->PlayerCameraManager->SetFOV(CurrentFOV);
-    }
+    CurrentFOV = FMath::FInterpTo(CurrentFOV, IsAiming() ? CurrentWeapon->GetWeaponProps().ZoomedFOV : DefaultFOV, DeltaTime, CurrentWeapon->GetWeaponProps().ZoomInterpSpeed);
+    PC->PlayerCameraManager->SetFOV(CurrentFOV);
 }
 
 void UBlasterWeaponComponent::InitializeAmmoMap()
@@ -491,10 +467,7 @@ void UBlasterWeaponComponent::PlayReloadMontage()
 
     if (!IsValid(Character) || !IsValid(Character->GetMesh())) return;
 
-    if (UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance())
-    {
-        AnimInstance->Montage_Play(GetCurrentWeapon()->GetWeaponProps().BlasterReloadMontage);
-    }
+    Character->PlayAnimMontage(GetCurrentWeapon()->GetWeaponProps().BlasterReloadMontage);
 }
 
 void UBlasterWeaponComponent::OnRep_CombatState()

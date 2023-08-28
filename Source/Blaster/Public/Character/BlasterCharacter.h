@@ -40,7 +40,6 @@ public:
 protected:
     virtual void BeginPlay() override;
     virtual void Jump() override;
-    virtual void Destroyed() override;
 
 public:
     virtual void SetOverlappedWeapon(ABlasterBaseWeapon* Weapon);

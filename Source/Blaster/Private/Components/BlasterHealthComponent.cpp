@@ -25,6 +25,7 @@ void UBlasterHealthComponent::BeginPlay()
 {
     Super::BeginPlay();
 
+    Character = Cast<ABlasterCharacter>(GetOwner());
     check(Character);
 
     Health = MaxHealth;
@@ -37,11 +38,6 @@ void UBlasterHealthComponent::BeginPlay()
             ComponentOwner->OnTakeAnyDamage.AddDynamic(this, &ThisClass::OnTakeAnyDamageHandle);
         }
     }
-}
-
-void UBlasterHealthComponent::SetCharacter(ABlasterCharacter* BlasterCharacter)
-{
-    Character = BlasterCharacter;
 }
 
 void UBlasterHealthComponent::OnRep_Health(float PrevHealth)
