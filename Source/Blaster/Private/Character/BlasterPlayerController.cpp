@@ -170,7 +170,7 @@ void ABlasterPlayerController::HandleMatchState()
     }
 }
 
-void ABlasterPlayerController::HandleWaitingToStart() 
+void ABlasterPlayerController::HandleWaitingToStart()
 {
     CountdownTime = WarmupDuration;
     WarmupStartTime = GetServerTime();
@@ -210,11 +210,10 @@ void ABlasterPlayerController::HandleCooldown()
 
         SetInputMode(FInputModeUIOnly());
         bShowMouseCursor = true;
-
     }
 }
 
-void ABlasterPlayerController::UpdateTopScoreText() 
+void ABlasterPlayerController::UpdateTopScoreText()
 {
     auto BlasterPlayerState = GetPlayerState<ABlasterPlayerState>();
     auto BlasterGameState = Cast<ABlasterGameState>(GetWorld()->GetGameState());

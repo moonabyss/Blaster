@@ -11,7 +11,6 @@
 
 class UBoxComponent;
 class UProjectileMovementComponent;
-class UParticleSystemComponent;
 
 UCLASS()
 class BLASTER_API ABlasterProjectile : public AActor
@@ -20,7 +19,6 @@ class BLASTER_API ABlasterProjectile : public AActor
 
 public:
     ABlasterProjectile();
-    virtual void Tick(float DeltaTime) override;
 
 protected:
     virtual void BeginPlay() override;
@@ -28,12 +26,11 @@ protected:
 public:
     void SetShotDirection(const FVector& Direction) { ShotDirection = Direction; }
 
+    UBoxComponent* GetCollisionBox() { return CollisionBox; }
+
 protected:
     UFUNCTION()
     virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
-    UPROPERTY(Category = "Bullet Properties", EditDefaultsOnly)
-    float Damage{0.0f};
 
 private:
     UPROPERTY(Category = "Components", VisibleAnywhere)
@@ -41,15 +38,6 @@ private:
 
     UPROPERTY(Category = "Components", VisibleAnywhere)
     UProjectileMovementComponent* ProjectileMovementComponent;
-
-    UPROPERTY(Category = "Bullet Properties", EditDefaultsOnly)
-    FBulletProps BulletProps{FBulletProps()};
-
-    UParticleSystemComponent* TracerComponent;
-
-    void SpawnParticles();
-
-    void SpawnSound();
 
     FVector ShotDirection{FVector()};
 };

@@ -29,7 +29,7 @@ protected:
 private:
     UPROPERTY(meta = (BindWidget))
     UTextBlock* TitleText;
-    
+
     UPROPERTY(meta = (BindWidget))
     UTextBlock* InfoText;
 

@@ -412,7 +412,7 @@ void ABlasterCharacter::FireReleased()
     WeaponComponent->StopFire();
 }
 
-void ABlasterCharacter::StopFire() 
+void ABlasterCharacter::StopFire()
 {
     FireReleased();
 }

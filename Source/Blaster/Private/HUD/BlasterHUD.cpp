@@ -70,7 +70,8 @@ void ABlasterHUD::AddCharacterOverlay()
     }
 }
 
-void ABlasterHUD::RemoveCharacterOverlay() {
+void ABlasterHUD::RemoveCharacterOverlay()
+{
     if (IsValid(CharacterOverlay))
     {
         CharacterOverlay->RemoveFromViewport();
@@ -90,7 +91,7 @@ void ABlasterHUD::AddAnnouncement(FText TitleText, FText InfoText)
     }
 }
 
-void ABlasterHUD::RemoveAnnouncement() 
+void ABlasterHUD::RemoveAnnouncement()
 {
     if (IsValid(Announcement))
     {

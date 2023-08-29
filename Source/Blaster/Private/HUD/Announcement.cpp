@@ -12,20 +12,21 @@ void UAnnouncement::NativeOnInitialized()
     BlasterPlayerController = Cast<ABlasterPlayerController>(GetOwningPlayer());
 }
 
-void UAnnouncement::SetTitleText(FText Text) 
+void UAnnouncement::SetTitleText(FText Text)
 {
     if (!TitleText) return;
 
     TitleText->SetText(Text);
 }
 
-void UAnnouncement::SetInfoText(FText Text) {
+void UAnnouncement::SetInfoText(FText Text)
+{
     if (!InfoText) return;
 
     InfoText->SetText(Text);
 }
 
-FText UAnnouncement::GetCountdown() 
+FText UAnnouncement::GetCountdown()
 {
     float CountdownTime = 0.0f;
     if (IsValid(BlasterPlayerController))

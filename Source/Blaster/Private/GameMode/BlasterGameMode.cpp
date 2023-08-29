@@ -57,7 +57,8 @@ void ABlasterGameMode::Tick(float DeltaSeconds)
     }
 }
 
-void ABlasterGameMode::OnMatchStateSet() {
+void ABlasterGameMode::OnMatchStateSet()
+{
     Super::OnMatchStateSet();
 
     for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)

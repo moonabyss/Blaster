@@ -55,13 +55,13 @@ struct FCrosshairsData
     UPROPERTY(EditAnywhere)
     UTexture2D* Bottom;
 
-    void Reset() 
-    { 
-        Center = nullptr; 
-        Left = nullptr; 
-        Right = nullptr; 
-        Top = nullptr; 
-        Bottom = nullptr; 
+    void Reset()
+    {
+        Center = nullptr;
+        Left = nullptr;
+        Right = nullptr;
+        Top = nullptr;
+        Bottom = nullptr;
     }
 };
 
@@ -175,6 +175,9 @@ struct FBulletProps
     GENERATED_BODY()
 
     UPROPERTY(EditAnywhere)
+    float Damage;
+
+    UPROPERTY(EditAnywhere)
     UParticleSystem* BulletTracer;
 
     UPROPERTY(EditAnywhere)
@@ -185,9 +188,44 @@ struct FBulletProps
 
     FBulletProps()
     {
+        Damage = 0.0f;
         BulletTracer = nullptr;
         BulletImpactParticles = nullptr;
         BulletImpactSound = nullptr;
+    }
+};
+
+USTRUCT(BlueprintType)
+struct FRocketProps
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere)
+    float Damage;
+
+    UPROPERTY(EditAnywhere)
+    float MinimumDamage;
+
+    UPROPERTY(EditAnywhere)
+    float DamageInnerRadius;
+
+    UPROPERTY(EditAnywhere)
+    float DamageOuterRadius;
+
+    UPROPERTY(EditAnywhere)
+    UParticleSystem* RocketImpactParticles;
+
+    UPROPERTY(EditAnywhere)
+    class USoundCue* RocketImpactSound;
+
+    FRocketProps()
+    {
+        Damage = 0.0f;
+        MinimumDamage = 0.0f;
+        DamageInnerRadius = 0.0f;
+        DamageOuterRadius = 0.0f;
+        RocketImpactParticles = nullptr;
+        RocketImpactSound = nullptr;
     }
 };
 

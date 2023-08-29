@@ -3,9 +3,6 @@
 #include "Weapon/BlasterProjectile.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
-#include "Particles/ParticleSystem.h"
-#include "Sound/SoundCue.h"
 
 #include "Interfaces/Hitable.h"
 
@@ -37,40 +34,14 @@ void ABlasterProjectile::BeginPlay()
 
     if (HasAuthority())
     {
-        if (IsValid(BulletProps.BulletTracer))
-        {
-            TracerComponent = UGameplayStatics::SpawnEmitterAttached(BulletProps.BulletTracer, CollisionBox, FName(), GetActorLocation(), GetActorRotation(), EAttachLocation::KeepWorldPosition);
-        }
-
         ProjectileMovementComponent->Velocity = ShotDirection * ProjectileMovementComponent->InitialSpeed;
         CollisionBox->IgnoreActorWhenMoving(GetOwner(), true);
         CollisionBox->OnComponentHit.AddDynamic(this, &ThisClass::OnHit);
     }
 }
 
-void ABlasterProjectile::Tick(float DeltaTime)
-{
-    Super::Tick(DeltaTime);
-}
-
 void ABlasterProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
     ProjectileMovementComponent->StopMovementImmediately();
-    SpawnParticles();
-    SpawnSound();
     Destroy();
-}
-
-void ABlasterProjectile::SpawnParticles()
-{
-    if (!BulletProps.BulletImpactParticles) return;
-
-    UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BulletProps.BulletImpactParticles, GetActorTransform());
-}
-
-void ABlasterProjectile::SpawnSound()
-{
-    if (!BulletProps.BulletImpactSound) return;
-
-    UGameplayStatics::PlaySoundAtLocation(this, BulletProps.BulletImpactSound, GetActorLocation());
 }
