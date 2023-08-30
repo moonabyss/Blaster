@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 
-#include "BlasterCoreTypes.h"
+#include "BlasterTypes/BlasterWeaponTypes.h"
 
 #include "BlasterHUD.generated.h"
 

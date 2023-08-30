@@ -5,7 +5,7 @@
 #include "Animation/AnimInstance.h"
 #include "CoreMinimal.h"
 
-#include "BlasterCoreTypes.h"
+#include "BlasterTypes/BlasterCoreTypes.h"
 
 #include "BlasterAnimInstance.generated.h"
 

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
-#include "BlasterCoreTypes.h"
+#include "BlasterTypes/BlasterWeaponTypes.h"
 
 #include "BlasterBaseWeapon.generated.h"
 

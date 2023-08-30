@@ -5,7 +5,7 @@
 #include "Components/ActorComponent.h"
 #include "CoreMinimal.h"
 
-#include "BlasterCoreTypes.h"
+#include "BlasterTypes/BlasterCoreTypes.h"
 
 #include "BlasterHealthComponent.generated.h"
 

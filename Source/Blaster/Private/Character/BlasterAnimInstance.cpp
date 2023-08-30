@@ -4,7 +4,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
-#include "BlasterCoreTypes.h"
+#include "BlasterTypes/BlasterCoreTypes.h"
 #include "BlasterUtils.h"
 #include "Character/BlasterCharacter.h"
 #include "Weapon/BlasterBaseWeapon.h"

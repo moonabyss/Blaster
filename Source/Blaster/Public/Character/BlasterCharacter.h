@@ -6,7 +6,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 
-#include "BlasterCoreTypes.h"
+#include "BlasterTypes/BlasterCoreTypes.h"
 #include "Interfaces/Hitable.h"
 #include "Interfaces/InteractWithCrosshairs.h"
 

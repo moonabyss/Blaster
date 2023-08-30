@@ -7,7 +7,7 @@
 #include "Net/UnrealNetwork.h"
 #include "TimerManager.h"
 
-#include "BlasterCoreTypes.h"
+#include "BlasterTypes/BlasterCoreTypes.h"
 #include "Character/BlasterAnimInstance.h"
 #include "Character/BlasterCharacter.h"
 #include "Character/BlasterPlayerController.h"
