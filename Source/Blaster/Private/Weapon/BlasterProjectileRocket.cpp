@@ -2,6 +2,7 @@
 
 #include "Weapon/BlasterProjectileRocket.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 ABlasterProjectileRocket::ABlasterProjectileRocket()
 {
@@ -16,6 +17,9 @@ void ABlasterProjectileRocket::OnHit(UPrimitiveComponent* HitComponent, AActor* 
     {
         UGameplayStatics::ApplyRadialDamageWithFalloff(this, RocketProps.Damage, RocketProps.MinimumDamage, GetActorLocation(), RocketProps.DamageInnerRadius, RocketProps.DamageOuterRadius, 1.0f, UDamageType::StaticClass(), TArray<AActor*>(), this, GetInstigator()->GetController());
     }
+
+    UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RocketProps.RocketImpactParticles, GetActorTransform());
+    UGameplayStatics::PlaySoundAtLocation(this, RocketProps.RocketImpactSound, GetActorLocation());
 
     Super::OnHit(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
 }

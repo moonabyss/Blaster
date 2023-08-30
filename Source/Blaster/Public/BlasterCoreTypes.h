@@ -31,6 +31,7 @@ enum class EWeaponType : uint8
     None,
     EWT_Pistol UMETA(DisplayName = "Pistol"),
     EWT_Rifle UMETA(DisplayName = "Rifle"),
+    EWT_RocketLauncher UMETA(DisplayName = "Rocket Launcher"),
 
     MAX UMETA(Hidden)
 };
@@ -73,7 +74,7 @@ struct FCrosshairs
     UPROPERTY(EditAnywhere)
     FCrosshairsData CrosshairsData;
 
-    UPROPERTY(EditAnywhere)
+    UPROPERTY(VisibleAnywhere)
     float SpreadAngle;
 
     UPROPERTY(EditAnywhere)

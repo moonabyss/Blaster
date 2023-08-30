@@ -260,9 +260,9 @@ void UBlasterWeaponComponent::StartFireTimer()
 
 void UBlasterWeaponComponent::FireTimerFinished()
 {
-    if (!CurrentWeapon) return;
-
     bCanFire = true;
+
+    if (!CurrentWeapon) return;
     if (bWantsFire && CurrentWeapon->GetWeaponProps().bIsAutomatic)
     {
         Fire();
