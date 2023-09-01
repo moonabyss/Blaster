@@ -3,6 +3,9 @@
 #include "Weapon/BlasterProjectile.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
+#include "Sound/SoundCue.h"
 
 #include "Interfaces/Hitable.h"
 
@@ -12,6 +15,7 @@ ABlasterProjectile::ABlasterProjectile()
     bReplicates = true;
 
     CollisionBox = CreateDefaultSubobject<UBoxComponent>("CollisionBox");
+    check(CollisionBox);
     SetRootComponent(CollisionBox);
     CollisionBox->SetBoxExtent(FVector(20.0f, 3.0f, 3.0f));
     CollisionBox->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
@@ -22,6 +26,7 @@ ABlasterProjectile::ABlasterProjectile()
     CollisionBox->SetCollisionResponseToChannel(ECC_SkeletalMesh, ECollisionResponse::ECR_Block);
 
     ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
+    check(ProjectileMovementComponent);
     ProjectileMovementComponent->bRotationFollowsVelocity = true;
     ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
     ProjectileMovementComponent->InitialSpeed = 2000.0f;
@@ -44,4 +49,10 @@ void ABlasterProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherA
 {
     ProjectileMovementComponent->StopMovementImmediately();
     Destroy();
+}
+
+void ABlasterProjectile::PlayImpactFX(UParticleSystem* ImpactParticles, USoundCue* ImpactSound)
+{
+    UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetActorTransform());
+    UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 }

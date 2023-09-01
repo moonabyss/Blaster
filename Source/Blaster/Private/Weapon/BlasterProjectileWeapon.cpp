@@ -20,10 +20,11 @@ void ABlasterProjectileWeapon::Fire(const FVector& HitTarget)
 
 void ABlasterProjectileWeapon::MulticastSpawnProjectile_Implementation(const FVector& StartLocation, const FVector& HitTarget)
 {
-    if (!GetWorld()) return;
+    if (!GetWorld() || !GetMesh()) return;
 
     FVector Direction = (HitTarget - StartLocation).GetSafeNormal();
-    const FTransform SpawnTransform(Direction.Rotation(), GetMesh()->GetSocketLocation(MuzzleFlashSocketName));
+    const FVector SocketLocation = GetMesh()->GetSocketLocation(MuzzleFlashSocketName);
+    const FTransform SpawnTransform(Direction.Rotation(), SocketLocation);
     ABlasterProjectile* Projectile = GetWorld()->SpawnActorDeferred<ABlasterProjectile>(ProjectileClass, SpawnTransform);
     if (Projectile)
     {

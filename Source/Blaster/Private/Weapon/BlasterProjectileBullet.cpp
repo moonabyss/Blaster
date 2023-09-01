@@ -3,8 +3,6 @@
 #include "Weapon/BlasterProjectileBullet.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Particles/ParticleSystem.h"
-#include "Sound/SoundCue.h"
 
 #include "Interfaces/Hitable.h"
 
@@ -28,8 +26,7 @@ void ABlasterProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* 
         Victim->HitByProjectile();
     }
 
-    UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BulletProps.BulletImpactParticles, GetActorTransform());
-    UGameplayStatics::PlaySoundAtLocation(this, BulletProps.BulletImpactSound, GetActorLocation());
+    PlayImpactFX(BulletProps.BulletImpactParticles, BulletProps.BulletImpactSound);
 
     Super::OnHit(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
 }

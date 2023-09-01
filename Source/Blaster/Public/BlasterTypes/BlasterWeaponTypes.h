@@ -3,6 +3,9 @@
 #pragma once
 #include "BlasterWeaponTypes.generated.h"
 
+class UNiagaraSystem;
+class USoundCue;
+
 // weapon
 DECLARE_MULTICAST_DELEGATE(FOnWeaponEquippedDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnWeaponUnequippedDelegate);
@@ -183,7 +186,7 @@ struct FBulletProps
     UParticleSystem* BulletImpactParticles;
 
     UPROPERTY(EditAnywhere)
-    class USoundCue* BulletImpactSound;
+    USoundCue* BulletImpactSound;
 
     FBulletProps()
     {
@@ -215,7 +218,13 @@ struct FRocketProps
     UParticleSystem* RocketImpactParticles;
 
     UPROPERTY(EditAnywhere)
-    class USoundCue* RocketImpactSound;
+    USoundCue* RocketImpactSound;
+
+    UPROPERTY(EditAnywhere)
+    UNiagaraSystem* TrailFX;
+
+    UPROPERTY(EditAnywhere)
+    USoundCue* LoopSound;
 
     FRocketProps()
     {
@@ -225,5 +234,7 @@ struct FRocketProps
         DamageOuterRadius = 0.0f;
         RocketImpactParticles = nullptr;
         RocketImpactSound = nullptr;
+        TrailFX = nullptr;
+        LoopSound = nullptr;
     }
 };

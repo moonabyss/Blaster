@@ -7,6 +7,9 @@
 
 #include "BlasterProjectileRocket.generated.h"
 
+class UAudioComponent;
+class UNiagaraComponent;
+class UNiagaraSystem;
 class UStaticMeshComponent;
 
 UCLASS()
@@ -18,6 +21,7 @@ public:
     ABlasterProjectileRocket();
 
 protected:
+    virtual void BeginPlay() override;
     virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 private:
@@ -26,4 +30,18 @@ private:
 
     UPROPERTY(Category = "Projectile Properties", EditDefaultsOnly)
     FRocketProps RocketProps{FRocketProps()};
+
+    FTimerHandle DestroyTimer;
+
+    UPROPERTY(EditDefaultsOnly)
+    float DestroyDelay{5.0};
+
+    UFUNCTION()
+    void DestroyTimerFinished();
+
+    UPROPERTY()
+    UNiagaraComponent* TrailFXComponent{nullptr};
+
+    UPROPERTY()
+    UAudioComponent* LoopSoundComponent{nullptr};
 };

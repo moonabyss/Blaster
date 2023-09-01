@@ -12,6 +12,8 @@
 
 class UBoxComponent;
 class UProjectileMovementComponent;
+class UParticleSystem;
+class USoundCue;
 
 UCLASS()
 class BLASTER_API ABlasterProjectile : public AActor
@@ -27,11 +29,14 @@ protected:
 public:
     void SetShotDirection(const FVector& Direction) { ShotDirection = Direction; }
 
-    UBoxComponent* GetCollisionBox() { return CollisionBox; }
-
 protected:
     UFUNCTION()
     virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+    UBoxComponent* GetCollisionBox() { return CollisionBox; }
+    UProjectileMovementComponent* GetProjectileMovementComponent() { return ProjectileMovementComponent; }
+
+    void PlayImpactFX(UParticleSystem* ImpactParticles, USoundCue* ImpactSound);
 
 private:
     UPROPERTY(Category = "Components", VisibleAnywhere)
