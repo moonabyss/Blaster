@@ -23,7 +23,7 @@ void ABlasterWeaponShell::BeginPlay()
 
     ShellMesh->OnComponentHit.AddDynamic(this, &ThisClass::OnHit);
 
-    ShellMesh->AddImpulse(GetActorRightVector() * ShellEjectionImpulse);
+    ShellMesh->AddImpulse(GetActorForwardVector() * ShellEjectionImpulse);
     SetLifeSpan(LifeSpanTime);
 }
 
