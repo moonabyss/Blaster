@@ -322,6 +322,30 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, b
             {
                 Crosshairs.Color = CrosshairsDefaultColor;
             }
+
+            // Try detect obstacle
+            if (TraceHitResult.bBlockingHit && Character && Character->IsLocallyControlled())
+            {
+                FHitResult WeaponHitResult;
+                FVector WeaponBarel = CurrentWeapon->GetMesh()->GetSocketLocation(MuzzleFlashSocketName);
+                // GetWorld()->LineTraceSingleByChannel(WeaponHitResult, WeaponBarel, TraceHitResult.ImpactPoint, ECollisionChannel::ECC_Visibility);
+                FCollisionQueryParams CollisionParams;
+                CollisionParams.AddIgnoredActor(CurrentWeapon);
+                FCollisionResponseParams ResponseParams;
+                ResponseParams.CollisionResponse = ECollisionResponse::ECR_Block;
+                bool bHit = GetWorld()->SweepSingleByChannel(WeaponHitResult, WeaponBarel, TraceHitResult.ImpactPoint, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(10), CollisionParams, ResponseParams);
+                if (bHit)
+                {
+                    if (!FMath::IsNearlyEqual(TraceHitResult.ImpactPoint.SizeSquared(), WeaponHitResult.ImpactPoint.SizeSquared(), 25.0f))
+                    {
+                        if (FVector::Distance(TraceHitResult.ImpactPoint, WeaponHitResult.ImpactPoint) > 100.0f &&  //
+                            !WeaponHitResult.GetActor()->Implements<UHitable>())
+                        {
+                            DrawDebugSphere(GetWorld(), WeaponHitResult.ImpactPoint, 5.0f, 8, FColor::Red);
+                        }
+                    }
+                }
+            }
         }
 
         if (!TraceHitResult.bBlockingHit)

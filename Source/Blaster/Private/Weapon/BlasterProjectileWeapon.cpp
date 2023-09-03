@@ -23,8 +23,7 @@ void ABlasterProjectileWeapon::MulticastSpawnProjectile_Implementation(const FVe
     if (!GetWorld() || !GetMesh()) return;
 
     FVector Direction = (HitTarget - StartLocation).GetSafeNormal();
-    const FVector SocketLocation = GetMesh()->GetSocketLocation(MuzzleFlashSocketName);
-    const FTransform SpawnTransform(Direction.Rotation(), SocketLocation);
+    const FTransform SpawnTransform(Direction.Rotation(), StartLocation);
     ABlasterProjectile* Projectile = GetWorld()->SpawnActorDeferred<ABlasterProjectile>(ProjectileClass, SpawnTransform);
     if (Projectile)
     {
