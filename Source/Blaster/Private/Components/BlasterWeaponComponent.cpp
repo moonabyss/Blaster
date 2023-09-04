@@ -336,14 +336,19 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, b
                 bool bHit = GetWorld()->SweepSingleByChannel(WeaponHitResult, WeaponBarel, TraceHitResult.ImpactPoint, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(10), CollisionParams, ResponseParams);
                 if (bHit)
                 {
-                    if (!FMath::IsNearlyEqual(TraceHitResult.ImpactPoint.SizeSquared(), WeaponHitResult.ImpactPoint.SizeSquared(), 25.0f))
+                    if (FVector::Distance(TraceHitResult.ImpactPoint, WeaponHitResult.ImpactPoint) > 300.0f &&  //
+                        !WeaponHitResult.GetActor()->Implements<UHitable>())
                     {
-                        if (FVector::Distance(TraceHitResult.ImpactPoint, WeaponHitResult.ImpactPoint) > 100.0f &&  //
-                            !WeaponHitResult.GetActor()->Implements<UHitable>())
-                        {
-                            DrawDebugSphere(GetWorld(), WeaponHitResult.ImpactPoint, 5.0f, 8, FColor::Red);
-                        }
+                        Character->ObstacleInFront(WeaponHitResult.ImpactPoint);
                     }
+                    else
+                    {
+                        Character->HideObstaclePoint();
+                    }
+                }
+                else
+                {
+                    Character->HideObstaclePoint();
                 }
             }
         }

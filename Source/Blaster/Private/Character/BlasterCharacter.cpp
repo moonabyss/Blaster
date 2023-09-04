@@ -53,6 +53,14 @@ ABlasterCharacter::ABlasterCharacter(const FObjectInitializer& ObjInit)
     OverheadWidget->SetWidgetSpace(EWidgetSpace::Screen);
     OverheadWidget->SetDrawAtDesiredSize(true);
 
+    ObstacleWidget = CreateDefaultSubobject<UWidgetComponent>("ObstacleWidget");
+    ObstacleWidget->SetupAttachment(GetRootComponent());
+    ObstacleWidget->SetWidgetSpace(EWidgetSpace::Screen);
+    ObstacleWidget->SetDrawAtDesiredSize(true);
+    ObstacleWidget->SetPivot(FVector2D(0.5f));
+    ObstacleWidget->bOnlyOwnerSee = true;
+    ObstacleWidget->SetVisibility(false);
+
     bUseControllerRotationYaw = false;
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
@@ -114,6 +122,10 @@ void ABlasterCharacter::Tick(float DeltaTime)
             OnRep_ReplicatedMovement();
         }
         CalculateAO_Pitch();
+    }
+    if (IsLocallyControlled() && IsValid(GetCurrentWeapon()))
+    {
+        UpdateObstaclePoint();
     }
 }
 
@@ -415,6 +427,34 @@ void ABlasterCharacter::FireReleased()
 void ABlasterCharacter::StopFire()
 {
     FireReleased();
+}
+
+void ABlasterCharacter::ObstacleInFront(const FVector& InObstaclePoint)
+{
+    ObstaclePoint = InObstaclePoint;
+    if (!GetWorldTimerManager().IsTimerActive(ObstacleTimer))
+    {
+        FTimerDelegate TimerDelegate;
+        TimerDelegate.BindUFunction(this, FName("ShowObstaclePoint"));
+        GetWorldTimerManager().SetTimer(ObstacleTimer, TimerDelegate, 0.5f, false);
+    }
+}
+
+void ABlasterCharacter::ShowObstaclePoint()
+{
+    bShowObstaclePoint = true;
+}
+
+void ABlasterCharacter::HideObstaclePoint()
+{
+    GetWorldTimerManager().ClearTimer(ObstacleTimer);
+    bShowObstaclePoint = false;
+}
+
+void ABlasterCharacter::UpdateObstaclePoint()
+{
+    ObstacleWidget->SetWorldLocation(ObstaclePoint);
+    ObstacleWidget->SetVisibility(bShowObstaclePoint);
 }
 
 FVector ABlasterCharacter::GetHitTargetNoSpread() const

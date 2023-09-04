@@ -15,6 +15,7 @@ void ABlasterProjectileWeapon::Fire(const FVector& HitTarget)
     {
         const auto StartLocation = GetMesh()->GetSocketLocation(MuzzleFlashSocketName);
         MulticastSpawnProjectile(StartLocation, HitTarget);
+        DrawDebugSphere(GetWorld(), StartLocation, 24, 16, FColor::Orange, false, 30.0f);
     }
 }
 

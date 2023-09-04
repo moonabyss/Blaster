@@ -58,6 +58,8 @@ public:
     bool IsAlive() const;
     ECombatState GetCombatState() const;
     void StopFire();
+    void ObstacleInFront(const FVector& InObstaclePoint);
+    void HideObstaclePoint();
 
 protected:
     void MoveForward(float Value);
@@ -86,6 +88,9 @@ private:
 
     UPROPERTY(Category = "Components", VisibleAnywhere)
     UWidgetComponent* OverheadWidget;
+
+    UPROPERTY(Category = "Components", VisibleAnywhere)
+    UWidgetComponent* ObstacleWidget;
 
     UPROPERTY(Category = "Components", VisibleAnywhere)
     UBlasterWeaponComponent* WeaponComponent;
@@ -199,4 +204,12 @@ private:
 
     UFUNCTION(Server, Reliable)
     void ServerDrop();
+
+    UFUNCTION()
+    void ShowObstaclePoint();
+    void UpdateObstaclePoint();
+    FVector ObstaclePoint{FVector()};
+    bool bShowObstaclePoint;
+
+    FTimerHandle ObstacleTimer;
 };
