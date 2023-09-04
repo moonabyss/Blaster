@@ -29,7 +29,7 @@ protected:
 public:
     void ShowPickupWidget(bool bShowWidget);
     void SetWeaponState(EWeaponState State);
-    virtual void Fire(const FVector& HitTarget);
+    virtual void Fire(const FVector& BarelLocation, const FVector& HitTarget);
     void DecrementAmmo();
     bool TryAddAmmoToClip(int32 AmmoCount);
 

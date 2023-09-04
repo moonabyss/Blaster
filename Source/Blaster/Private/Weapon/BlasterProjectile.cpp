@@ -47,7 +47,6 @@ void ABlasterProjectile::BeginPlay()
 
 void ABlasterProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-    DrawDebugSphere(GetWorld(), Hit.ImpactPoint, 12, 16, FColor::Yellow, false, 10.0f);
     ProjectileMovementComponent->StopMovementImmediately();
     Destroy();
 }

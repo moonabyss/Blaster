@@ -170,7 +170,7 @@ void ABlasterBaseWeapon::OnRep_WeaponState()
     }
 }
 
-void ABlasterBaseWeapon::Fire(const FVector& HitTarget)
+void ABlasterBaseWeapon::Fire(const FVector& BarelLocation, const FVector& HitTarget)
 {
     PlayFireAnimation();
     SpawnShell();

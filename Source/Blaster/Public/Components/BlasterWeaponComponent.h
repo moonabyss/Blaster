@@ -80,10 +80,10 @@ private:
     void PlayFireMontage();
 
     UFUNCTION(Server, Reliable)
-    void ServerFire(const FVector_NetQuantize& TraceHitTarget);
+    void Server_Fire(const FVector_NetQuantize& BarelLocation, const FVector_NetQuantize& TraceHitTarget);
 
     UFUNCTION(NetMulticast, Reliable)
-    void MulticastFire(const FVector_NetQuantize& TraceHitTarget);
+    void Multicast_Fire(const FVector_NetQuantize& BarelLocation, const FVector_NetQuantize& TraceHitTarget);
 
     void PlayReloadMontage();
 

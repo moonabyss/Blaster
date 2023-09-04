@@ -6,22 +6,18 @@
 #include "BlasterTypes/BlasterCoreTypes.h"
 #include "Weapon/BlasterProjectile.h"
 
-void ABlasterProjectileWeapon::Fire(const FVector& HitTarget)
+void ABlasterProjectileWeapon::Fire(const FVector& BarelLocation, const FVector& HitTarget)
 {
-    Super::Fire(HitTarget);
+    Super::Fire(BarelLocation, HitTarget);
 
     if (!HasAuthority()) return;
-    if (ProjectileClass)
-    {
-        const auto StartLocation = GetMesh()->GetSocketLocation(MuzzleFlashSocketName);
-        MulticastSpawnProjectile(StartLocation, HitTarget);
-        DrawDebugSphere(GetWorld(), StartLocation, 24, 16, FColor::Orange, false, 30.0f);
-    }
+
+    Multicast_SpawnProjectile(BarelLocation, HitTarget);
 }
 
-void ABlasterProjectileWeapon::MulticastSpawnProjectile_Implementation(const FVector& StartLocation, const FVector& HitTarget)
+void ABlasterProjectileWeapon::Multicast_SpawnProjectile_Implementation(const FVector& StartLocation, const FVector& HitTarget)
 {
-    if (!GetWorld() || !GetMesh()) return;
+    if (!GetWorld() || !GetOwner() || !ProjectileClass) return;
 
     FVector Direction = (HitTarget - StartLocation).GetSafeNormal();
     const FTransform SpawnTransform(Direction.Rotation(), StartLocation);

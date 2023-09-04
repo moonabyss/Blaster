@@ -174,7 +174,7 @@ bool UBlasterWeaponComponent::IsAiming()
 {
     if (!Character) return false;
 
-    return bWantsAiming && !Character->GetCharacterMovement()->IsFalling();
+    return bWantsAiming && !Character->GetCharacterMovement()->IsFalling() && CombatState != ECombatState::ECS_Reloading;
 }
 
 void UBlasterWeaponComponent::ServerSetWantsAiming_Implementation(bool bIsAiming)
@@ -211,13 +211,14 @@ bool UBlasterWeaponComponent::CanShoot() const
 
 void UBlasterWeaponComponent::Fire()
 {
-    if (!CanShoot() || !IsValid(CurrentWeapon)) return;
+    if (!CanShoot() || !IsValid(CurrentWeapon) || !CurrentWeapon->GetMesh()) return;
 
     if (Character->IsLocallyControlled())
     {
+        FVector BarelLocation = CurrentWeapon->GetMesh()->GetSocketLocation(MuzzleFlashSocketName);
         FHitResult HitResult;
         TraceUnderCrosshairs(HitResult, true);
-        ServerFire(HitResult.ImpactPoint);
+        Server_Fire(BarelLocation, HitResult.ImpactPoint);
         CrosshairsShootingFactor = FMath::Min(CurrentWeapon->GetWeaponProps().SpreadModifierShootingMax, CrosshairsShootingFactor + CurrentWeapon->GetWeaponProps().SpreadModifierPerShoot);
 
         StartFireTimer();
@@ -225,22 +226,22 @@ void UBlasterWeaponComponent::Fire()
     }
 }
 
-void UBlasterWeaponComponent::ServerFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
+void UBlasterWeaponComponent::Server_Fire_Implementation(const FVector_NetQuantize& BarelLocation, const FVector_NetQuantize& TraceHitTarget)
 {
     if (!CanShoot() || !IsValid(CurrentWeapon)) return;
 
     CurrentWeapon->DecrementAmmo();
-    MulticastFire(TraceHitTarget);
+    Multicast_Fire(BarelLocation, TraceHitTarget);
     StartFireTimer();
 }
 
-void UBlasterWeaponComponent::MulticastFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
+void UBlasterWeaponComponent::Multicast_Fire_Implementation(const FVector_NetQuantize& BarelLocation, const FVector_NetQuantize& TraceHitTarget)
 {
     if (!IsValid(CurrentWeapon)) return;
 
     PlayFireMontage();
 
-    CurrentWeapon->Fire(TraceHitTarget);
+    CurrentWeapon->Fire(BarelLocation, TraceHitTarget);
 }
 
 void UBlasterWeaponComponent::PlayFireMontage()

@@ -15,12 +15,12 @@ class BLASTER_API ABlasterProjectileWeapon : public ABlasterBaseWeapon
     GENERATED_BODY()
 
 public:
-    virtual void Fire(const FVector& HitTarget) override;
+    virtual void Fire(const FVector& BarelLocation, const FVector& HitTarget) override;
 
 private:
     UPROPERTY(EditDefaultsOnly)
     TSubclassOf<ABlasterProjectile> ProjectileClass;
 
     UFUNCTION(NetMulticast, Reliable)
-    void MulticastSpawnProjectile(const FVector& StartLocation, const FVector& HitTarget);
+    void Multicast_SpawnProjectile(const FVector& StartLocation, const FVector& HitTarget);
 };
