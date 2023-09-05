@@ -215,7 +215,7 @@ void UBlasterWeaponComponent::Fire()
 
     if (Character->IsLocallyControlled())
     {
-        FVector BarelLocation = CurrentWeapon->GetMesh()->GetSocketLocation(MuzzleFlashSocketName);
+        const FVector BarelLocation = CurrentWeapon->GetMesh()->GetSocketLocation(MuzzleFlashSocketName);
         FHitResult HitResult;
         TraceUnderCrosshairs(HitResult, true);
         Server_Fire(BarelLocation, HitResult.ImpactPoint);
@@ -276,7 +276,7 @@ void UBlasterWeaponComponent::FireTimerFinished()
 
 void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, bool bWithSpread)
 {
-    if (!GetWorld() || !IsValid(CurrentWeapon)) return;
+    if (!GetWorld() || !IsValid(CurrentWeapon) || !CurrentWeapon->GetMesh()) return;
 
     FVector2D ViewportSize;
     if (GEngine && GEngine->GameViewport)
@@ -328,16 +328,17 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, b
             if (TraceHitResult.bBlockingHit && Character && Character->IsLocallyControlled())
             {
                 FHitResult WeaponHitResult;
-                FVector WeaponBarel = CurrentWeapon->GetMesh()->GetSocketLocation(MuzzleFlashSocketName);
+                const FVector WeaponBarel = CurrentWeapon->GetMesh()->GetSocketLocation(MuzzleFlashSocketName);
                 // GetWorld()->LineTraceSingleByChannel(WeaponHitResult, WeaponBarel, TraceHitResult.ImpactPoint, ECollisionChannel::ECC_Visibility);
                 FCollisionQueryParams CollisionParams;
                 CollisionParams.AddIgnoredActor(CurrentWeapon);
                 FCollisionResponseParams ResponseParams;
                 ResponseParams.CollisionResponse = ECollisionResponse::ECR_Block;
-                bool bHit = GetWorld()->SweepSingleByChannel(WeaponHitResult, WeaponBarel, TraceHitResult.ImpactPoint, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(10), CollisionParams, ResponseParams);
+                const bool bHit = GetWorld()->SweepSingleByChannel(WeaponHitResult, WeaponBarel, TraceHitResult.ImpactPoint, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(10), CollisionParams, ResponseParams);
                 if (bHit)
                 {
-                    if (FVector::Distance(TraceHitResult.ImpactPoint, WeaponHitResult.ImpactPoint) > 300.0f &&  //
+                    if (FVector::Distance(TraceHitResult.ImpactPoint, WeaponHitResult.ImpactPoint) > 300.0f &&      //
+                        FVector::Distance(WeaponHitResult.ImpactPoint, Character->GetActorLocation()) < 1000.0f &&  //
                         !WeaponHitResult.GetActor()->Implements<UHitable>())
                     {
                         Character->ObstacleInFront(WeaponHitResult.ImpactPoint);

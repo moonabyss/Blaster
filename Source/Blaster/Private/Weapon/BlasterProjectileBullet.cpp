@@ -18,6 +18,11 @@ void ABlasterProjectileBullet::BeginPlay()
 
 void ABlasterProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+    if (OtherActor == GetInstigator())
+    {
+        return;
+    }
+
     UGameplayStatics::ApplyDamage(OtherActor, BulletProps.Damage, GetInstigator()->GetController(), this, UDamageType::StaticClass());
 
     if (IsValid(OtherActor) && OtherActor->Implements<UHitable>())
