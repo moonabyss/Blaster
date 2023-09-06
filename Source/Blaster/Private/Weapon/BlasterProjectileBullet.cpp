@@ -10,10 +10,7 @@ void ABlasterProjectileBullet::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (HasAuthority())
-    {
-        TracerComponent = UGameplayStatics::SpawnEmitterAttached(BulletProps.BulletTracer, GetCollisionBox(), FName(), GetActorLocation(), GetActorRotation(), EAttachLocation::KeepWorldPosition);
-    }
+    UGameplayStatics::SpawnEmitterAttached(BulletProps.BulletTracer, GetCollisionBox(), FName(), GetActorLocation(), GetActorRotation(), EAttachLocation::KeepWorldPosition);
 }
 
 void ABlasterProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -31,7 +28,7 @@ void ABlasterProjectileBullet::OnHit(UPrimitiveComponent* HitComponent, AActor* 
         Victim->HitByProjectile();
     }
 
-    PlayImpactFX(BulletProps.BulletImpactParticles, BulletProps.BulletImpactSound);
+    Multicast_PlayImpactFX(BulletProps.BulletImpactParticles, BulletProps.BulletImpactSound);
 
     Super::OnHit(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
 }

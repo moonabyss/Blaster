@@ -11,7 +11,7 @@
 #include "BlasterProjectile.generated.h"
 
 class UBoxComponent;
-class UProjectileMovementComponent;
+class UBlasterProjectileMoveComponent;
 class UParticleSystem;
 class USoundCue;
 
@@ -34,16 +34,17 @@ protected:
     virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
     UBoxComponent* GetCollisionBox() { return CollisionBox; }
-    UProjectileMovementComponent* GetProjectileMovementComponent() { return ProjectileMovementComponent; }
+    UBlasterProjectileMoveComponent* GetProjectileMovementComponent() { return ProjectileMovementComponent; }
 
-    void PlayImpactFX(UParticleSystem* ImpactParticles, USoundCue* ImpactSound);
+    UFUNCTION(NetMulticast, Reliable)
+    void Multicast_PlayImpactFX(UParticleSystem* ImpactParticles, USoundCue* ImpactSound);
 
 private:
     UPROPERTY(Category = "Components", VisibleAnywhere)
     UBoxComponent* CollisionBox;
 
     UPROPERTY(Category = "Components", VisibleAnywhere)
-    UProjectileMovementComponent* ProjectileMovementComponent;
+    UBlasterProjectileMoveComponent* ProjectileMovementComponent;
 
     FVector ShotDirection{FVector()};
 };

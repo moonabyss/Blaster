@@ -334,7 +334,7 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, b
                 CollisionParams.AddIgnoredActor(CurrentWeapon);
                 FCollisionResponseParams ResponseParams;
                 ResponseParams.CollisionResponse = ECollisionResponse::ECR_Block;
-                const bool bHit = GetWorld()->SweepSingleByChannel(WeaponHitResult, WeaponBarel, TraceHitResult.ImpactPoint, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(10), CollisionParams, ResponseParams);
+                const bool bHit = GetWorld()->SweepSingleByChannel(WeaponHitResult, WeaponBarel, TraceHitResult.ImpactPoint, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(2), CollisionParams, ResponseParams);
                 if (bHit)
                 {
                     if (FVector::Distance(TraceHitResult.ImpactPoint, WeaponHitResult.ImpactPoint) > 300.0f &&      //

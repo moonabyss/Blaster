@@ -44,4 +44,7 @@ private:
 
     UPROPERTY()
     UAudioComponent* LoopSoundComponent{nullptr};
+
+    UFUNCTION(NetMulticast, Reliable)
+    void Multicast_StopTrailFX();
 };

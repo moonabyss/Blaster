@@ -2,11 +2,11 @@
 
 #include "Weapon/BlasterProjectile.h"
 #include "Components/BoxComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
 #include "Sound/SoundCue.h"
 
+#include "Components/BlasterProjectileMoveComponent.h"
 #include "Interfaces/Hitable.h"
 
 ABlasterProjectile::ABlasterProjectile()
@@ -25,12 +25,13 @@ ABlasterProjectile::ABlasterProjectile()
     CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
     CollisionBox->SetCollisionResponseToChannel(ECC_SkeletalMesh, ECollisionResponse::ECR_Block);
 
-    ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
+    ProjectileMovementComponent = CreateDefaultSubobject<UBlasterProjectileMoveComponent>("BlasterProjectileMovementComponent");
     check(ProjectileMovementComponent);
     ProjectileMovementComponent->bRotationFollowsVelocity = true;
     ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
     ProjectileMovementComponent->InitialSpeed = 2000.0f;
     ProjectileMovementComponent->MaxSpeed = 2000.0f;
+    ProjectileMovementComponent->SetIsReplicated(true);
 }
 
 void ABlasterProjectile::BeginPlay()
@@ -40,7 +41,7 @@ void ABlasterProjectile::BeginPlay()
     if (HasAuthority())
     {
         ProjectileMovementComponent->Velocity = ShotDirection * ProjectileMovementComponent->InitialSpeed;
-        CollisionBox->IgnoreActorWhenMoving(GetOwner(), true);
+        CollisionBox->IgnoreActorWhenMoving(GetInstigator(), true);
         CollisionBox->OnComponentHit.AddDynamic(this, &ThisClass::OnHit);
     }
 }
@@ -56,7 +57,7 @@ void ABlasterProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherA
     Destroy();
 }
 
-void ABlasterProjectile::PlayImpactFX(UParticleSystem* ImpactParticles, USoundCue* ImpactSound)
+void ABlasterProjectile::Multicast_PlayImpactFX_Implementation(UParticleSystem* ImpactParticles, USoundCue* ImpactSound)
 {
     UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetActorTransform());
     UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());

@@ -12,7 +12,20 @@ void ABlasterProjectileWeapon::Fire(const FVector& BarelLocation, const FVector&
 
     if (!HasAuthority()) return;
 
-    Multicast_SpawnProjectile(BarelLocation, HitTarget);
+    // Multicast_SpawnProjectile(BarelLocation, HitTarget);
+
+    if (!GetWorld() || !GetOwner() || !GetMesh() || !ProjectileClass) return;
+
+    FVector Direction = (HitTarget - BarelLocation).GetSafeNormal();
+    const FTransform SpawnTransform(Direction.Rotation(), BarelLocation);
+    ABlasterProjectile* Projectile = GetWorld()->SpawnActorDeferred<ABlasterProjectile>(ProjectileClass, SpawnTransform);
+    if (Projectile)
+    {
+        Projectile->SetShotDirection(Direction);
+        Projectile->SetOwner(this);
+        Projectile->SetInstigator(Cast<APawn>(GetOwner()));
+        Projectile->FinishSpawning(SpawnTransform);
+    }
 }
 
 void ABlasterProjectileWeapon::Multicast_SpawnProjectile_Implementation(const FVector& StartLocation, const FVector& HitTarget)
@@ -29,6 +42,7 @@ void ABlasterProjectileWeapon::Multicast_SpawnProjectile_Implementation(const FV
         Projectile->SetShotDirection(Direction);
         Projectile->SetOwner(this);
         Projectile->SetInstigator(Cast<APawn>(GetOwner()));
+        UE_LOG(LogTemp, Warning, TEXT("Instigator: %s"), *Cast<APawn>(GetOwner())->GetName());
         Projectile->FinishSpawning(SpawnTransform);
     }
 }

@@ -23,6 +23,4 @@ protected:
 private:
     UPROPERTY(Category = "Projectile Properties", EditDefaultsOnly)
     FBulletProps BulletProps{FBulletProps()};
-
-    UParticleSystemComponent* TracerComponent{nullptr};
 };
