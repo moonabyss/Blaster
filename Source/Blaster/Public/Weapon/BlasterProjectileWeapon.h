@@ -20,7 +20,4 @@ public:
 private:
     UPROPERTY(EditDefaultsOnly)
     TSubclassOf<ABlasterProjectile> ProjectileClass;
-
-    UFUNCTION(NetMulticast, Reliable)
-    void Multicast_SpawnProjectile(const FVector& StartLocation, const FVector& HitTarget);
 };
