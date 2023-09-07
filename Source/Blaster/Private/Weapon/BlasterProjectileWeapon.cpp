@@ -4,6 +4,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 
 #include "BlasterTypes/BlasterCoreTypes.h"
+#include "Components/BlasterProjectileMoveComponent.h"
 #include "Weapon/BlasterProjectile.h"
 
 void ABlasterProjectileWeapon::Fire(const FVector& BarelLocation, const FVector& HitTarget)
@@ -24,6 +25,7 @@ void ABlasterProjectileWeapon::Fire(const FVector& BarelLocation, const FVector&
         Projectile->SetShotDirection(Direction);
         Projectile->SetOwner(this);
         Projectile->SetInstigator(Cast<APawn>(GetOwner()));
+        Projectile->SetLifeSpan(GetWeaponProps().Range / Projectile->GetInitialSpeed());
         Projectile->FinishSpawning(SpawnTransform);
     }
 }
@@ -42,7 +44,6 @@ void ABlasterProjectileWeapon::Multicast_SpawnProjectile_Implementation(const FV
         Projectile->SetShotDirection(Direction);
         Projectile->SetOwner(this);
         Projectile->SetInstigator(Cast<APawn>(GetOwner()));
-        UE_LOG(LogTemp, Warning, TEXT("Instigator: %s"), *Cast<APawn>(GetOwner())->GetName());
         Projectile->FinishSpawning(SpawnTransform);
     }
 }

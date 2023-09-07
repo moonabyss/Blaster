@@ -28,6 +28,7 @@ protected:
 
 public:
     void SetShotDirection(const FVector& Direction) { ShotDirection = Direction; }
+    float GetInitialSpeed() const;
 
 protected:
     UFUNCTION()

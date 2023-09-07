@@ -87,7 +87,8 @@ private:
 
     void PlayReloadMontage();
 
-    void TraceUnderCrosshairs(FHitResult& TraceHitResult, bool bWithSpread);
+    void TraceUnderCrosshairs(FHitResult& TraceHitResult, bool bWithSpread, float Range);
+    void DetectObstacle(const FHitResult& TraceHit);
 
     void SetHUDCrosshairs(float DeltaTime);
 

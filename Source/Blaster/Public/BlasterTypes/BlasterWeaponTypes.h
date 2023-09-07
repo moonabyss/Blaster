@@ -146,6 +146,9 @@ struct FWeaponProps
     float ReloadTime;
 
     UPROPERTY(EditAnywhere)
+    float Range;
+
+    UPROPERTY(EditAnywhere)
     USoundBase* EquipSound;
 
     FWeaponProps()
@@ -167,6 +170,7 @@ struct FWeaponProps
         ClipCapacity = 0;
         BlasterReloadMontage = nullptr;
         ReloadTime = 0.0f;
+        Range = 0.0f;
         EquipSound = nullptr;
     }
 };
