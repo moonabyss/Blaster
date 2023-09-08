@@ -310,7 +310,7 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, b
         if (bWithSpread)
         {
             // Shooting
-            const auto HalfRad = FMath::DegreesToRadians(CurrentSpreadAngle / 2.0f);
+            const auto HalfRad = FMath::DegreesToRadians(CurrentSpreadAngle * 0.5f);
             const FVector ShootDirection = FMath::VRandCone(CrosshairWorldDirection, HalfRad);
             End = Start + ShootDirection * Range;
             GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility);
