@@ -10,7 +10,7 @@
 class UParticleSystem;
 class USoundCue;
 
-UCLASS()
+UCLASS(Blueprintable)
 class BLASTER_API ABlasterHitscanWeapon : public ABlasterBaseWeapon
 {
     GENERATED_BODY()

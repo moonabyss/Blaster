@@ -32,6 +32,8 @@ void ABlasterHitscanWeapon::Fire(const FVector& BarelLocation, const FVector& Hi
         FTransform ImpactTransform(HitResult.ImpactNormal.Rotation(), HitResult.ImpactPoint);
         Multicast_PlayImpactFX_Implementation(BulletProps.BulletImpactParticles, BulletProps.BulletImpactSound, ImpactTransform);
     }
+
+    Super::Fire(BarelLocation, HitTarget);
 }
 
 void ABlasterHitscanWeapon::Multicast_PlayImpactFX_Implementation(UParticleSystem* ImpactParticles, USoundCue* ImpactSound, FTransform ImpactTransform)
