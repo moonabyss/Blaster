@@ -310,7 +310,7 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, b
         if (bWithSpread)
         {
             // Shooting
-            const auto HalfRad = FMath::DegreesToRadians(CurrentSpreadAngle * 0.5f);
+            const auto HalfRad = FMath::DegreesToRadians(CurrentSpreadAngle);
             const FVector ShootDirection = FMath::VRandCone(CrosshairWorldDirection, HalfRad);
             End = Start + ShootDirection * Range;
             GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility);
@@ -414,24 +414,10 @@ float UBlasterWeaponComponent::CalculateCurrentSpreadModifier(float DeltaTime)
     CrosshairsVelocityFactor = FMath::GetMappedRangeValueClamped(WalkSpeedRange, VelocityMultiplierRange, Character->GetVelocity().Size2D());
 
     // CrosshairsInAirFactor
-    if (Character->GetCharacterMovement()->IsFalling())
-    {
-        CrosshairsInAirFactor = FMath::FInterpTo(CrosshairsInAirFactor, 2.0f, DeltaTime, 2.0f);
-    }
-    else
-    {
-        CrosshairsInAirFactor = FMath::FInterpTo(CrosshairsInAirFactor, 0.0f, DeltaTime, 20.0f);
-    }
+    CrosshairsInAirFactor = FMath::FInterpTo(CrosshairsInAirFactor, Character->GetCharacterMovement()->IsFalling() ? 2.0f : 0.0f, DeltaTime, 20.0f);
 
     // CrosshairsAimFactor
-    if (IsAiming())
-    {
-        CrosshairsAimFactor = FMath::FInterpTo(CrosshairsAimFactor, CurrentWeapon->GetWeaponProps().SpreadModifierZoom, DeltaTime, 30.0f);
-    }
-    else
-    {
-        CrosshairsAimFactor = FMath::FInterpTo(CrosshairsAimFactor, 0.0f, DeltaTime, 30.0f);
-    }
+    CrosshairsAimFactor = FMath::FInterpTo(CrosshairsAimFactor, IsAiming() ? CurrentWeapon->GetWeaponProps().SpreadModifierZoom : 0.0f, DeltaTime, 30.0f);
 
     // CrosshairsShootingFactor
     CrosshairsShootingFactor = FMath::FInterpConstantTo(CrosshairsShootingFactor, 0.0f, DeltaTime, 4.0f);
@@ -458,7 +444,7 @@ void UBlasterWeaponComponent::InterpFOV(float DeltaTime)
 
 void UBlasterWeaponComponent::InitializeAmmoMap()
 {
-    for (int32 WeaponTypeIndex = 0; WeaponTypeIndex < (int32) EWeaponType::MAX; ++WeaponTypeIndex)
+    for (int32 WeaponTypeIndex = 0; WeaponTypeIndex < (int32)EWeaponType::MAX; ++WeaponTypeIndex)
     {
         EWeaponType WeaponType = static_cast<EWeaponType>(WeaponTypeIndex);
 

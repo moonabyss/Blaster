@@ -10,7 +10,7 @@ void ABlasterHitscanWeapon::Fire(const FVector& BarelLocation, const FVector& Hi
 {
     if (!GetWorld() || !GetOwner() || !GetOwner()->GetInstigator()) return;
 
-    const FVector End = (HitTarget - BarelLocation).GetSafeNormal() * GetWeaponProps().Range;
+    const FVector End = BarelLocation + (HitTarget - BarelLocation).GetSafeNormal() * GetWeaponProps().Range;
 
     FHitResult HitResult;
     FCollisionQueryParams QueryParams;
@@ -20,10 +20,9 @@ void ABlasterHitscanWeapon::Fire(const FVector& BarelLocation, const FVector& Hi
     {
         if (IsValid(HitResult.GetActor()))
         {
-            UGameplayStatics::ApplyDamage(HitResult.GetActor(), BulletProps.Damage, GetOwner()->GetInstigator()->GetController(), this, UDamageType::StaticClass());
-
             if (HitResult.GetActor()->Implements<UHitable>())
             {
+                UGameplayStatics::ApplyDamage(HitResult.GetActor(), BulletProps.Damage, GetOwner()->GetInstigator()->GetController(), this, UDamageType::StaticClass());
                 auto Victim = Cast<IHitable>(HitResult.GetActor());
                 Victim->HitByProjectile();
             }
