@@ -565,15 +565,15 @@ void ABlasterCharacter::PlayElimMontage()
 
 void ABlasterCharacter::ElimTimerFinished()
 {
+    if (IsValid(ElimBotComponent))
+    {
+        ElimBotComponent->DestroyComponent();
+    }
+
     auto BlasterGameMode = GetWorld()->GetAuthGameMode<ABlasterGameMode>();
     if (BlasterGameMode)
     {
         BlasterGameMode->RequestRespawn(this, Controller);
-    }
-
-    if (IsValid(ElimBotComponent))
-    {
-        ElimBotComponent->DestroyComponent();
     }
 }
 
@@ -634,6 +634,7 @@ ECombatState ABlasterCharacter::GetCombatState() const
 
 void ABlasterCharacter::Drop()
 {
+    AimReleased();
     ServerDrop();
 }
 

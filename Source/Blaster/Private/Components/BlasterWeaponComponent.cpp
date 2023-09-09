@@ -55,15 +55,17 @@ void UBlasterWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType
 {
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-    if (Character && Character->IsLocallyControlled() && CurrentWeapon)
+    if (Character && Character->IsLocallyControlled())
     {
-        FHitResult HitResult;
-        TraceUnderCrosshairs(HitResult, false, CurrentWeapon->GetWeaponProps().Range);
-        HitTargetNoSpread = HitResult.ImpactPoint;
-        DetectObstacle(HitResult);
-
-        InterpFOV(DeltaTime);
+        if (CurrentWeapon)
+        {
+            FHitResult HitResult;
+            TraceUnderCrosshairs(HitResult, false, CurrentWeapon->GetWeaponProps().Range);
+            HitTargetNoSpread = HitResult.ImpactPoint;
+            DetectObstacle(HitResult);
+        }
         SetHUDCrosshairs(DeltaTime);
+        InterpFOV(DeltaTime);
     }
 }
 
@@ -101,6 +103,7 @@ void UBlasterWeaponComponent::DropWeapon()
     if (!IsValid(CurrentWeapon)) return;
     if (CombatState != ECombatState::ECS_Unoccupied) return;
 
+    StopAiming();
     CurrentWeapon->SetWeaponState(EWeaponState::EWS_Dropped);
     DetachWeapon(CurrentWeapon);
     CurrentWeapon->SetOwner(nullptr);
@@ -175,7 +178,7 @@ bool UBlasterWeaponComponent::IsAiming()
 {
     if (!Character) return false;
 
-    return bWantsAiming && !Character->GetCharacterMovement()->IsFalling() && CombatState != ECombatState::ECS_Reloading;
+    return bWantsAiming && !Character->GetCharacterMovement()->IsFalling() && CombatState != ECombatState::ECS_Reloading && CurrentWeapon;
 }
 
 void UBlasterWeaponComponent::ServerSetWantsAiming_Implementation(bool bIsAiming)
@@ -408,18 +411,12 @@ float UBlasterWeaponComponent::CalculateCurrentSpreadModifier(float DeltaTime)
     float Result = 1.0f;
 
     // [0, 600] -> [0, 1]
-    // CrosshairsVelocityFactor
     const FVector2D WalkSpeedRange(0, Character->GetCharacterMovement()->MaxWalkSpeed);
     const FVector2D VelocityMultiplierRange(0.0f, CurrentWeapon->GetWeaponProps().SpreadModifierWalk);
     CrosshairsVelocityFactor = FMath::GetMappedRangeValueClamped(WalkSpeedRange, VelocityMultiplierRange, Character->GetVelocity().Size2D());
 
-    // CrosshairsInAirFactor
     CrosshairsInAirFactor = FMath::FInterpTo(CrosshairsInAirFactor, Character->GetCharacterMovement()->IsFalling() ? 2.0f : 0.0f, DeltaTime, 20.0f);
-
-    // CrosshairsAimFactor
     CrosshairsAimFactor = FMath::FInterpTo(CrosshairsAimFactor, IsAiming() ? CurrentWeapon->GetWeaponProps().SpreadModifierZoom : 0.0f, DeltaTime, 30.0f);
-
-    // CrosshairsShootingFactor
     CrosshairsShootingFactor = FMath::FInterpConstantTo(CrosshairsShootingFactor, 0.0f, DeltaTime, 4.0f);
 
     const float SpreadFactor = FMath::Max(0.0f, Result + CrosshairsVelocityFactor + CrosshairsInAirFactor - CrosshairsAimFactor + CrosshairsShootingFactor);
