@@ -23,5 +23,8 @@ private:
     FBulletProps BulletProps{FBulletProps()};
 
     UFUNCTION(NetMulticast, Reliable)
-    void Multicast_PlayImpactFX(UParticleSystem* ImpactParticles, USoundCue* ImpactSound, FTransform ImpactTransform);
+    void Multicast_SpawnImpactFX(UParticleSystem* ImpactParticles, USoundCue* ImpactSound, const FTransform& ImpactTransform);
+
+    UFUNCTION(NetMulticast, Reliable)
+    void Multicast_SpawnBeamFX(UParticleSystem* ImpactParticles, const FVector& BeamStart, const FVector& BeamEnd);
 };

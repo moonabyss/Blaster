@@ -4,6 +4,7 @@
 #include "Interfaces/Hitable.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "Sound/SoundCue.h"
 
 void ABlasterHitscanWeapon::Fire(const FVector& BarelLocation, const FVector& HitTarget)
@@ -11,6 +12,7 @@ void ABlasterHitscanWeapon::Fire(const FVector& BarelLocation, const FVector& Hi
     if (!GetWorld() || !GetOwner() || !GetOwner()->GetInstigator()) return;
 
     const FVector End = BarelLocation + (HitTarget - BarelLocation).GetSafeNormal() * GetWeaponProps().Range;
+    FVector BeamEnd{End};
 
     FHitResult HitResult;
     FCollisionQueryParams QueryParams;
@@ -29,14 +31,24 @@ void ABlasterHitscanWeapon::Fire(const FVector& BarelLocation, const FVector& Hi
         }
 
         FTransform ImpactTransform(HitResult.ImpactNormal.Rotation(), HitResult.ImpactPoint);
-        Multicast_PlayImpactFX_Implementation(BulletProps.BulletImpactParticles, BulletProps.BulletImpactSound, ImpactTransform);
+        Multicast_SpawnImpactFX(BulletProps.BulletImpactParticles, BulletProps.BulletImpactSound, ImpactTransform);
+        BeamEnd = HitResult.ImpactPoint;
     }
+    Multicast_SpawnBeamFX(BulletProps.BulletTracer, BarelLocation, BeamEnd);
 
     Super::Fire(BarelLocation, HitTarget);
 }
 
-void ABlasterHitscanWeapon::Multicast_PlayImpactFX_Implementation(UParticleSystem* ImpactParticles, USoundCue* ImpactSound, FTransform ImpactTransform)
+void ABlasterHitscanWeapon::Multicast_SpawnImpactFX_Implementation(UParticleSystem* ImpactParticles, USoundCue* ImpactSound, const FTransform& ImpactTransform)
 {
     UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, ImpactTransform);
     UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, ImpactTransform.GetLocation());
+}
+
+void ABlasterHitscanWeapon::Multicast_SpawnBeamFX_Implementation(UParticleSystem* ImpactParticles, const FVector& BeamStart, const FVector& BeamEnd)
+{
+    if (auto* Beam = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, BeamStart, FRotator()))
+    {
+        Beam->SetVectorParameter(FName("Target"), BeamEnd);
+    }
 }
