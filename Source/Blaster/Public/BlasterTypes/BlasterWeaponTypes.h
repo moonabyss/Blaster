@@ -31,6 +31,7 @@ enum class EWeaponType : uint8
 {
     None,
     EWT_Pistol UMETA(DisplayName = "Pistol"),
+    EWT_SMG UMETA(DisplayName = "Submachine Gun"),
     EWT_Rifle UMETA(DisplayName = "Rifle"),
     EWT_RocketLauncher UMETA(DisplayName = "Rocket Launcher"),
 
