@@ -434,15 +434,14 @@ void ABlasterCharacter::ObstacleInFront(const FVector& InObstaclePoint)
     ObstaclePoint = InObstaclePoint;
     if (!GetWorldTimerManager().IsTimerActive(ObstacleTimer))
     {
+        auto ShowObstacle = [=]()
+        {
+            bShowObstaclePoint = true;
+        };
         FTimerDelegate TimerDelegate;
-        TimerDelegate.BindUFunction(this, FName("ShowObstaclePoint"));
+        TimerDelegate.BindLambda(ShowObstacle);
         GetWorldTimerManager().SetTimer(ObstacleTimer, TimerDelegate, 0.5f, false);
     }
-}
-
-void ABlasterCharacter::ShowObstaclePoint()
-{
-    bShowObstaclePoint = true;
 }
 
 void ABlasterCharacter::HideObstaclePoint()

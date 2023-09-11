@@ -205,8 +205,6 @@ private:
     UFUNCTION(Server, Reliable)
     void ServerDrop();
 
-    UFUNCTION()
-    void ShowObstaclePoint();
     void UpdateObstaclePoint();
     FVector ObstaclePoint{FVector()};
     bool bShowObstaclePoint;
