@@ -23,14 +23,15 @@ class BLASTER_API ABlasterGameMode : public AGameMode
 public:
     ABlasterGameMode();
     virtual void Tick(float DeltaSeconds) override;
-    virtual void PlayerEliminated(ABlasterCharacter* ElimmedCharacter, ABlasterPlayerController* VictimController, ABlasterPlayerController* AttackerController);
-    virtual void RequestRespawn(ACharacter* ElimmedCharacter, AController* ElimmedController);
 
 protected:
     virtual void BeginPlay() override;
     virtual void OnMatchStateSet() override;
 
 public:
+    virtual void PlayerEliminated(ABlasterCharacter* ElimmedCharacter, ABlasterPlayerController* VictimController, ABlasterPlayerController* AttackerController);
+    virtual void RequestRespawn(ACharacter* ElimmedCharacter, AController* ElimmedController);
+
     /** Duration of match for this game mode */
     float GetMatchTime() const { return MatchTime; }
     float GetWarmupTime() const { return WarmupTime; }

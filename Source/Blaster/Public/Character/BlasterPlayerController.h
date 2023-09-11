@@ -7,6 +7,7 @@
 
 #include "BlasterPlayerController.generated.h"
 
+class ABlasterBaseWeapon;
 class ABlasterGameState;
 class ABlasterPlayerState;
 
@@ -23,10 +24,13 @@ public:
 protected:
     virtual void BeginPlay() override;
     virtual void OnPossess(APawn* aPawn) override;
+    virtual void OnUnPossess() override;
 
 public:
     float GetTimerTime();
     void SetMatchState(FName State);
+    void SetCurrentWeapon() { CurrentWeapon = nullptr; }
+    void SetCurrentWeapon(ABlasterBaseWeapon* Weapon) { CurrentWeapon = Weapon; }
 
 protected:
     // Request the current server time
@@ -88,4 +92,6 @@ private:
     FText CooldownInfoText{FText()};
 
     void UpdateTopScoreText();
+
+    ABlasterBaseWeapon* CurrentWeapon{nullptr};
 };

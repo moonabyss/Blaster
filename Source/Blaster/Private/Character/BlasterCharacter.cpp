@@ -293,7 +293,7 @@ ABlasterBaseWeapon* ABlasterCharacter::GetCurrentWeapon() const
     return WeaponComponent->GetCurrentWeapon();
 }
 
-void ABlasterCharacter::OnWeaponEquipped()
+void ABlasterCharacter::OnWeaponEquipped(ABlasterBaseWeapon* Weapon)
 {
     bUseControllerRotationYaw = true;
     GetCharacterMovement()->bOrientRotationToMovement = false;

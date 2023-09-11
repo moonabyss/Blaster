@@ -6,11 +6,14 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 
+#include "BlasterUtils.h"
 #include "Character/BlasterCharacter.h"
 #include "Character/BlasterPlayerState.h"
+#include "Components/BlasterWeaponComponent.h"
 #include "GameMode/BlasterGameMode.h"
 #include "GameState/BlasterGameState.h"
 #include "HUD/BlasterHUD.h"
+#include "Weapon/BlasterBaseWeapon.h"
 
 const FText AnnouncementTitleText = FText::FromString("Match starts in:");
 const FText AnnouncementInfoText = FText::FromString("Fly around: W A S D");
@@ -66,6 +69,22 @@ void ABlasterPlayerController::OnPossess(APawn* aPawn)
     Super::OnPossess(aPawn);
 
     OnNewPawn.Broadcast(aPawn);
+
+    if (auto* WeaponComponent = BlasterUtils::GetBlasterPlayerComponent<UBlasterWeaponComponent>(aPawn))
+    {
+        WeaponComponent->WeaponEquipped.AddUObject(this, &ThisClass::SetCurrentWeapon);
+        WeaponComponent->WeaponUnequipped.AddUObject(this, &ThisClass::SetCurrentWeapon);
+    }
+}
+
+void ABlasterPlayerController::OnUnPossess()
+{
+    Super::OnUnPossess();
+
+    if (CurrentWeapon)
+    {
+        CurrentWeapon->SetWeaponState(EWeaponState::EWS_Dropped);
+    }
 }
 
 void ABlasterPlayerController::SetTimers()

@@ -113,7 +113,7 @@ private:
     void ServerEquipPressed();
 
     UFUNCTION()
-    void OnWeaponEquipped();
+    void OnWeaponEquipped(ABlasterBaseWeapon* Weapon);
 
     UFUNCTION()
     void OnWeaponUnequipped();

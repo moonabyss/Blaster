@@ -3,11 +3,12 @@
 #pragma once
 #include "BlasterWeaponTypes.generated.h"
 
+class ABlasterBaseWeapon;
 class UNiagaraSystem;
 class USoundCue;
 
 // weapon
-DECLARE_MULTICAST_DELEGATE(FOnWeaponEquippedDelegate);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnWeaponEquippedDelegate, ABlasterBaseWeapon* Weapon);
 DECLARE_MULTICAST_DELEGATE(FOnWeaponUnequippedDelegate);
 
 const FName LeftHandSocketName = "LeftHandSocket";

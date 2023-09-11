@@ -94,7 +94,7 @@ bool UBlasterWeaponComponent::EquipWeapon(ABlasterBaseWeapon* WeaponToEquip)
         Reload();
     }
 
-    WeaponEquipped.Broadcast();
+    WeaponEquipped.Broadcast(CurrentWeapon);
     return true;
 }
 
@@ -118,13 +118,13 @@ void UBlasterWeaponComponent::OnRep_CurrentWeapon(ABlasterBaseWeapon* LastWeapon
     {
         UGameplayStatics::PlaySoundAtLocation(CurrentWeapon, CurrentWeapon->GetWeaponProps().EquipSound, CurrentWeapon->GetActorLocation());
 
-        WeaponEquipped.Broadcast();
+        WeaponEquipped.Broadcast(CurrentWeapon);
     }
     else if (IsValid(CurrentWeapon))  // Weapon changed
     {
         UGameplayStatics::PlaySoundAtLocation(CurrentWeapon, CurrentWeapon->GetWeaponProps().EquipSound, CurrentWeapon->GetActorLocation());
 
-        WeaponEquipped.Broadcast();
+        WeaponEquipped.Broadcast(CurrentWeapon);
     }
     else if (!IsValid(CurrentWeapon) && IsValid(LastWeapon))  // weapon unequipped
     {
