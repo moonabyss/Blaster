@@ -9,6 +9,7 @@
 #include "Character/BlasterPlayerController.h"
 #include "Character/BlasterPlayerState.h"
 #include "GameState/BlasterGameState.h"
+#include "Weapon/BlasterBaseWeapon.h"
 
 namespace MatchState
 {
@@ -52,6 +53,14 @@ void ABlasterGameMode::Tick(float DeltaSeconds)
         CountdownTime = WarmupTime + MatchTime + CooldownTime + LevelStartingTime - GetWorld()->GetTimeSeconds();
         if (CountdownTime <= 0.0f)
         {
+            // Clear timers wor weapons
+            TArray<AActor*> FoundWeapons;
+            UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABlasterBaseWeapon::StaticClass(), FoundWeapons);
+            for (auto* Weapon : FoundWeapons)
+            {
+                GetWorldTimerManager().ClearAllTimersForObject(Weapon);
+            }
+
             RestartGame();
         }
     }
