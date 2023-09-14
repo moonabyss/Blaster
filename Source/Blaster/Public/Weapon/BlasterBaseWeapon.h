@@ -13,6 +13,8 @@ class UAnimationAsset;
 class USphereComponent;
 class UWidgetComponent;
 class ABlasterWeaponShell;
+class UParticleSystem;
+class USoundCue;
 
 UCLASS(NotBlueprintable)
 class BLASTER_API ABlasterBaseWeapon : public AActor
@@ -29,7 +31,7 @@ protected:
 public:
     void ShowPickupWidget(bool bShowWidget);
     void SetWeaponState(EWeaponState State);
-    virtual void Fire(const FVector& BarelLocation, const FVector& HitTarget, float SpreadAngle);
+    virtual void Fire(const FVector& BarelLocation, const FVector& HitTarget, float SpreadAngle){};
     void DecrementAmmo();
     bool TryAddAmmoToClip(int32 AmmoCount);
 
@@ -49,6 +51,15 @@ protected:
     virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
     FVector ShotDirectionWithSpread(const FVector& Direction, float SpreadAngle) const;
+
+    UFUNCTION(NetMulticast, Reliable)
+    void Multicast_PlayWeaponFireAnimation();
+
+    UFUNCTION(NetMulticast, Reliable)
+    void Multicast_SpawnImpactFX(UParticleSystem* ImpactParticles, USoundCue* ImpactSound, const FTransform& ImpactTransform);
+
+    UFUNCTION(NetMulticast, Reliable)
+    void Multicast_SpawnBeamFX(UParticleSystem* ImpactParticles, const FVector& BeamStart, const FVector& BeamEnd);
 
 private:
     UPROPERTY(Category = "Components", VisibleAnywhere)

@@ -3,9 +3,6 @@
 #include "Weapon/BlasterHitscanWeapon.h"
 #include "Interfaces/Hitable.h"
 #include "Kismet/GameplayStatics.h"
-#include "Particles/ParticleSystem.h"
-#include "Particles/ParticleSystemComponent.h"
-#include "Sound/SoundCue.h"
 
 void ABlasterHitscanWeapon::Fire(const FVector& BarelLocation, const FVector& HitTarget, float SpreadAngle)
 {
@@ -36,21 +33,6 @@ void ABlasterHitscanWeapon::Fire(const FVector& BarelLocation, const FVector& Hi
         Multicast_SpawnImpactFX(BulletProps.BulletImpactParticles, BulletProps.BulletImpactSound, ImpactTransform);
         BeamEnd = HitResult.ImpactPoint;
     }
+    Multicast_PlayWeaponFireAnimation();
     Multicast_SpawnBeamFX(BulletProps.BulletTracer, BarelLocation, BeamEnd);
-
-    Super::Fire(BarelLocation, HitTarget, SpreadAngle);
-}
-
-void ABlasterHitscanWeapon::Multicast_SpawnImpactFX_Implementation(UParticleSystem* ImpactParticles, USoundCue* ImpactSound, const FTransform& ImpactTransform)
-{
-    UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, ImpactTransform);
-    UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, ImpactTransform.GetLocation());
-}
-
-void ABlasterHitscanWeapon::Multicast_SpawnBeamFX_Implementation(UParticleSystem* ImpactParticles, const FVector& BeamStart, const FVector& BeamEnd)
-{
-    if (auto* Beam = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, BeamStart, FRotator()))
-    {
-        Beam->SetVectorParameter(FName("Target"), BeamEnd);
-    }
 }

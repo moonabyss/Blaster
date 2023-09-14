@@ -7,9 +7,6 @@
 
 #include "BlasterHitscanWeapon.generated.h"
 
-class UParticleSystem;
-class USoundCue;
-
 UCLASS(Blueprintable)
 class BLASTER_API ABlasterHitscanWeapon : public ABlasterBaseWeapon
 {
@@ -21,10 +18,4 @@ public:
 private:
     UPROPERTY(Category = "Bullet Properties", EditDefaultsOnly)
     FBulletProps BulletProps{FBulletProps()};
-
-    UFUNCTION(NetMulticast, Reliable)
-    void Multicast_SpawnImpactFX(UParticleSystem* ImpactParticles, USoundCue* ImpactSound, const FTransform& ImpactTransform);
-
-    UFUNCTION(NetMulticast, Reliable)
-    void Multicast_SpawnBeamFX(UParticleSystem* ImpactParticles, const FVector& BeamStart, const FVector& BeamEnd);
 };

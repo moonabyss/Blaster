@@ -5,7 +5,11 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Sound/SoundCue.h"
 
 #include "Character/BlasterCharacter.h"
 #include "Weapon/BlasterWeaponShell.h"
@@ -170,16 +174,30 @@ void ABlasterBaseWeapon::OnRep_WeaponState()
     }
 }
 
-void ABlasterBaseWeapon::Fire(const FVector& BarelLocation, const FVector& HitTarget, float SpreadAngle)
+FVector ABlasterBaseWeapon::ShotDirectionWithSpread(const FVector& Direction, float SpreadAngle) const
+{
+    const auto HalfRad = FMath::DegreesToRadians(SpreadAngle);
+    return FMath::VRandCone(Direction, HalfRad);
+}
+
+void ABlasterBaseWeapon::Multicast_PlayWeaponFireAnimation_Implementation()
 {
     PlayFireAnimation();
     SpawnShell();
 }
 
-FVector ABlasterBaseWeapon::ShotDirectionWithSpread(const FVector& Direction, float SpreadAngle) const
+void ABlasterBaseWeapon::Multicast_SpawnImpactFX_Implementation(UParticleSystem* ImpactParticles, USoundCue* ImpactSound, const FTransform& ImpactTransform)
 {
-    const auto HalfRad = FMath::DegreesToRadians(SpreadAngle);
-    return FMath::VRandCone(Direction, HalfRad);
+    UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, ImpactTransform);
+    UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, ImpactTransform.GetLocation());
+}
+
+void ABlasterBaseWeapon::Multicast_SpawnBeamFX_Implementation(UParticleSystem* ImpactParticles, const FVector& BeamStart, const FVector& BeamEnd)
+{
+    if (auto* Beam = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, BeamStart, FRotator()))
+    {
+        Beam->SetVectorParameter(FName("Target"), BeamEnd);
+    }
 }
 
 void ABlasterBaseWeapon::PlayFireAnimation()

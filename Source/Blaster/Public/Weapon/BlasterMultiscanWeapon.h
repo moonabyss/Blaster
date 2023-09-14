@@ -7,11 +7,18 @@
 
 #include "BlasterMultiscanWeapon.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable)
 class BLASTER_API ABlasterMultiscanWeapon : public ABlasterBaseWeapon
 {
     GENERATED_BODY()
 
 public:
-    virtual void Fire(const FVector& BarelLocation, const FVector& HitTarget, float SpreadAngle);
+    virtual void Fire(const FVector& BarelLocation, const FVector& HitTarget, float SpreadAngle) override;
+
+private:
+    UPROPERTY(Category = "Bullet Properties", EditDefaultsOnly)
+    FBulletProps BulletProps{FBulletProps()};
+
+    UPROPERTY(Category = "Bullet Properties", EditDefaultsOnly)
+    int32 Pellets{1};
 };

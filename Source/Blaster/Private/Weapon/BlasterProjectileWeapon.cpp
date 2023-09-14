@@ -9,9 +9,6 @@
 
 void ABlasterProjectileWeapon::Fire(const FVector& BarelLocation, const FVector& HitTarget, float SpreadAngle)
 {
-    Super::Fire(BarelLocation, HitTarget, SpreadAngle);
-
-    if (!HasAuthority()) return;
     if (!GetWorld() || !GetOwner() || !GetMesh() || !ProjectileClass) return;
 
     FVector Direction = ShotDirectionWithSpread((HitTarget - BarelLocation).GetSafeNormal(), SpreadAngle);
@@ -25,4 +22,6 @@ void ABlasterProjectileWeapon::Fire(const FVector& BarelLocation, const FVector&
         Projectile->SetLifeSpan(GetWeaponProps().Range / Projectile->GetInitialSpeed());
         Projectile->FinishSpawning(SpawnTransform);
     }
+
+    Multicast_PlayWeaponFireAnimation();
 }

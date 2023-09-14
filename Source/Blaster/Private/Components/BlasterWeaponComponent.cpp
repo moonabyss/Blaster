@@ -240,6 +240,7 @@ void UBlasterWeaponComponent::Server_Fire_Implementation(const FVector_NetQuanti
     if (!CanShoot() || !IsValid(CurrentWeapon)) return;
 
     CurrentWeapon->DecrementAmmo();
+    CurrentWeapon->Fire(BarelLocation, TraceHitTarget, SpreadAngle);
     Multicast_Fire(BarelLocation, TraceHitTarget, SpreadAngle);
     StartFireTimer();
 }
@@ -249,8 +250,6 @@ void UBlasterWeaponComponent::Multicast_Fire_Implementation(const FVector_NetQua
     if (!IsValid(CurrentWeapon)) return;
 
     PlayFireMontage();
-
-    CurrentWeapon->Fire(BarelLocation, TraceHitTarget, SpreadAngle);
 }
 
 void UBlasterWeaponComponent::PlayFireMontage()
@@ -319,20 +318,6 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, f
         {
             Crosshairs.Color = CrosshairsDefaultColor;
         }
-
-        // if (bWithSpread)
-        //{
-        //     // Shooting
-        //     const auto HalfRad = FMath::DegreesToRadians(CurrentSpreadAngle);
-        //     const FVector ShootDirection = FMath::VRandCone(CrosshairWorldDirection, HalfRad);
-        //     End = Start + ShootDirection * Range;
-        //     GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility);
-        // }
-        // else
-        //{
-        //     // Aiming
-        //
-        // }
 
         if (!TraceHitResult.bBlockingHit)
         {
