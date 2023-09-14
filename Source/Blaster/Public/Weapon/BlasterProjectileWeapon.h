@@ -15,7 +15,7 @@ class BLASTER_API ABlasterProjectileWeapon : public ABlasterBaseWeapon
     GENERATED_BODY()
 
 public:
-    virtual void Fire(const FVector& BarelLocation, const FVector& HitTarget) override;
+    virtual void Fire(const FVector& BarelLocation, const FVector& HitTarget, float SpreadAngle) override;
 
 private:
     UPROPERTY(EditDefaultsOnly)

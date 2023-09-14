@@ -7,14 +7,14 @@
 #include "Components/BlasterProjectileMoveComponent.h"
 #include "Weapon/BlasterProjectile.h"
 
-void ABlasterProjectileWeapon::Fire(const FVector& BarelLocation, const FVector& HitTarget)
+void ABlasterProjectileWeapon::Fire(const FVector& BarelLocation, const FVector& HitTarget, float SpreadAngle)
 {
-    Super::Fire(BarelLocation, HitTarget);
+    Super::Fire(BarelLocation, HitTarget, SpreadAngle);
 
     if (!HasAuthority()) return;
     if (!GetWorld() || !GetOwner() || !GetMesh() || !ProjectileClass) return;
 
-    FVector Direction = (HitTarget - BarelLocation).GetSafeNormal();
+    FVector Direction = ShotDirectionWithSpread((HitTarget - BarelLocation).GetSafeNormal(), SpreadAngle);
     const FTransform SpawnTransform(Direction.Rotation(), BarelLocation);
     ABlasterProjectile* Projectile = GetWorld()->SpawnActorDeferred<ABlasterProjectile>(ProjectileClass, SpawnTransform);
     if (Projectile)

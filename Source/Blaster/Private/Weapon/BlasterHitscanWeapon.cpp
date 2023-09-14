@@ -7,16 +7,18 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Sound/SoundCue.h"
 
-void ABlasterHitscanWeapon::Fire(const FVector& BarelLocation, const FVector& HitTarget)
+void ABlasterHitscanWeapon::Fire(const FVector& BarelLocation, const FVector& HitTarget, float SpreadAngle)
 {
     if (!GetWorld() || !GetOwner() || !GetOwner()->GetInstigator()) return;
-
-    const FVector End = BarelLocation + (HitTarget - BarelLocation).GetSafeNormal() * GetWeaponProps().Range;
-    FVector BeamEnd{End};
 
     FHitResult HitResult;
     FCollisionQueryParams QueryParams;
     QueryParams.AddIgnoredActor(this);
+
+    const FVector Direction = ShotDirectionWithSpread((HitTarget - BarelLocation).GetSafeNormal(), SpreadAngle);
+    const FVector End = BarelLocation + Direction * GetWeaponProps().Range;
+    FVector BeamEnd{End};
+
     GetWorld()->LineTraceSingleByChannel(HitResult, BarelLocation, End, ECC_Visibility, QueryParams);
     if (HitResult.bBlockingHit)
     {
@@ -36,7 +38,7 @@ void ABlasterHitscanWeapon::Fire(const FVector& BarelLocation, const FVector& Hi
     }
     Multicast_SpawnBeamFX(BulletProps.BulletTracer, BarelLocation, BeamEnd);
 
-    Super::Fire(BarelLocation, HitTarget);
+    Super::Fire(BarelLocation, HitTarget, SpreadAngle);
 }
 
 void ABlasterHitscanWeapon::Multicast_SpawnImpactFX_Implementation(UParticleSystem* ImpactParticles, USoundCue* ImpactSound, const FTransform& ImpactTransform)

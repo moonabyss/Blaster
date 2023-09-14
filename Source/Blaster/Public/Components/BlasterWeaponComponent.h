@@ -80,14 +80,14 @@ private:
     void PlayFireMontage();
 
     UFUNCTION(Server, Reliable)
-    void Server_Fire(const FVector_NetQuantize& BarelLocation, const FVector_NetQuantize& TraceHitTarget);
+    void Server_Fire(const FVector_NetQuantize& BarelLocation, const FVector_NetQuantize& TraceHitTarget, float SpreadAngle);
 
     UFUNCTION(NetMulticast, Reliable)
-    void Multicast_Fire(const FVector_NetQuantize& BarelLocation, const FVector_NetQuantize& TraceHitTarget);
+    void Multicast_Fire(const FVector_NetQuantize& BarelLocation, const FVector_NetQuantize& TraceHitTarget, float SpreadAngle);
 
     void PlayReloadMontage();
 
-    void TraceUnderCrosshairs(FHitResult& TraceHitResult, bool bWithSpread, float Range);
+    void TraceUnderCrosshairs(FHitResult& TraceHitResult, float Range);
     void DetectObstacle(const FHitResult& TraceHit);
 
     void SetHUDCrosshairs(float DeltaTime);

@@ -29,7 +29,7 @@ protected:
 public:
     void ShowPickupWidget(bool bShowWidget);
     void SetWeaponState(EWeaponState State);
-    virtual void Fire(const FVector& BarelLocation, const FVector& HitTarget);
+    virtual void Fire(const FVector& BarelLocation, const FVector& HitTarget, float SpreadAngle);
     void DecrementAmmo();
     bool TryAddAmmoToClip(int32 AmmoCount);
 
@@ -47,6 +47,8 @@ protected:
 
     UFUNCTION()
     virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+    FVector ShotDirectionWithSpread(const FVector& Direction, float SpreadAngle) const;
 
 private:
     UPROPERTY(Category = "Components", VisibleAnywhere)

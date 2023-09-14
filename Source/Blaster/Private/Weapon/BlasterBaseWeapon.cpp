@@ -170,10 +170,16 @@ void ABlasterBaseWeapon::OnRep_WeaponState()
     }
 }
 
-void ABlasterBaseWeapon::Fire(const FVector& BarelLocation, const FVector& HitTarget)
+void ABlasterBaseWeapon::Fire(const FVector& BarelLocation, const FVector& HitTarget, float SpreadAngle)
 {
     PlayFireAnimation();
     SpawnShell();
+}
+
+FVector ABlasterBaseWeapon::ShotDirectionWithSpread(const FVector& Direction, float SpreadAngle) const
+{
+    const auto HalfRad = FMath::DegreesToRadians(SpreadAngle);
+    return FMath::VRandCone(Direction, HalfRad);
 }
 
 void ABlasterBaseWeapon::PlayFireAnimation()

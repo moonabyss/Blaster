@@ -60,7 +60,7 @@ void UBlasterWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType
         if (CurrentWeapon)
         {
             FHitResult HitResult;
-            TraceUnderCrosshairs(HitResult, false, CurrentWeapon->GetWeaponProps().Range);
+            TraceUnderCrosshairs(HitResult, CurrentWeapon->GetWeaponProps().Range);
             HitTargetNoSpread = HitResult.ImpactPoint;
             DetectObstacle(HitResult);
         }
@@ -226,8 +226,8 @@ void UBlasterWeaponComponent::Fire()
     {
         const FVector BarelLocation = CurrentWeapon->GetMesh()->GetSocketLocation(MuzzleFlashSocketName);
         FHitResult HitResult;
-        TraceUnderCrosshairs(HitResult, true, CurrentWeapon->GetWeaponProps().Range);
-        Server_Fire(BarelLocation, HitResult.ImpactPoint);
+        TraceUnderCrosshairs(HitResult, CurrentWeapon->GetWeaponProps().Range);
+        Server_Fire(BarelLocation, HitResult.ImpactPoint, CurrentSpreadAngle);
         CrosshairsShootingFactor = FMath::Min(CurrentWeapon->GetWeaponProps().SpreadModifierShootingMax, CrosshairsShootingFactor + CurrentWeapon->GetWeaponProps().SpreadModifierPerShoot);
 
         StartFireTimer();
@@ -235,22 +235,22 @@ void UBlasterWeaponComponent::Fire()
     }
 }
 
-void UBlasterWeaponComponent::Server_Fire_Implementation(const FVector_NetQuantize& BarelLocation, const FVector_NetQuantize& TraceHitTarget)
+void UBlasterWeaponComponent::Server_Fire_Implementation(const FVector_NetQuantize& BarelLocation, const FVector_NetQuantize& TraceHitTarget, float SpreadAngle)
 {
     if (!CanShoot() || !IsValid(CurrentWeapon)) return;
 
     CurrentWeapon->DecrementAmmo();
-    Multicast_Fire(BarelLocation, TraceHitTarget);
+    Multicast_Fire(BarelLocation, TraceHitTarget, SpreadAngle);
     StartFireTimer();
 }
 
-void UBlasterWeaponComponent::Multicast_Fire_Implementation(const FVector_NetQuantize& BarelLocation, const FVector_NetQuantize& TraceHitTarget)
+void UBlasterWeaponComponent::Multicast_Fire_Implementation(const FVector_NetQuantize& BarelLocation, const FVector_NetQuantize& TraceHitTarget, float SpreadAngle)
 {
     if (!IsValid(CurrentWeapon)) return;
 
     PlayFireMontage();
 
-    CurrentWeapon->Fire(BarelLocation, TraceHitTarget);
+    CurrentWeapon->Fire(BarelLocation, TraceHitTarget, SpreadAngle);
 }
 
 void UBlasterWeaponComponent::PlayFireMontage()
@@ -283,7 +283,7 @@ void UBlasterWeaponComponent::FireTimerFinished()
     }
 }
 
-void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, bool bWithSpread, float Range)
+void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, float Range)
 {
     if (!GetWorld()) return;
 
@@ -308,31 +308,31 @@ void UBlasterWeaponComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult, b
             Start += CrosshairWorldDirection * (DistanceToCharacter + 100.0f);
         }
 
-        FVector End;
+        FVector End = Start + CrosshairWorldDirection * Range;
+        GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility);
 
-        if (bWithSpread)
+        if (IsValid(TraceHitResult.GetActor()) && TraceHitResult.GetActor()->Implements<UInteractWithCrosshairs>())
         {
-            // Shooting
-            const auto HalfRad = FMath::DegreesToRadians(CurrentSpreadAngle);
-            const FVector ShootDirection = FMath::VRandCone(CrosshairWorldDirection, HalfRad);
-            End = Start + ShootDirection * Range;
-            GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility);
+            Crosshairs.Color = CrosshairsEnemyColor;
         }
         else
         {
-            // Aiming
-            End = Start + CrosshairWorldDirection * Range;
-            GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility);
-
-            if (IsValid(TraceHitResult.GetActor()) && TraceHitResult.GetActor()->Implements<UInteractWithCrosshairs>())
-            {
-                Crosshairs.Color = CrosshairsEnemyColor;
-            }
-            else
-            {
-                Crosshairs.Color = CrosshairsDefaultColor;
-            }
+            Crosshairs.Color = CrosshairsDefaultColor;
         }
+
+        // if (bWithSpread)
+        //{
+        //     // Shooting
+        //     const auto HalfRad = FMath::DegreesToRadians(CurrentSpreadAngle);
+        //     const FVector ShootDirection = FMath::VRandCone(CrosshairWorldDirection, HalfRad);
+        //     End = Start + ShootDirection * Range;
+        //     GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECollisionChannel::ECC_Visibility);
+        // }
+        // else
+        //{
+        //     // Aiming
+        //
+        // }
 
         if (!TraceHitResult.bBlockingHit)
         {
