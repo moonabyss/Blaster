@@ -13,7 +13,7 @@
 
 namespace MatchState
 {
-    const FName Cooldown = FName("Cooldown");
+const FName Cooldown = FName("Cooldown");
 }
 
 ABlasterGameMode::ABlasterGameMode()

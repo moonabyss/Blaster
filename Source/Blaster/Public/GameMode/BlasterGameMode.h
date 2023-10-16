@@ -12,7 +12,7 @@ class ABlasterPlayerController;
 
 namespace MatchState
 {
-    extern BLASTER_API const FName Cooldown;  // Match duration has been reached. Display winner and begin cooldown timer.
+extern BLASTER_API const FName Cooldown;  // Match duration has been reached. Display winner and begin cooldown timer.
 }
 
 UCLASS()

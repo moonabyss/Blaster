@@ -5,9 +5,9 @@
 
 namespace
 {
-    TMap<FString, FString> Levels{
-        {"FreeForAll", "/Game/Maps/BlasterGame"}  //
-    };
+TMap<FString, FString> Levels{
+    {"FreeForAll", "/Game/Maps/BlasterGame"}  //
+};
 }
 
 void ABlasterLobbyGameMode::PostLogin(APlayerController* NewPlayer)

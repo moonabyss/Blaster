@@ -24,9 +24,9 @@ PointerAlignment: Left
 SpacesBeforeTrailingComments: 2
 AlignEscapedNewlines: Left
 SpaceAfterLogicalNot: false
-SpaceAfterCStyleCast: true
 AlwaysBreakTemplateDeclarations: Yes
 BreakConstructorInitializers: BeforeComma
-NamespaceIndentation: All
+NamespaceIndentation: None
 InsertNewlineAtEOF: true
 SpaceAfterCStyleCast: false
+AlignArrayOfStructures: Left
