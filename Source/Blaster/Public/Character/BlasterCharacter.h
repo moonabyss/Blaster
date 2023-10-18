@@ -61,6 +61,9 @@ public:
     void ObstacleInFront(const FVector& InObstaclePoint);
     void HideObstaclePoint();
 
+    UFUNCTION(BlueprintImplementableEvent)
+    void ShowSniperScopeWidget(bool bShowScope);
+
 protected:
     void MoveForward(float Value);
     void MoveRight(float Value);

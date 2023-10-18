@@ -37,7 +37,8 @@ public:
     ABlasterBaseWeapon* GetCurrentWeapon() const;
     void StartAiming();
     void StopAiming();
-    bool IsAiming();
+    bool IsAiming() const;
+    bool AllowAiming() const;
     void StartFire();
     void StopFire();
     void Fire();

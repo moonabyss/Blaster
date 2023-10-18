@@ -162,23 +162,40 @@ ABlasterBaseWeapon* UBlasterWeaponComponent::GetCurrentWeapon() const
 
 void UBlasterWeaponComponent::StartAiming()
 {
-    if (!IsValid(CurrentWeapon)) return;
+    if (!CurrentWeapon || !Character || !AllowAiming()) return;
 
     bWantsAiming = true;
-    if (Character && !Character->HasAuthority()) ServerSetWantsAiming(true);
+    if (!Character->HasAuthority()) ServerSetWantsAiming(bWantsAiming);
+    if (IsAiming() && Character->IsLocallyControlled() && CurrentWeapon->GetWeaponProps().WeaponType == EWeaponType::EWT_SniperRifle)
+    {
+        Character->ShowSniperScopeWidget(bWantsAiming);
+    }
 }
 
 void UBlasterWeaponComponent::StopAiming()
 {
+    if (!Character || !CurrentWeapon) return;
+
     bWantsAiming = false;
-    if (Character && !Character->HasAuthority()) ServerSetWantsAiming(false);
+    if (!Character->HasAuthority()) ServerSetWantsAiming(bWantsAiming);
+    if (Character->IsLocallyControlled() && CurrentWeapon->GetWeaponProps().WeaponType == EWeaponType::EWT_SniperRifle)
+    {
+        Character->ShowSniperScopeWidget(bWantsAiming);
+    }
 }
 
-bool UBlasterWeaponComponent::IsAiming()
+bool UBlasterWeaponComponent::IsAiming() const
 {
-    if (!Character) return false;
+    if (!Character || !CurrentWeapon) return false;
 
-    return bWantsAiming && !Character->GetCharacterMovement()->IsFalling() && CombatState != ECombatState::ECS_Reloading && CurrentWeapon;
+    return bWantsAiming && AllowAiming();
+}
+
+bool UBlasterWeaponComponent::AllowAiming() const
+{
+    if (!Character || !CurrentWeapon) return false;
+
+    return !Character->GetCharacterMovement()->IsFalling() && CombatState != ECombatState::ECS_Reloading;
 }
 
 void UBlasterWeaponComponent::ServerSetWantsAiming_Implementation(bool bIsAiming)
@@ -450,6 +467,7 @@ void UBlasterWeaponComponent::Reload()
         CarriedAmmo > 0 &&                            //
         CombatState == ECombatState::ECS_Unoccupied)  //
     {
+        StopAiming();
         ServerReload();
     }
 }
