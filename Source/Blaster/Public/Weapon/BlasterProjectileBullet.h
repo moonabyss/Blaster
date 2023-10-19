@@ -14,6 +14,9 @@ class BLASTER_API ABlasterProjectileBullet : public ABlasterProjectile
 {
     GENERATED_BODY()
 
+public:
+    ABlasterProjectileBullet();
+
 protected:
     virtual void BeginPlay() override;
 

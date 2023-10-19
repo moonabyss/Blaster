@@ -10,8 +10,10 @@
 
 #include "BlasterProjectile.generated.h"
 
+class UAudioComponent;
 class UBoxComponent;
 class UBlasterProjectileMoveComponent;
+class UNiagaraComponent;
 class UParticleSystem;
 class USoundCue;
 
@@ -28,7 +30,7 @@ protected:
 
 public:
     void SetShotDirection(const FVector& Direction) { ShotDirection = Direction; }
-    float GetInitialSpeed() const;
+    virtual float GetInitialSpeed() const;
 
 protected:
     UFUNCTION()
@@ -40,12 +42,35 @@ protected:
     UFUNCTION(NetMulticast, Reliable)
     void Multicast_PlayImpactFX(UParticleSystem* ImpactParticles, USoundCue* ImpactSound);
 
-private:
+    UFUNCTION(NetMulticast, Reliable)
+    void Multicast_StopTrailFX();
+
+    void SpawnFX(UNiagaraSystem* VisualFX, USoundBase* LoopSound);
+
+    UPROPERTY(Category = "Components", VisibleAnywhere)
+    UStaticMeshComponent* ProjectileMesh;
+
     UPROPERTY(Category = "Components", VisibleAnywhere)
     UBoxComponent* CollisionBox;
 
     UPROPERTY(Category = "Components", VisibleAnywhere)
     UBlasterProjectileMoveComponent* ProjectileMovementComponent;
+
+    void StartDestroyTimer();
+
+    FTimerHandle DestroyTimer;
+
+    UPROPERTY(EditDefaultsOnly)
+    float DestroyDelay{5.0};
+
+    UFUNCTION()
+    virtual void DestroyTimerFinished();
+
+    UPROPERTY()
+    UNiagaraComponent* TrailFXComponent{nullptr};
+
+    UPROPERTY()
+    UAudioComponent* LoopSoundComponent{nullptr};
 
     FVector ShotDirection{FVector()};
 };

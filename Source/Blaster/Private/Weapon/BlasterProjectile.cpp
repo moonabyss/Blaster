@@ -1,8 +1,11 @@
 // Blaster Multiplayer Game. All rights reserved.
 
 #include "Weapon/BlasterProjectile.h"
+#include "Components/AudioComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Particles/ParticleSystem.h"
 #include "Sound/SoundCue.h"
 
@@ -24,14 +27,6 @@ ABlasterProjectile::ABlasterProjectile()
     CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
     CollisionBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
     CollisionBox->SetCollisionResponseToChannel(ECC_SkeletalMesh, ECollisionResponse::ECR_Block);
-
-    ProjectileMovementComponent = CreateDefaultSubobject<UBlasterProjectileMoveComponent>("BlasterProjectileMovementComponent");
-    check(ProjectileMovementComponent);
-    ProjectileMovementComponent->bRotationFollowsVelocity = true;
-    ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
-    ProjectileMovementComponent->InitialSpeed = 2000.0f;
-    ProjectileMovementComponent->MaxSpeed = 2000.0f;
-    ProjectileMovementComponent->SetIsReplicated(true);
 }
 
 void ABlasterProjectile::BeginPlay()
@@ -66,4 +61,32 @@ void ABlasterProjectile::Multicast_PlayImpactFX_Implementation(UParticleSystem* 
 {
     UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetActorTransform());
     UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+}
+
+void ABlasterProjectile::Multicast_StopTrailFX_Implementation()
+{
+    if (TrailFXComponent && TrailFXComponent->GetSystemInstanceController())
+    {
+        TrailFXComponent->GetSystemInstanceController()->Deactivate();
+    }
+    if (LoopSoundComponent)
+    {
+        LoopSoundComponent->Stop();
+    }
+}
+
+void ABlasterProjectile::StartDestroyTimer()
+{
+    GetWorldTimerManager().SetTimer(DestroyTimer, this, &ThisClass::DestroyTimerFinished, DestroyDelay);
+}
+
+void ABlasterProjectile::DestroyTimerFinished()
+{
+    Destroy();
+}
+
+void ABlasterProjectile::SpawnFX(UNiagaraSystem* VisualFX, USoundBase* LoopSound)
+{
+    TrailFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(VisualFX, GetRootComponent(), FName(), GetActorLocation(), GetActorRotation(), EAttachLocation::KeepWorldPosition, false);
+    LoopSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopSound, GetRootComponent(), FName(), GetActorLocation(), EAttachLocation::KeepWorldPosition, true);
 }

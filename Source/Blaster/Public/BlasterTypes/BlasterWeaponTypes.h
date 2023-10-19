@@ -247,3 +247,45 @@ struct FRocketProps
         LoopSound = nullptr;
     }
 };
+
+USTRUCT(BlueprintType)
+struct FGrenadeProps
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere)
+    float Damage;
+
+    UPROPERTY(EditAnywhere)
+    float MinimumDamage;
+
+    UPROPERTY(EditAnywhere)
+    float DamageInnerRadius;
+
+    UPROPERTY(EditAnywhere)
+    float DamageOuterRadius;
+
+    UPROPERTY(EditAnywhere)
+    UParticleSystem* GrenadeExplosionParticles;
+
+    UPROPERTY(EditAnywhere)
+    USoundCue* GrenadeExplosionSound;
+
+    UPROPERTY(EditAnywhere)
+    UNiagaraSystem* TrailFX;
+
+    UPROPERTY(EditAnywhere)
+    USoundCue* BounceSound;
+
+    FGrenadeProps()
+    {
+        Damage = 0.0f;
+        MinimumDamage = 0.0f;
+        DamageInnerRadius = 0.0f;
+        DamageOuterRadius = 0.0f;
+        GrenadeExplosionParticles = nullptr;
+        GrenadeExplosionSound = nullptr;
+        TrailFX = nullptr;
+        BounceSound = nullptr;
+    }
+};

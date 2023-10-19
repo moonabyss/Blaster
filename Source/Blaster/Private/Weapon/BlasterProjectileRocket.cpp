@@ -1,30 +1,34 @@
 // Blaster Multiplayer Game. All rights reserved.
 
 #include "Weapon/BlasterProjectileRocket.h"
-#include "Components/AudioComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "NiagaraComponent.h"
-#include "NiagaraFunctionLibrary.h"
 #include "Sound/SoundCue.h"
 
 #include "Components/BlasterProjectileMoveComponent.h"
 
 ABlasterProjectileRocket::ABlasterProjectileRocket()
 {
-    RocketMesh = CreateDefaultSubobject<UStaticMeshComponent>("Rocket Mesh");
-    check(RocketMesh);
-    RocketMesh->SetupAttachment(GetRootComponent());
-    RocketMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    RocketMesh->SetIsReplicated(true);
+    ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>("Rocket Mesh");
+    check(ProjectileMesh);
+    ProjectileMesh->SetupAttachment(GetRootComponent());
+    ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    ProjectileMesh->SetIsReplicated(true);
+
+    ProjectileMovementComponent = CreateDefaultSubobject<UBlasterProjectileMoveComponent>("BlasterProjectileMovementComponent");
+    check(ProjectileMovementComponent);
+    ProjectileMovementComponent->bRotationFollowsVelocity = true;
+    ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
+    ProjectileMovementComponent->InitialSpeed = 2000.0f;
+    ProjectileMovementComponent->MaxSpeed = 2000.0f;
+    ProjectileMovementComponent->SetIsReplicated(true);
 }
 
 void ABlasterProjectileRocket::BeginPlay()
 {
     Super::BeginPlay();
 
-    TrailFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(RocketProps.TrailFX, GetRootComponent(), FName(), GetActorLocation(), GetActorRotation(), EAttachLocation::KeepWorldPosition, false);
-    LoopSoundComponent = UGameplayStatics::SpawnSoundAttached(RocketProps.LoopSound, GetRootComponent(), FName(), GetActorLocation(), EAttachLocation::KeepWorldPosition, true);
+    SpawnFX(RocketProps.TrailFX, RocketProps.LoopSound);
 }
 
 void ABlasterProjectileRocket::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -40,27 +44,13 @@ void ABlasterProjectileRocket::OnHit(UPrimitiveComponent* HitComponent, AActor* 
     }
 
     GetProjectileMovementComponent()->StopMovementImmediately();
-    RocketMesh->SetVisibility(false);
-    GetCollisionBox()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    GetWorldTimerManager().SetTimer(DestroyTimer, this, &ThisClass::DestroyTimerFinished, DestroyDelay);
+    if (ProjectileMesh)
+    {
+        ProjectileMesh->SetVisibility(false);
+    }
+    CollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    StartDestroyTimer();
 
     Multicast_PlayImpactFX(RocketProps.RocketImpactParticles, RocketProps.RocketImpactSound);
     Multicast_StopTrailFX();
-}
-
-void ABlasterProjectileRocket::Multicast_StopTrailFX_Implementation()
-{
-    if (TrailFXComponent && TrailFXComponent->GetSystemInstanceController())
-    {
-        TrailFXComponent->GetSystemInstanceController()->Deactivate();
-    }
-    if (LoopSoundComponent)
-    {
-        LoopSoundComponent->Stop();
-    }
-}
-
-void ABlasterProjectileRocket::DestroyTimerFinished()
-{
-    Destroy();
 }

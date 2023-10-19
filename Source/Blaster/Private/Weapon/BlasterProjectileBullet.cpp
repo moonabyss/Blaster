@@ -4,7 +4,19 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "Components/BlasterProjectileMoveComponent.h"
 #include "Interfaces/Hitable.h"
+
+ABlasterProjectileBullet::ABlasterProjectileBullet()
+{
+    ProjectileMovementComponent = CreateDefaultSubobject<UBlasterProjectileMoveComponent>("BlasterProjectileMovementComponent");
+    check(ProjectileMovementComponent);
+    ProjectileMovementComponent->bRotationFollowsVelocity = true;
+    ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
+    ProjectileMovementComponent->InitialSpeed = 2000.0f;
+    ProjectileMovementComponent->MaxSpeed = 2000.0f;
+    ProjectileMovementComponent->SetIsReplicated(true);
+}
 
 void ABlasterProjectileBullet::BeginPlay()
 {
