@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "NiagaraSystemInstanceController.h"
 #include "Particles/ParticleSystem.h"
 #include "Sound/SoundCue.h"
 

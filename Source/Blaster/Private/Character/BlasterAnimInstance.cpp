@@ -5,7 +5,6 @@
 #include "Kismet/KismetMathLibrary.h"
 
 #include "BlasterTypes/BlasterCoreTypes.h"
-#include "BlasterUtils.h"
 #include "Character/BlasterCharacter.h"
 #include "Weapon/BlasterBaseWeapon.h"
 
@@ -26,7 +25,7 @@ void UBlasterAnimInstance::NativeInitializeAnimation()
     if (!IsValid(BlasterCharacter))
     {
 #if !UE_BUILD_SHIPPING
-        BLASTER_LOG_ERROR(LogBlasterAnimInstance, TEXT("UBlasterAnimInstance::NativeInitializeAnimation() UBlasterAnimInstance can only be used with ABlasterCharacter"));
+        UE_LOG(LogBlasterAnimInstance, Error, TEXT("UBlasterAnimInstance::NativeInitializeAnimation() UBlasterAnimInstance can only be used with ABlasterCharacter"));
 #endif  // !UE_BUILD_SHIPPING
         return;
     }
@@ -41,7 +40,7 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
     if (!IsValid(BlasterCharacter->GetCharacterMovement()))
     {
 #if !UE_BUILD_SHIPPING
-        BLASTER_LOG_ERROR(LogBlasterAnimInstance, TEXT("UBlasterAnimInstance::NativeUpdateAnimation() Invalid MovementComponent"));
+        UE_LOG(LogBlasterAnimInstance, Error, TEXT("UBlasterAnimInstance::NativeUpdateAnimation() Invalid MovementComponent"));
 #endif  // !UE_BUILD_SHIPPING
         return;
     }

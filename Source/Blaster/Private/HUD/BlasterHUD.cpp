@@ -74,7 +74,7 @@ void ABlasterHUD::RemoveCharacterOverlay()
 {
     if (IsValid(CharacterOverlay))
     {
-        CharacterOverlay->RemoveFromViewport();
+        CharacterOverlay->RemoveFromParent();
     }
 }
 
@@ -95,6 +95,6 @@ void ABlasterHUD::RemoveAnnouncement()
 {
     if (IsValid(Announcement))
     {
-        Announcement->RemoveFromViewport();
+        Announcement->RemoveFromParent();
     }
 }

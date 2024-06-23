@@ -126,7 +126,7 @@ void ABlasterBaseWeapon::SetWeaponState(EWeaponState State)
                 WeaponMesh->SetEnableGravity(true);
                 WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
-                auto NewWeaponState = [=]()
+                auto NewWeaponState = [=, this]()
                 {
                     SetWeaponState(EWeaponState::EWS_Initial);
                 };

@@ -15,6 +15,8 @@ bool UMenu::Initialize()
     if (!ensure(JoinButton)) return false;
     if (!ensure(RefreshButton)) return false;
 
+    // bIsFocusable = true;
+
     ServerList->ClearChildren();
 
     HostButton->OnClicked.AddDynamic(this, &ThisClass::HostButtonClicked);
@@ -87,7 +89,6 @@ void UMenu::MenuShow()
 
     AddToViewport();
     SetVisibility(ESlateVisibility::Visible);
-    bIsFocusable = true;
 
     // Set input mode
     if (APlayerController* PC = GetWorld()->GetFirstPlayerController())

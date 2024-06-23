@@ -434,7 +434,7 @@ void ABlasterCharacter::ObstacleInFront(const FVector& InObstaclePoint)
     ObstaclePoint = InObstaclePoint;
     if (!GetWorldTimerManager().IsTimerActive(ObstacleTimer))
     {
-        auto ShowObstacle = [=]()
+        auto ShowObstacle = [=, this]()
         {
             bShowObstaclePoint = true;
         };

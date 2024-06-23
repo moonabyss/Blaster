@@ -81,7 +81,7 @@ void ABlasterPlayerController::OnUnPossess()
 {
     Super::OnUnPossess();
 
-    if (CurrentWeapon)
+    if (CurrentWeapon && MatchState == MatchState::InProgress)
     {
         CurrentWeapon->SetWeaponState(EWeaponState::EWS_Dropped);
     }

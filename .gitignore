@@ -81,6 +81,7 @@ Content/StarterContent/*
 
 # VSCode Files
 /.vscode/*
+.vsconfig
 *.code-workspace
 .idea/
 

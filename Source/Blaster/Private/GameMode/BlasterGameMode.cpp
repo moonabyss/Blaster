@@ -45,14 +45,6 @@ void ABlasterGameMode::Tick(float DeltaSeconds)
         CountdownTime = WarmupTime + MatchTime + LevelStartingTime - GetWorld()->GetTimeSeconds();
         if (CountdownTime <= 0.0f)
         {
-            SetMatchState(MatchState::Cooldown);
-        }
-    }
-    else if (MatchState == MatchState::Cooldown)
-    {
-        CountdownTime = WarmupTime + MatchTime + CooldownTime + LevelStartingTime - GetWorld()->GetTimeSeconds();
-        if (CountdownTime <= 0.0f)
-        {
             // Clear timers wor weapons
             TArray<AActor*> FoundWeapons;
             UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABlasterBaseWeapon::StaticClass(), FoundWeapons);
@@ -61,6 +53,14 @@ void ABlasterGameMode::Tick(float DeltaSeconds)
                 GetWorldTimerManager().ClearAllTimersForObject(Weapon);
             }
 
+            SetMatchState(MatchState::Cooldown);
+        }
+    }
+    else if (MatchState == MatchState::Cooldown)
+    {
+        CountdownTime = WarmupTime + MatchTime + CooldownTime + LevelStartingTime - GetWorld()->GetTimeSeconds();
+        if (CountdownTime <= 0.0f)
+        {
             RestartGame();
         }
     }

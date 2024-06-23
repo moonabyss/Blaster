@@ -55,7 +55,7 @@ private:
     TObjectPtr<ABlasterHUD> HUD{nullptr};
 
     UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_CurrentWeapon)
-    ABlasterBaseWeapon* CurrentWeapon{nullptr};
+    TObjectPtr <ABlasterBaseWeapon> CurrentWeapon{ nullptr };
 
     UFUNCTION()
     void OnRep_CurrentWeapon(ABlasterBaseWeapon* LastWeapon);

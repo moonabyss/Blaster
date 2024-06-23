@@ -1,6 +1,7 @@
 // Multiplayer Sessions plugin. All rights reserved
 
 #include "MultiplayerSessionsSubsystem.h"
+#include "Online\OnlineSessionNames.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 
